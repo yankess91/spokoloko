@@ -21,6 +21,7 @@ public sealed class AppDbContext : DbContext
         {
             entity.ToTable("clients");
             entity.HasKey(client => client.Id);
+            entity.Property(client => client.Id).HasColumnName("id");
             entity.Property(client => client.FullName).HasColumnName("full_name");
             entity.Property(client => client.Email).HasColumnName("email");
             entity.Property(client => client.PhoneNumber).HasColumnName("phone_number");
@@ -34,6 +35,7 @@ public sealed class AppDbContext : DbContext
         {
             entity.ToTable("used_products");
             entity.HasKey(product => product.Id);
+            entity.Property(product => product.Id).HasColumnName("id");
             entity.Property(product => product.ClientId).HasColumnName("client_id");
             entity.Property(product => product.Name).HasColumnName("name");
             entity.Property(product => product.Notes).HasColumnName("notes");
@@ -44,6 +46,7 @@ public sealed class AppDbContext : DbContext
         {
             entity.ToTable("products");
             entity.HasKey(product => product.Id);
+            entity.Property(product => product.Id).HasColumnName("id");
             entity.Property(product => product.Name).HasColumnName("name");
             entity.Property(product => product.Brand).HasColumnName("brand");
             entity.Property(product => product.Notes).HasColumnName("notes");
@@ -53,6 +56,7 @@ public sealed class AppDbContext : DbContext
         {
             entity.ToTable("services");
             entity.HasKey(service => service.Id);
+            entity.Property(service => service.Id).HasColumnName("id");
             entity.Property(service => service.Name).HasColumnName("name");
             entity.Property(service => service.Description).HasColumnName("description");
             entity.Property(service => service.Duration).HasColumnName("duration");
@@ -65,6 +69,7 @@ public sealed class AppDbContext : DbContext
         {
             entity.ToTable("appointments");
             entity.HasKey(appointment => appointment.Id);
+            entity.Property(appointment => appointment.Id).HasColumnName("id");
             entity.Property(appointment => appointment.ClientId).HasColumnName("client_id");
             entity.Property(appointment => appointment.ServiceId).HasColumnName("service_id");
             entity.Property(appointment => appointment.StartAt).HasColumnName("start_at");
