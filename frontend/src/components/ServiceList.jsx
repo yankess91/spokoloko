@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { formatCurrency } from '../utils/formatters';
 
 export default function ServiceList({ services, isLoading, linkBase }) {
   return (
@@ -19,7 +20,9 @@ export default function ServiceList({ services, isLoading, linkBase }) {
               ) : (
                 <span className="list-title">{service.name}</span>
               )}
-              <span className="muted">{service.duration}</span>
+              <span className="muted">
+                {service.duration} · {formatCurrency(service.price)}
+              </span>
             </li>
           ))}
         </ul>

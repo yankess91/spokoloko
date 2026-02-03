@@ -33,7 +33,8 @@ public sealed class ClientService : IClientService
         {
             FullName = request.FullName,
             Email = request.Email,
-            PhoneNumber = request.PhoneNumber
+            PhoneNumber = request.PhoneNumber,
+            Notes = request.Notes ?? string.Empty
         };
 
         await _clientRepository.AddAsync(client, cancellationToken);

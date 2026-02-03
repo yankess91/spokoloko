@@ -12,7 +12,12 @@ public static class DtoMapper
             appointment.ServiceId,
             appointment.StartAt,
             appointment.EndAt,
-            appointment.Notes);
+            appointment.Notes,
+            appointment.AppointmentProducts
+                .Select(appointmentProduct => appointmentProduct.Product)
+                .Where(product => product is not null)
+                .Select(product => product!.ToResponse())
+                .ToList());
 
     public static ClientProfileResponse ToResponse(this ClientProfile client) =>
         new(
@@ -20,7 +25,12 @@ public static class DtoMapper
             client.FullName,
             client.Email,
             client.PhoneNumber,
-            client.UsedProducts.Select(product => product.ToResponse()).ToList());
+            client.Notes,
+            client.UsedProducts.Select(product => product.ToResponse()).ToList(),
+            client.Appointments
+                .OrderByDescending(appointment => appointment.StartAt)
+                .Select(appointment => appointment.ToHistoryResponse())
+                .ToList());
 
     public static UsedProductResponse ToResponse(this UsedProduct usedProduct) =>
         new(
@@ -35,12 +45,40 @@ public static class DtoMapper
             serviceItem.Id,
             serviceItem.Name,
             serviceItem.Description,
-            serviceItem.Duration);
+            serviceItem.Duration,
+            serviceItem.Price,
+            serviceItem.ServiceProducts
+                .Select(serviceProduct => serviceProduct.Product)
+                .Where(product => product is not null)
+                .Select(product => product!.ToResponse())
+                .ToList());
+
+    public static ServiceSummaryResponse ToSummaryResponse(this ServiceItem serviceItem) =>
+        new(
+            serviceItem.Id,
+            serviceItem.Name,
+            serviceItem.Duration,
+            serviceItem.Price);
+
+    public static ClientServiceHistoryResponse ToHistoryResponse(this Appointment appointment) =>
+        new(
+            appointment.Id,
+            appointment.StartAt,
+            appointment.EndAt,
+            appointment.Notes,
+            appointment.ServiceItem?.ToSummaryResponse()
+            ?? new ServiceSummaryResponse(Guid.Empty, "Nieznana usługa", TimeSpan.Zero, 0),
+            appointment.AppointmentProducts
+                .Select(appointmentProduct => appointmentProduct.Product)
+                .Where(product => product is not null)
+                .Select(product => product!.ToResponse())
+                .ToList());
 
     public static ProductResponse ToResponse(this Product product) =>
         new(
             product.Id,
             product.Name,
             product.Brand,
-            product.Notes);
+            product.Notes,
+            product.ImageUrl);
 }

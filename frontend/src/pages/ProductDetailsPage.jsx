@@ -33,6 +33,14 @@ export default function ProductDetailsPage() {
           <p>Marka: {product.brand || 'Brak danych'}</p>
           <p>Notatki: {product.notes || 'Brak notatek'}</p>
         </article>
+        <article className="card">
+          <h2>Zdjęcie produktu</h2>
+          {product.imageUrl ? (
+            <img className="product-image" src={product.imageUrl} alt={product.name} />
+          ) : (
+            <p className="muted">Brak zdjęcia.</p>
+          )}
+        </article>
       </section>
     </div>
   );

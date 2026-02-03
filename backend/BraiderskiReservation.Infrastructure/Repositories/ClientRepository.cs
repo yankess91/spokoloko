@@ -17,12 +17,22 @@ public sealed class ClientRepository : IClientRepository
     public Task<List<ClientProfile>> GetAllAsync(CancellationToken cancellationToken) =>
         _context.Clients
             .Include(client => client.UsedProducts)
+            .Include(client => client.Appointments)
+            .ThenInclude(appointment => appointment.ServiceItem)
+            .Include(client => client.Appointments)
+            .ThenInclude(appointment => appointment.AppointmentProducts)
+            .ThenInclude(appointmentProduct => appointmentProduct.Product)
             .AsNoTracking()
             .ToListAsync(cancellationToken);
 
     public Task<ClientProfile?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
         _context.Clients
             .Include(client => client.UsedProducts)
+            .Include(client => client.Appointments)
+            .ThenInclude(appointment => appointment.ServiceItem)
+            .Include(client => client.Appointments)
+            .ThenInclude(appointment => appointment.AppointmentProducts)
+            .ThenInclude(appointmentProduct => appointmentProduct.Product)
             .AsNoTracking()
             .FirstOrDefaultAsync(client => client.Id == id, cancellationToken);
 

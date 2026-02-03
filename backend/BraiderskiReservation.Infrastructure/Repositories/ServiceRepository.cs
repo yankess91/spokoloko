@@ -16,11 +16,15 @@ public sealed class ServiceRepository : IServiceRepository
 
     public Task<List<ServiceItem>> GetAllAsync(CancellationToken cancellationToken) =>
         _context.Services
+            .Include(service => service.ServiceProducts)
+            .ThenInclude(serviceProduct => serviceProduct.Product)
             .AsNoTracking()
             .ToListAsync(cancellationToken);
 
     public Task<ServiceItem?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
         _context.Services
+            .Include(service => service.ServiceProducts)
+            .ThenInclude(serviceProduct => serviceProduct.Product)
             .AsNoTracking()
             .FirstOrDefaultAsync(service => service.Id == id, cancellationToken);
 

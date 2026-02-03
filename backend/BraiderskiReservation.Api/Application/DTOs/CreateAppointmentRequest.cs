@@ -5,5 +5,6 @@ public sealed record CreateAppointmentRequest(
     Guid ServiceId,
     DateTime StartAt,
     DateTime EndAt,
-    string Notes
+    string Notes,
+    List<Guid> ProductIds
 );

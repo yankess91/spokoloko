@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import useServiceDetails from '../hooks/useServiceDetails';
+import { formatCurrency } from '../utils/formatters';
 
 export default function ServiceDetailsPage() {
   const { id } = useParams();
@@ -32,6 +33,22 @@ export default function ServiceDetailsPage() {
           <h2>Opis</h2>
           <p>{service.description || 'Brak opisu'}</p>
           <p>Czas trwania: {service.duration}</p>
+          <p>Cena: {formatCurrency(service.price)}</p>
+        </article>
+        <article className="card">
+          <h2>Wymagane produkty</h2>
+          {service.requiredProducts?.length ? (
+            <ul className="list stacked">
+              {service.requiredProducts.map((product) => (
+                <li key={product.id}>
+                  <span className="list-title">{product.name}</span>
+                  <span className="muted">{product.brand || 'Brak marki'}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="muted">Brak przypiętych produktów.</p>
+          )}
         </article>
       </section>
     </div>

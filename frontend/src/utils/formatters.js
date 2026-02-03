@@ -45,3 +45,15 @@ export const formatTime = (value) =>
     hour: '2-digit',
     minute: '2-digit'
   });
+
+export const formatCurrency = (value) => {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) {
+    return 'Brak ceny';
+  }
+
+  return new Intl.NumberFormat('pl-PL', {
+    style: 'currency',
+    currency: 'PLN',
+    minimumFractionDigits: 2
+  }).format(Number(value));
+};

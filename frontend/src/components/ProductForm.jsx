@@ -4,7 +4,8 @@ export default function ProductForm({ onSubmit, isSubmitting }) {
   const [formState, setFormState] = useState({
     name: '',
     brand: '',
-    notes: ''
+    notes: '',
+    imageUrl: ''
   });
 
   const handleChange = (event) => {
@@ -15,7 +16,7 @@ export default function ProductForm({ onSubmit, isSubmitting }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     await onSubmit?.(formState);
-    setFormState({ name: '', brand: '', notes: '' });
+    setFormState({ name: '', brand: '', notes: '', imageUrl: '' });
   };
 
   return (
@@ -48,6 +49,16 @@ export default function ProductForm({ onSubmit, isSubmitting }) {
             placeholder="Dodatkowe informacje"
             rows="3"
             value={formState.notes}
+            onChange={handleChange}
+          />
+        </label>
+        <label>
+          Zdjęcie (link)
+          <input
+            name="imageUrl"
+            type="url"
+            placeholder="https://..."
+            value={formState.imageUrl}
             onChange={handleChange}
           />
         </label>

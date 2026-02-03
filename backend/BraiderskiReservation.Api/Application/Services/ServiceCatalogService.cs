@@ -33,7 +33,15 @@ public sealed class ServiceCatalogService : IServiceCatalogService
         {
             Name = request.Name,
             Description = request.Description,
-            Duration = TimeSpan.FromMinutes(request.DurationMinutes)
+            Duration = TimeSpan.FromMinutes(request.DurationMinutes),
+            Price = request.Price,
+            ServiceProducts = (request.RequiredProductIds ?? new List<Guid>())
+                .Distinct()
+                .Select(productId => new ServiceProduct
+                {
+                    ProductId = productId
+                })
+                .ToList()
         };
 
         await _serviceRepository.AddAsync(service, cancellationToken);

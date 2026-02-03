@@ -16,11 +16,15 @@ public sealed class AppointmentRepository : IAppointmentRepository
 
     public Task<List<Appointment>> GetAllAsync(CancellationToken cancellationToken) =>
         _context.Appointments
+            .Include(appointment => appointment.AppointmentProducts)
+            .ThenInclude(appointmentProduct => appointmentProduct.Product)
             .AsNoTracking()
             .ToListAsync(cancellationToken);
 
     public Task<Appointment?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
         _context.Appointments
+            .Include(appointment => appointment.AppointmentProducts)
+            .ThenInclude(appointmentProduct => appointmentProduct.Product)
             .AsNoTracking()
             .FirstOrDefaultAsync(appointment => appointment.Id == id, cancellationToken);
 

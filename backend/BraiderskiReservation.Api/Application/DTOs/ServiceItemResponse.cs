@@ -4,4 +4,6 @@ public sealed record ServiceItemResponse(
     Guid Id,
     string Name,
     string Description,
-    TimeSpan Duration);
+    TimeSpan Duration,
+    decimal Price,
+    List<ProductResponse> RequiredProducts);

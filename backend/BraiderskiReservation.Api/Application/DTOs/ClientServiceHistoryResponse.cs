@@ -1,10 +1,9 @@
 namespace BraiderskiReservation.Api.Application.DTOs;
 
-public sealed record AppointmentResponse(
-    Guid Id,
-    Guid ClientId,
-    Guid ServiceId,
+public sealed record ClientServiceHistoryResponse(
+    Guid AppointmentId,
     DateTime StartAt,
     DateTime EndAt,
     string Notes,
+    ServiceSummaryResponse Service,
     List<ProductResponse> UsedProducts);

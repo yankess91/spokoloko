@@ -4,4 +4,5 @@ public sealed record ProductResponse(
     Guid Id,
     string Name,
     string Brand,
-    string Notes);
+    string Notes,
+    string ImageUrl);

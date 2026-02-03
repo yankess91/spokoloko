@@ -32,6 +32,7 @@ export default function ClientDetailsPage() {
           <h2>Dane kontaktowe</h2>
           <p>Email: {client.email || 'Brak emaila'}</p>
           <p>Telefon: {client.phoneNumber || 'Brak telefonu'}</p>
+          <p>Uwagi: {client.notes || 'Brak uwag'}</p>
         </article>
         <article className="card">
           <h2>Ostatnio użyte produkty</h2>
@@ -46,6 +47,37 @@ export default function ClientDetailsPage() {
             </ul>
           ) : (
             <p className="muted">Brak zapisanych produktów.</p>
+          )}
+        </article>
+        <article className="card">
+          <h2>Historia usług</h2>
+          {client.serviceHistory?.length ? (
+            <ul className="list stacked">
+              {client.serviceHistory.map((history) => (
+                <li key={history.appointmentId}>
+                  <span className="list-title">{history.service?.name || 'Nieznana usługa'}</span>
+                  <span className="muted">
+                    {history.startAt
+                      ? new Date(history.startAt).toLocaleDateString('pl-PL')
+                      : 'Brak daty'}
+                  </span>
+                  <span className="muted">Uwagi: {history.notes || 'Brak notatek'}</span>
+                  {history.usedProducts?.length ? (
+                    <div className="chips">
+                      {history.usedProducts.map((product) => (
+                        <span key={product.id} className="chip">
+                          {product.name}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="muted">Brak zapisanych produktów.</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="muted">Brak historii usług.</p>
           )}
         </article>
       </section>
