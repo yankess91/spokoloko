@@ -24,7 +24,9 @@ export default function AppointmentCalendar({
 
   return (
     <section className="card calendar">
-      <h2>Kalendarz wizyt</h2>
+      <header className="card-header">
+        <h2>Kalendarz wizyt</h2>
+      </header>
       {isLoading ? (
         <p className="muted">Ładowanie wizyt...</p>
       ) : days.length === 0 ? (

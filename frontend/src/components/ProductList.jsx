@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 export default function ProductList({ products, isLoading, linkBase }) {
   return (
     <article className="card">
-      <h2>Wszystkie produkty</h2>
+      <header className="card-header">
+        <h2>Wszystkie produkty</h2>
+      </header>
       {isLoading ? (
         <p className="muted">Ładowanie produktów...</p>
       ) : products.length === 0 ? (
@@ -20,7 +22,7 @@ export default function ProductList({ products, isLoading, linkBase }) {
                 ) : (
                   <span className="list-title">{product.name}</span>
                 )}
-                <span className="muted">{product.brand || 'Brak marki'}</span>
+                <span className="list-meta">{product.brand || 'Brak marki'}</span>
               </div>
               {product.imageUrl ? (
                 <img className="thumb" src={product.imageUrl} alt={product.name} />

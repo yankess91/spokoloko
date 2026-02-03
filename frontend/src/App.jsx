@@ -32,17 +32,28 @@ import DesignServicesRoundedIcon from '@mui/icons-material/DesignServicesRounded
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 
 const navLinkStyles = {
-  color: '#5b5448',
+  color: 'var(--color-muted)',
   fontWeight: 600,
-  borderRadius: 999,
-  paddingX: 1.5,
-  paddingY: 0.6,
+  borderRadius: '10px',
+  paddingX: 1.8,
+  paddingY: 0.9,
   textTransform: 'none',
-  backgroundColor: '#f0e7d6',
+  backgroundColor: 'var(--color-surface-muted)',
+  border: '1px solid transparent',
+  minHeight: 40,
   gap: 1,
+  '&:hover': {
+    backgroundColor: 'var(--color-bg-accent)',
+    borderColor: 'var(--color-border)',
+  },
+  '&:focus-visible': {
+    outline: 'none',
+    boxShadow: '0 0 0 3px var(--color-focus)',
+  },
   '&.active': {
-    backgroundColor: '#c9a227',
-    color: '#111111',
+    backgroundColor: 'var(--color-accent)',
+    color: '#1f1f1f',
+    borderColor: 'transparent',
   },
 };
 
@@ -88,23 +99,28 @@ export default function App() {
     <div className="page">
       {isAuthenticated && (
         <AppBar
-          position="static"
+          position="sticky"
           elevation={0}
           sx={{
-            backgroundColor: '#ffffff',
-            borderRadius: 4,
-            boxShadow: '0 10px 24px rgba(19, 12, 9, 0.06)',
+            backgroundColor: 'rgba(255, 255, 255, 0.92)',
+            borderRadius: '18px',
+            boxShadow: 'var(--shadow-sm)',
+            border: '1px solid var(--color-border)',
             paddingX: { xs: 1, md: 2 },
+            backdropFilter: 'blur(12px)',
+            width: '100%',
+            maxWidth: 'var(--max-width)',
+            alignSelf: 'center',
           }}
         >
           <Toolbar disableGutters sx={{ gap: 2, paddingY: 1, paddingX: 2 }}>
             <Stack direction="row" spacing={1.2} alignItems="center">
-              <Avatar sx={{ bgcolor: '#c9a227', width: 36, height: 36 }}>B</Avatar>
+              <Avatar sx={{ bgcolor: 'var(--color-accent)', width: 36, height: 36 }}>B</Avatar>
               <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#111111' }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#1f1f1f' }}>
                   Braiderski Panel
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#6f675c' }}>
+                <Typography variant="caption" sx={{ color: 'var(--color-muted)' }}>
                   Zarządzaj rezerwacjami w jednym miejscu
                 </Typography>
               </Box>
@@ -129,7 +145,12 @@ export default function App() {
 
             <IconButton
               onClick={handleMenuOpen}
-              sx={{ display: { xs: 'inline-flex', md: 'none' }, backgroundColor: '#f0e7d6' }}
+              sx={{
+                display: { xs: 'inline-flex', md: 'none' },
+                backgroundColor: 'var(--color-surface-muted)',
+                borderRadius: '10px',
+                border: '1px solid var(--color-border)',
+              }}
               size="small"
               aria-label="Otwórz menu nawigacji"
             >
@@ -147,6 +168,7 @@ export default function App() {
                   marginTop: 1,
                   borderRadius: 3,
                   minWidth: 200,
+                  border: '1px solid var(--color-border)',
                 },
               }}
             >
@@ -159,8 +181,8 @@ export default function App() {
                   sx={{
                     gap: 1.5,
                     '&.active': {
-                      backgroundColor: '#f4ecde',
-                      color: '#111111',
+                      backgroundColor: 'var(--color-bg-accent)',
+                      color: '#1f1f1f',
                     },
                   }}
                 >
@@ -171,21 +193,27 @@ export default function App() {
             </Menu>
 
             <Stack direction="row" spacing={1.5} alignItems="center">
-              <Typography variant="body2" sx={{ color: '#5b5448', fontWeight: 600 }}>
+              <Typography variant="body2" sx={{ color: 'var(--color-muted)', fontWeight: 600 }}>
                 Witaj, {user?.fullName}
               </Typography>
               <Button
                 onClick={logout}
-                variant="contained"
+                variant="outlined"
                 startIcon={<LogoutRoundedIcon fontSize="small" />}
                 sx={{
                   textTransform: 'none',
-                  borderRadius: 999,
-                  backgroundColor: '#f0e7d6',
-                  color: '#5b5448',
+                  borderRadius: '10px',
+                  backgroundColor: 'transparent',
+                  borderColor: 'var(--color-border)',
+                  color: 'var(--color-muted)',
+                  minHeight: 40,
                   boxShadow: 'none',
+                  '&:focus-visible': {
+                    outline: 'none',
+                    boxShadow: '0 0 0 3px var(--color-focus)',
+                  },
                   '&:hover': {
-                    backgroundColor: '#e9dcc4',
+                    backgroundColor: 'var(--color-bg-accent)',
                     boxShadow: 'none',
                   },
                 }}
