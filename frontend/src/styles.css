@@ -286,6 +286,18 @@ label {
   color: #111111;
 }
 
+.form-field {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+  color: #111111;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #111111;
+}
+
 input,
 select,
 textarea {
@@ -449,6 +461,11 @@ button:disabled {
   display: flex;
   gap: 12px;
   align-items: center;
+}
+
+.autocomplete-inline {
+  flex: 1;
+  min-width: 0;
 }
 
 .chips {

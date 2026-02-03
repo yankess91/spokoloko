@@ -17,7 +17,12 @@ public sealed class ServiceCatalogService : IServiceCatalogService
 
     public async Task<List<ServiceItemResponse>> GetAllAsync(CancellationToken cancellationToken)
     {
-        var services = await _serviceRepository.GetAllAsync(cancellationToken);
+        return await SearchAsync(null, cancellationToken);
+    }
+
+    public async Task<List<ServiceItemResponse>> SearchAsync(string? searchTerm, CancellationToken cancellationToken)
+    {
+        var services = await _serviceRepository.SearchAsync(searchTerm, cancellationToken);
         return services.Select(service => service.ToResponse()).ToList();
     }
 

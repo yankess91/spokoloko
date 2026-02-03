@@ -7,6 +7,11 @@ export default class ProductsApi {
     return this.client.get('/api/products');
   }
 
+  search(searchTerm = '') {
+    const query = searchTerm.trim();
+    return this.client.get(`/api/products${query ? `?search=${encodeURIComponent(query)}` : ''}`);
+  }
+
   getById(id) {
     return this.client.get(`/api/products/${id}`);
   }

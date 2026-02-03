@@ -1,4 +1,7 @@
 import { useMemo, useState } from 'react';
+import { clientsApi, productsApi, servicesApi } from '../api';
+import useAutocompleteSearch from '../hooks/useAutocompleteSearch';
+import AutocompleteField from './AutocompleteField';
 
 const buildClientLabel = (client) => client.fullName;
 const buildServiceLabel = (service) => service.name;
@@ -6,36 +9,46 @@ const buildProductLabel = (product) =>
   product.brand ? `${product.name} (${product.brand})` : product.name;
 
 export default function AppointmentForm({
-  clients = [],
-  services = [],
-  products = [],
   onSubmit,
   isSubmitting
 }) {
   const [formState, setFormState] = useState({
-    clientId: '',
-    serviceId: '',
-    clientInput: '',
-    serviceInput: '',
     startAt: '',
     endAt: '',
     notes: '',
-    productInput: '',
     selectedProducts: []
   });
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedService, setSelectedService] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [error, setError] = useState('');
 
-  const clientLabels = useMemo(
-    () => clients.map((client) => ({ id: client.id, label: buildClientLabel(client) })),
-    [clients]
+  const clientSearch = useAutocompleteSearch({
+    searchFn: (query) => clientsApi.search(query)
+  });
+  const serviceSearch = useAutocompleteSearch({
+    searchFn: (query) => servicesApi.search(query)
+  });
+  const productSearch = useAutocompleteSearch({
+    searchFn: (query) => productsApi.search(query)
+  });
+
+  const clientOptions = useMemo(
+    () => clientSearch.options.map((client) => ({ id: client.id, label: buildClientLabel(client) })),
+    [clientSearch.options]
   );
-  const serviceLabels = useMemo(
-    () => services.map((service) => ({ id: service.id, label: buildServiceLabel(service) })),
-    [services]
+  const serviceOptions = useMemo(
+    () =>
+      serviceSearch.options.map((service) => ({ id: service.id, label: buildServiceLabel(service) })),
+    [serviceSearch.options]
   );
-  const productLabels = useMemo(
-    () => products.map((product) => ({ id: product.id, label: buildProductLabel(product) })),
-    [products]
+  const productOptions = useMemo(
+    () =>
+      productSearch.options.map((product) => ({
+        id: product.id,
+        label: buildProductLabel(product)
+      })),
+    [productSearch.options]
   );
 
   const handleChange = (event) => {
@@ -43,42 +56,22 @@ export default function AppointmentForm({
     setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleClientChange = (event) => {
-    const { value } = event.target;
-    const match = clientLabels.find((client) => client.label === value);
-    setFormState((prev) => ({
-      ...prev,
-      clientInput: value,
-      clientId: match?.id ?? ''
-    }));
-  };
-
-  const handleServiceChange = (event) => {
-    const { value } = event.target;
-    const match = serviceLabels.find((service) => service.label === value);
-    setFormState((prev) => ({
-      ...prev,
-      serviceInput: value,
-      serviceId: match?.id ?? ''
-    }));
-  };
-
   const handleAddProduct = () => {
     setError('');
-    const match = productLabels.find((product) => product.label === formState.productInput);
-    if (!match) {
+    if (!selectedProduct) {
       setError('Wybierz produkt z listy podpowiedzi.');
       return;
     }
-    if (formState.selectedProducts.some((item) => item.id === match.id)) {
+    if (formState.selectedProducts.some((item) => item.id === selectedProduct.id)) {
       setError('Ten produkt został już dodany.');
       return;
     }
     setFormState((prev) => ({
       ...prev,
-      productInput: '',
-      selectedProducts: [...prev.selectedProducts, match]
+      selectedProducts: [...prev.selectedProducts, selectedProduct]
     }));
+    setSelectedProduct(null);
+    productSearch.setInputValue('');
   };
 
   const handleRemoveProduct = (productId) => {
@@ -90,68 +83,61 @@ export default function AppointmentForm({
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!formState.clientId || !formState.serviceId) {
+    if (!selectedClient || !selectedService) {
       setError('Wybierz klientkę i usługę z listy podpowiedzi.');
       return;
     }
     setError('');
     await onSubmit?.({
-      clientId: formState.clientId,
-      serviceId: formState.serviceId,
+      clientId: selectedClient.id,
+      serviceId: selectedService.id,
       startAt: new Date(formState.startAt).toISOString(),
       endAt: new Date(formState.endAt).toISOString(),
       notes: formState.notes,
       productIds: formState.selectedProducts.map((product) => product.id)
     });
     setFormState({
-      clientId: '',
-      serviceId: '',
-      clientInput: '',
-      serviceInput: '',
       startAt: '',
       endAt: '',
       notes: '',
-      productInput: '',
       selectedProducts: []
     });
+    setSelectedClient(null);
+    setSelectedService(null);
+    setSelectedProduct(null);
+    clientSearch.setInputValue('');
+    serviceSearch.setInputValue('');
+    productSearch.setInputValue('');
   };
 
   return (
     <article className="card">
       <h2>Zaplanuj wizytę</h2>
       <form className="form" onSubmit={handleSubmit}>
-        <label>
-          Klientka
-          <input
-            name="clientInput"
-            list="client-options"
-            placeholder="Wybierz klientkę"
-            value={formState.clientInput}
-            onChange={handleClientChange}
-            required
-          />
-          <datalist id="client-options">
-            {clientLabels.map((client) => (
-              <option key={client.id} value={client.label} />
-            ))}
-          </datalist>
-        </label>
-        <label>
-          Usługa
-          <input
-            name="serviceInput"
-            list="service-options"
-            placeholder="Wybierz usługę"
-            value={formState.serviceInput}
-            onChange={handleServiceChange}
-            required
-          />
-          <datalist id="service-options">
-            {serviceLabels.map((service) => (
-              <option key={service.id} value={service.label} />
-            ))}
-          </datalist>
-        </label>
+        <AutocompleteField
+          label="Klientka"
+          placeholder="Wybierz klientkę"
+          options={clientOptions}
+          value={selectedClient}
+          inputValue={clientSearch.inputValue}
+          onChange={(_, newValue) => setSelectedClient(newValue)}
+          onInputChange={(_, newValue) => clientSearch.setInputValue(newValue)}
+          loading={clientSearch.isLoading}
+          disabled={isSubmitting}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+        />
+        <AutocompleteField
+          label="Usługa"
+          placeholder="Wybierz usługę"
+          options={serviceOptions}
+          value={selectedService}
+          inputValue={serviceSearch.inputValue}
+          onChange={(_, newValue) => setSelectedService(newValue)}
+          onInputChange={(_, newValue) => serviceSearch.setInputValue(newValue)}
+          loading={serviceSearch.isLoading}
+          disabled={isSubmitting}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+        />
         <label>
           Start wizyty
           <input
@@ -182,27 +168,34 @@ export default function AppointmentForm({
             onChange={handleChange}
           />
         </label>
-        <label>
-          Produkty użyte
+        <div className="form-field">
+          <span className="form-label">Produkty użyte</span>
           <div className="inline-field">
-            <input
-              name="productInput"
-              list="appointment-products"
+            <AutocompleteField
+              label="Produkty użyte"
               placeholder="Dodaj produkt"
-              value={formState.productInput}
-              onChange={handleChange}
+              options={productOptions}
+              value={selectedProduct}
+              inputValue={productSearch.inputValue}
+              onChange={(_, newValue) => setSelectedProduct(newValue)}
+              onInputChange={(_, newValue) => productSearch.setInputValue(newValue)}
+              loading={productSearch.isLoading}
+              disabled={isSubmitting}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              hideLabel
+              containerClassName="autocomplete-inline"
             />
             <button type="button" className="secondary" onClick={handleAddProduct}>
               Dodaj
             </button>
           </div>
-          <datalist id="appointment-products">
-            {productLabels.map((product) => (
-              <option key={product.id} value={product.label} />
-            ))}
-          </datalist>
-        </label>
+        </div>
         {error ? <p className="error-note">{error}</p> : null}
+        {clientSearch.error || serviceSearch.error || productSearch.error ? (
+          <p className="error-note">
+            {clientSearch.error || serviceSearch.error || productSearch.error}
+          </p>
+        ) : null}
         {formState.selectedProducts.length ? (
           <div className="chips">
             {formState.selectedProducts.map((product) => (

@@ -3,14 +3,12 @@ import AppointmentForm from '../components/AppointmentForm';
 import AppointmentList from '../components/AppointmentList';
 import useAppointments from '../hooks/useAppointments';
 import useClients from '../hooks/useClients';
-import useProducts from '../hooks/useProducts';
 import useServices from '../hooks/useServices';
 
 export default function AppointmentsPage() {
   const { appointments, isLoading, error, addAppointment } = useAppointments();
   const { clients, isLoading: clientsLoading } = useClients();
   const { services, isLoading: servicesLoading } = useServices();
-  const { products, isLoading: productsLoading } = useProducts();
   const [formError, setFormError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,11 +46,8 @@ export default function AppointmentsPage() {
 
       <section className="grid">
         <AppointmentForm
-          clients={clients}
-          services={services}
-          products={products}
           onSubmit={handleSubmit}
-          isSubmitting={isSubmitting || clientsLoading || servicesLoading || productsLoading}
+          isSubmitting={isSubmitting || clientsLoading || servicesLoading}
         />
         <div className="stack">
           {formError ? <p className="card error">{formError}</p> : null}

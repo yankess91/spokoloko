@@ -1,12 +1,10 @@
 import { useMemo, useState } from 'react';
 import ServiceForm from '../components/ServiceForm';
 import ServiceList from '../components/ServiceList';
-import useProducts from '../hooks/useProducts';
 import useServices from '../hooks/useServices';
 
 export default function ServicesPage() {
   const { services, isLoading, error, addService } = useServices();
-  const { products, isLoading: productsLoading } = useProducts();
   const [formError, setFormError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,9 +37,8 @@ export default function ServicesPage() {
 
       <section className="grid">
         <ServiceForm
-          products={products}
           onSubmit={handleSubmit}
-          isSubmitting={isSubmitting || productsLoading}
+          isSubmitting={isSubmitting}
         />
         <div className="stack">
           {formError ? <p className="card error">{formError}</p> : null}

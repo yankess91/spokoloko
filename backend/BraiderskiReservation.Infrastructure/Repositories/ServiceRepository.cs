@@ -15,17 +15,26 @@ public sealed class ServiceRepository : IServiceRepository
     }
 
     public Task<List<ServiceItem>> GetAllAsync(CancellationToken cancellationToken) =>
-        _context.Services
-            .Include(service => service.ServiceProducts)
-            .ThenInclude(serviceProduct => serviceProduct.Product)
-            .AsNoTracking()
+        BuildServiceQuery().ToListAsync(cancellationToken);
+
+    public Task<List<ServiceItem>> SearchAsync(string? searchTerm, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            return GetAllAsync(cancellationToken);
+        }
+
+        var normalized = searchTerm.Trim().ToLowerInvariant();
+
+        return BuildServiceQuery()
+            .Where(service =>
+                service.Name.ToLower().Contains(normalized) ||
+                service.Description.ToLower().Contains(normalized))
             .ToListAsync(cancellationToken);
+    }
 
     public Task<ServiceItem?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
-        _context.Services
-            .Include(service => service.ServiceProducts)
-            .ThenInclude(serviceProduct => serviceProduct.Product)
-            .AsNoTracking()
+        BuildServiceQuery()
             .FirstOrDefaultAsync(service => service.Id == id, cancellationToken);
 
     public async Task AddAsync(ServiceItem service, CancellationToken cancellationToken) =>
@@ -33,4 +42,10 @@ public sealed class ServiceRepository : IServiceRepository
 
     public Task SaveChangesAsync(CancellationToken cancellationToken) =>
         _context.SaveChangesAsync(cancellationToken);
+
+    private IQueryable<ServiceItem> BuildServiceQuery() =>
+        _context.Services
+            .Include(service => service.ServiceProducts)
+            .ThenInclude(serviceProduct => serviceProduct.Product)
+            .AsNoTracking();
 }

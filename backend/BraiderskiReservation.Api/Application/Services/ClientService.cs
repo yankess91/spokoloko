@@ -17,7 +17,12 @@ public sealed class ClientService : IClientService
 
     public async Task<List<ClientProfileResponse>> GetAllAsync(CancellationToken cancellationToken)
     {
-        var clients = await _clientRepository.GetAllAsync(cancellationToken);
+        return await SearchAsync(null, cancellationToken);
+    }
+
+    public async Task<List<ClientProfileResponse>> SearchAsync(string? searchTerm, CancellationToken cancellationToken)
+    {
+        var clients = await _clientRepository.SearchAsync(searchTerm, cancellationToken);
         return clients.Select(client => client.ToResponse()).ToList();
     }
 

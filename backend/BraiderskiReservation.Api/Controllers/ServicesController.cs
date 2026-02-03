@@ -18,8 +18,10 @@ public sealed class ServicesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ServiceItemResponse>>> GetAll(CancellationToken cancellationToken) =>
-        Ok(await _serviceCatalog.GetAllAsync(cancellationToken));
+    public async Task<ActionResult<IEnumerable<ServiceItemResponse>>> GetAll(
+        [FromQuery] string? search,
+        CancellationToken cancellationToken) =>
+        Ok(await _serviceCatalog.SearchAsync(search, cancellationToken));
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ServiceItemResponse>> GetById(Guid id, CancellationToken cancellationToken)

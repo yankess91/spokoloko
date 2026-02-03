@@ -1,22 +1,33 @@
 import { useMemo, useState } from 'react';
+import { productsApi } from '../api';
+import useAutocompleteSearch from '../hooks/useAutocompleteSearch';
+import AutocompleteField from './AutocompleteField';
 
 const buildProductLabel = (product) =>
   product.brand ? `${product.name} (${product.brand})` : product.name;
 
-export default function ServiceForm({ products = [], onSubmit, isSubmitting }) {
+export default function ServiceForm({ onSubmit, isSubmitting }) {
   const [formState, setFormState] = useState({
     name: '',
     description: '',
     durationMinutes: 60,
     price: '',
-    productInput: '',
     selectedProducts: []
   });
   const [error, setError] = useState('');
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const productLabels = useMemo(
-    () => products.map((product) => ({ id: product.id, label: buildProductLabel(product) })),
-    [products]
+  const productSearch = useAutocompleteSearch({
+    searchFn: (query) => productsApi.search(query)
+  });
+
+  const productOptions = useMemo(
+    () =>
+      productSearch.options.map((product) => ({
+        id: product.id,
+        label: buildProductLabel(product)
+      })),
+    [productSearch.options]
   );
 
   const handleChange = (event) => {
@@ -26,20 +37,20 @@ export default function ServiceForm({ products = [], onSubmit, isSubmitting }) {
 
   const handleAddProduct = () => {
     setError('');
-    const match = productLabels.find((product) => product.label === formState.productInput);
-    if (!match) {
+    if (!selectedProduct) {
       setError('Wybierz produkt z listy podpowiedzi.');
       return;
     }
-    if (formState.selectedProducts.some((item) => item.id === match.id)) {
+    if (formState.selectedProducts.some((item) => item.id === selectedProduct.id)) {
       setError('Ten produkt został już dodany.');
       return;
     }
     setFormState((prev) => ({
       ...prev,
-      productInput: '',
-      selectedProducts: [...prev.selectedProducts, match]
+      selectedProducts: [...prev.selectedProducts, selectedProduct]
     }));
+    setSelectedProduct(null);
+    productSearch.setInputValue('');
   };
 
   const handleRemoveProduct = (productId) => {
@@ -63,10 +74,11 @@ export default function ServiceForm({ products = [], onSubmit, isSubmitting }) {
       description: '',
       durationMinutes: 60,
       price: '',
-      productInput: '',
       selectedProducts: []
     });
     setError('');
+    setSelectedProduct(null);
+    productSearch.setInputValue('');
   };
 
   return (
@@ -121,24 +133,27 @@ export default function ServiceForm({ products = [], onSubmit, isSubmitting }) {
         <label>
           Produkty wymagane
           <div className="inline-field">
-            <input
-              name="productInput"
-              list="service-products"
+            <AutocompleteField
+              label="Produkty wymagane"
               placeholder="Wybierz produkt"
-              value={formState.productInput}
-              onChange={handleChange}
+              options={productOptions}
+              value={selectedProduct}
+              inputValue={productSearch.inputValue}
+              onChange={(_, newValue) => setSelectedProduct(newValue)}
+              onInputChange={(_, newValue) => productSearch.setInputValue(newValue)}
+              loading={productSearch.isLoading}
+              disabled={isSubmitting}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              hideLabel
+              containerClassName="autocomplete-inline"
             />
             <button type="button" className="secondary" onClick={handleAddProduct}>
               Dodaj
             </button>
           </div>
-          <datalist id="service-products">
-            {productLabels.map((product) => (
-              <option key={product.id} value={product.label} />
-            ))}
-          </datalist>
         </label>
         {error ? <p className="error-note">{error}</p> : null}
+        {productSearch.error ? <p className="error-note">{productSearch.error}</p> : null}
         {formState.selectedProducts.length ? (
           <div className="chips">
             {formState.selectedProducts.map((product) => (
