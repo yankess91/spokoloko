@@ -1,17 +1,13 @@
-const formatDate = (value) =>
-  new Date(value).toLocaleDateString('pl-PL', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  });
+import { Link } from 'react-router-dom';
+import { formatDate, formatTime } from '../utils/formatters';
 
-const formatTime = (value) =>
-  new Date(value).toLocaleTimeString('pl-PL', {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-
-export default function AppointmentCalendar({ appointments, clientsById, servicesById, isLoading }) {
+export default function AppointmentCalendar({
+  appointments,
+  clientsById,
+  servicesById,
+  isLoading,
+  linkBase
+}) {
   const grouped = appointments.reduce((acc, appointment) => {
     const key = formatDate(appointment.startAt);
     if (!acc[key]) {
@@ -45,7 +41,13 @@ export default function AppointmentCalendar({ appointments, clientsById, service
                   return (
                     <div key={appointment.id} className="slot-details">
                       <span className="slot-time">{formatTime(appointment.startAt)}</span>
-                      <span>{service?.name ?? 'Nieznana usługa'}</span>
+                      {linkBase ? (
+                        <Link to={`${linkBase}/${appointment.id}`}>
+                          {service?.name ?? 'Nieznana usługa'}
+                        </Link>
+                      ) : (
+                        <span>{service?.name ?? 'Nieznana usługa'}</span>
+                      )}
                       <span className="muted">{client?.fullName ?? 'Nieznana klientka'}</span>
                     </div>
                   );

@@ -1,4 +1,6 @@
-export default function ClientList({ clients, isLoading }) {
+import { Link } from 'react-router-dom';
+
+export default function ClientList({ clients, isLoading, linkBase }) {
   return (
     <article className="card">
       <h2>Wszystkie klientki</h2>
@@ -10,7 +12,13 @@ export default function ClientList({ clients, isLoading }) {
         <ul className="list stacked">
           {clients.map((client) => (
             <li key={client.id}>
-              <span className="list-title">{client.fullName}</span>
+              {linkBase ? (
+                <Link className="list-title" to={`${linkBase}/${client.id}`}>
+                  {client.fullName}
+                </Link>
+              ) : (
+                <span className="list-title">{client.fullName}</span>
+              )}
               <span className="muted">{client.email || 'Brak emaila'}</span>
               <span className="muted">{client.phoneNumber || 'Brak telefonu'}</span>
               <span className="muted">Produkty użyte: {client.usedProducts?.length ?? 0}</span>
