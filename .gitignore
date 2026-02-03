@@ -1,1 +1,26 @@
 node_modules/
+dist/
+.env
+.env.*
+!.env.example
+
+# Vite
+*.local
+
+# .NET / Visual Studio
+bin/
+obj/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.sln.docstates
+*.vs/
+*.vscode/
+*.idea/
+*.swp
+*.DS_Store
+
+# Logs
+logs/
+*.log
