@@ -1,20 +1,29 @@
+import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import useProductDetails from '../hooks/useProductDetails';
+import { useToast } from '../components/ToastProvider';
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
   const { product, isLoading, error } = useProductDetails(id);
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    if (error) {
+      showToast(error, { severity: 'error' });
+    }
+  }, [error, showToast]);
 
   if (isLoading) {
     return <p className="card muted">Ładowanie produktu...</p>;
   }
 
-  if (error) {
-    return <p className="card error">{error}</p>;
+  if (!product && !error) {
+    return <p className="card muted">Nie znaleziono produktu.</p>;
   }
 
-  if (!product) {
-    return <p className="card muted">Nie znaleziono produktu.</p>;
+  if (error) {
+    return <div className="page-content" />;
   }
 
   return (

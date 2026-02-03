@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import AppointmentCalendar from '../components/AppointmentCalendar';
 import ClientList from '../components/ClientList';
 import HeroSection from '../components/HeroSection';
@@ -9,6 +9,7 @@ import useClients from '../hooks/useClients';
 import useProducts from '../hooks/useProducts';
 import useServices from '../hooks/useServices';
 import { formatDate, formatTime } from '../utils/formatters';
+import { useToast } from '../components/ToastProvider';
 
 export default function DashboardPage() {
   const { clients, isLoading: clientsLoading, error: clientsError } = useClients();
@@ -16,11 +17,18 @@ export default function DashboardPage() {
   const { services, isLoading: servicesLoading, error: servicesError } = useServices();
   const { appointments, isLoading: appointmentsLoading, error: appointmentsError } =
     useAppointments();
+  const { showToast } = useToast();
 
   const isLoading =
     clientsLoading || productsLoading || servicesLoading || appointmentsLoading;
 
   const error = clientsError || productsError || servicesError || appointmentsError;
+
+  useEffect(() => {
+    if (error) {
+      showToast(error, { severity: 'error' });
+    }
+  }, [error, showToast]);
 
   const clientsById = useMemo(
     () => new Map(clients.map((client) => [client.id, client])),
@@ -67,8 +75,6 @@ export default function DashboardPage() {
         upcomingAppointment={upcomingAppointment}
         isLoading={isLoading}
       />
-
-      {error ? <p className="card error">{error}</p> : null}
 
       <section className="grid">
         <ClientList clients={clients} isLoading={isLoading} linkBase="/clients" />

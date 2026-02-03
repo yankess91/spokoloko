@@ -1,21 +1,30 @@
+import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import useServiceDetails from '../hooks/useServiceDetails';
+import { useToast } from '../components/ToastProvider';
 import { formatCurrency } from '../utils/formatters';
 
 export default function ServiceDetailsPage() {
   const { id } = useParams();
   const { service, isLoading, error } = useServiceDetails(id);
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    if (error) {
+      showToast(error, { severity: 'error' });
+    }
+  }, [error, showToast]);
 
   if (isLoading) {
     return <p className="card muted">Ładowanie usługi...</p>;
   }
 
-  if (error) {
-    return <p className="card error">{error}</p>;
+  if (!service && !error) {
+    return <p className="card muted">Nie znaleziono usługi.</p>;
   }
 
-  if (!service) {
-    return <p className="card muted">Nie znaleziono usługi.</p>;
+  if (error) {
+    return <div className="page-content" />;
   }
 
   return (

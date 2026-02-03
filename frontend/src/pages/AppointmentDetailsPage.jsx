@@ -1,25 +1,34 @@
+import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import useAppointmentDetails from '../hooks/useAppointmentDetails';
 import useClients from '../hooks/useClients';
 import useServices from '../hooks/useServices';
 import { formatDate, formatTime } from '../utils/formatters';
+import { useToast } from '../components/ToastProvider';
 
 export default function AppointmentDetailsPage() {
   const { id } = useParams();
   const { appointment, isLoading, error } = useAppointmentDetails(id);
   const { clients } = useClients();
   const { services } = useServices();
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    if (error) {
+      showToast(error, { severity: 'error' });
+    }
+  }, [error, showToast]);
 
   if (isLoading) {
     return <p className="card muted">Ładowanie wizyty...</p>;
   }
 
-  if (error) {
-    return <p className="card error">{error}</p>;
+  if (!appointment && !error) {
+    return <p className="card muted">Nie znaleziono wizyty.</p>;
   }
 
-  if (!appointment) {
-    return <p className="card muted">Nie znaleziono wizyty.</p>;
+  if (error) {
+    return <div className="page-content" />;
   }
 
   const client = clients.find((item) => item.id === appointment.clientId);
