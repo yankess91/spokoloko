@@ -4,7 +4,8 @@ export default function ClientForm({ onSubmit, isSubmitting }) {
   const [formState, setFormState] = useState({
     fullName: '',
     email: '',
-    phoneNumber: ''
+    phoneNumber: '',
+    notes: ''
   });
 
   const handleChange = (event) => {
@@ -15,7 +16,7 @@ export default function ClientForm({ onSubmit, isSubmitting }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     await onSubmit?.(formState);
-    setFormState({ fullName: '', email: '', phoneNumber: '' });
+    setFormState({ fullName: '', email: '', phoneNumber: '', notes: '' });
   };
 
   return (
@@ -48,6 +49,16 @@ export default function ClientForm({ onSubmit, isSubmitting }) {
             name="phoneNumber"
             placeholder="+48 600 000 000"
             value={formState.phoneNumber}
+            onChange={handleChange}
+          />
+        </label>
+        <label>
+          Uwagi
+          <textarea
+            name="notes"
+            placeholder="Preferencje, alergie, ważne informacje"
+            rows="3"
+            value={formState.notes}
             onChange={handleChange}
           />
         </label>

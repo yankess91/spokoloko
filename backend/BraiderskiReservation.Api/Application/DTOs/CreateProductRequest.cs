@@ -3,5 +3,6 @@ namespace BraiderskiReservation.Api.Application.DTOs;
 public sealed record CreateProductRequest(
     string Name,
     string Brand,
-    string Notes
+    string Notes,
+    string ImageUrl
 );

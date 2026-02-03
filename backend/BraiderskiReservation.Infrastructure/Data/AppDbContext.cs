@@ -14,6 +14,8 @@ public sealed class AppDbContext : DbContext
     public DbSet<Product> Products => Set<Product>();
     public DbSet<ServiceItem> Services => Set<ServiceItem>();
     public DbSet<Appointment> Appointments => Set<Appointment>();
+    public DbSet<ServiceProduct> ServiceProducts => Set<ServiceProduct>();
+    public DbSet<AppointmentProduct> AppointmentProducts => Set<AppointmentProduct>();
     public DbSet<UserAccount> Users => Set<UserAccount>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,9 +28,14 @@ public sealed class AppDbContext : DbContext
             entity.Property(client => client.FullName).HasColumnName("full_name");
             entity.Property(client => client.Email).HasColumnName("email");
             entity.Property(client => client.PhoneNumber).HasColumnName("phone_number");
+            entity.Property(client => client.Notes).HasColumnName("notes");
             entity.HasMany(client => client.UsedProducts)
                 .WithOne(usedProduct => usedProduct.ClientProfile)
                 .HasForeignKey(usedProduct => usedProduct.ClientId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasMany(client => client.Appointments)
+                .WithOne(appointment => appointment.ClientProfile)
+                .HasForeignKey(appointment => appointment.ClientId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -51,6 +58,7 @@ public sealed class AppDbContext : DbContext
             entity.Property(product => product.Name).HasColumnName("name");
             entity.Property(product => product.Brand).HasColumnName("brand");
             entity.Property(product => product.Notes).HasColumnName("notes");
+            entity.Property(product => product.ImageUrl).HasColumnName("image_url");
         });
 
         modelBuilder.Entity<ServiceItem>(entity =>
@@ -61,9 +69,14 @@ public sealed class AppDbContext : DbContext
             entity.Property(service => service.Name).HasColumnName("name");
             entity.Property(service => service.Description).HasColumnName("description");
             entity.Property(service => service.Duration).HasColumnName("duration");
+            entity.Property(service => service.Price).HasColumnName("price");
             entity.HasMany(service => service.Appointments)
                 .WithOne(appointment => appointment.ServiceItem)
                 .HasForeignKey(appointment => appointment.ServiceId);
+            entity.HasMany(service => service.ServiceProducts)
+                .WithOne(serviceProduct => serviceProduct.ServiceItem)
+                .HasForeignKey(serviceProduct => serviceProduct.ServiceId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Appointment>(entity =>
@@ -77,8 +90,39 @@ public sealed class AppDbContext : DbContext
             entity.Property(appointment => appointment.EndAt).HasColumnName("end_at");
             entity.Property(appointment => appointment.Notes).HasColumnName("notes");
             entity.HasOne(appointment => appointment.ClientProfile)
-                .WithMany()
+                .WithMany(client => client.Appointments)
                 .HasForeignKey(appointment => appointment.ClientId);
+            entity.HasMany(appointment => appointment.AppointmentProducts)
+                .WithOne(appointmentProduct => appointmentProduct.Appointment)
+                .HasForeignKey(appointmentProduct => appointmentProduct.AppointmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ServiceProduct>(entity =>
+        {
+            entity.ToTable("service_products");
+            entity.HasKey(serviceProduct => serviceProduct.Id);
+            entity.Property(serviceProduct => serviceProduct.Id).HasColumnName("id");
+            entity.Property(serviceProduct => serviceProduct.ServiceId).HasColumnName("service_id");
+            entity.Property(serviceProduct => serviceProduct.ProductId).HasColumnName("product_id");
+            entity.HasOne(serviceProduct => serviceProduct.Product)
+                .WithMany(product => product.ServiceProducts)
+                .HasForeignKey(serviceProduct => serviceProduct.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<AppointmentProduct>(entity =>
+        {
+            entity.ToTable("appointment_products");
+            entity.HasKey(appointmentProduct => appointmentProduct.Id);
+            entity.Property(appointmentProduct => appointmentProduct.Id).HasColumnName("id");
+            entity.Property(appointmentProduct => appointmentProduct.AppointmentId)
+                .HasColumnName("appointment_id");
+            entity.Property(appointmentProduct => appointmentProduct.ProductId).HasColumnName("product_id");
+            entity.HasOne(appointmentProduct => appointmentProduct.Product)
+                .WithMany(product => product.AppointmentProducts)
+                .HasForeignKey(appointmentProduct => appointmentProduct.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<UserAccount>(entity =>

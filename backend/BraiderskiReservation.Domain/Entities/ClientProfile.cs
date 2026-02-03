@@ -6,7 +6,9 @@ public sealed class ClientProfile
     public string FullName { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
+    public string Notes { get; set; } = string.Empty;
     public List<UsedProduct> UsedProducts { get; set; } = new();
+    public List<Appointment> Appointments { get; set; } = new();
 }
 
 public sealed class UsedProduct

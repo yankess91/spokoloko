@@ -1,7 +1,7 @@
 :root {
   font-family: 'Inter', system-ui, sans-serif;
-  color: #1f1f1f;
-  background: #f6f3f0;
+  color: #111111;
+  background: #f5f0e6;
 }
 
 * {
@@ -25,7 +25,7 @@ body {
 
 .brand {
   font-weight: 700;
-  color: #3e2d28;
+  color: #111111;
 }
 
 .nav-links {
@@ -37,15 +37,15 @@ body {
 .nav-link {
   text-decoration: none;
   font-weight: 600;
-  color: #7d4d3f;
+  color: #5b5448;
   padding: 6px 12px;
   border-radius: 999px;
-  background: #f9f4f2;
+  background: #f0e7d6;
 }
 
 .nav-link-active {
-  background: #a36b5c;
-  color: #ffffff;
+  background: #c9a227;
+  color: #111111;
 }
 
 .page {
@@ -62,7 +62,7 @@ body {
   align-items: center;
   gap: 12px;
   font-weight: 600;
-  color: #7d4d3f;
+  color: #5b5448;
 }
 
 .auth-shell {
@@ -74,7 +74,7 @@ body {
 }
 
 .auth-brand {
-  background: linear-gradient(140deg, #1f1f1f, #3f2b23 60%, #a36b5c);
+  background: linear-gradient(140deg, #111111, #5b5448 60%, #c9a227);
   color: #ffffff;
   border-radius: 28px;
   padding: 48px;
@@ -148,12 +148,12 @@ body {
   letter-spacing: 0.2em;
   font-size: 12px;
   margin: 0;
-  color: #a36b5c;
+  color: #c9a227;
 }
 
 .auth-subtitle {
   margin: 0;
-  color: #5c4d49;
+  color: #5b5448;
 }
 
 .auth-fields {
@@ -162,8 +162,8 @@ body {
 }
 
 .auth-error {
-  background: #fff0f0;
-  color: #a13b3b;
+  background: #fff4e5;
+  color: #7a5a1a;
   padding: 10px 14px;
   border-radius: 12px;
   font-weight: 600;
@@ -171,11 +171,11 @@ body {
 
 .auth-switch {
   font-size: 14px;
-  color: #5c4d49;
+  color: #5b5448;
 }
 
 .auth-switch a {
-  color: #a36b5c;
+  color: #c9a227;
   font-weight: 600;
   text-decoration: none;
 }
@@ -206,12 +206,12 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.2em;
   font-size: 12px;
-  color: #a36b5c;
+  color: #c9a227;
   margin: 0 0 12px;
 }
 
 .subtitle {
-  color: #5c4d49;
+  color: #5b5448;
   max-width: 480px;
 }
 
@@ -222,7 +222,7 @@ body {
 }
 
 .hero-card {
-  background: linear-gradient(160deg, #f2e6df, #f8f1ee);
+  background: linear-gradient(160deg, #f4ecde, #f9f4ea);
   border-radius: 20px;
   padding: 24px;
   display: flex;
@@ -246,18 +246,18 @@ body {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  color: #a36b5c;
+  color: #c9a227;
 }
 
 .hero-stats dd {
   margin: 0;
   font-size: 20px;
   font-weight: 700;
-  color: #3e2d28;
+  color: #111111;
 }
 
 .hero-label {
-  color: #7d4d3f;
+  color: #5b5448;
   font-weight: 600;
 }
 
@@ -283,17 +283,17 @@ label {
   display: grid;
   gap: 6px;
   font-weight: 600;
-  color: #3e2d28;
+  color: #111111;
 }
 
 input,
 select,
 textarea {
   border-radius: 12px;
-  border: 1px solid #e3d5cf;
+  border: 1px solid #d7cbb8;
   padding: 10px 12px;
   font-size: 14px;
-  background: #fdfbfa;
+  background: #fffdf8;
 }
 
 button {
@@ -320,19 +320,19 @@ button:disabled {
 }
 
 .primary {
-  background: #a36b5c;
-  color: #ffffff;
+  background: #c9a227;
+  color: #111111;
 }
 
 .secondary {
   background: #ffffff;
-  color: #a36b5c;
-  border: 1px solid #d8b9b1;
+  color: #111111;
+  border: 1px solid #d7cbb8;
 }
 
 .ghost {
-  background: #f9f4f2;
-  color: #7d4d3f;
+  background: #f0e7d6;
+  color: #5b5448;
 }
 
 .list {
@@ -347,7 +347,7 @@ button:disabled {
   display: flex;
   justify-content: space-between;
   padding: 10px 12px;
-  background: #fdf9f7;
+  background: #f8f3ea;
   border-radius: 12px;
 }
 
@@ -359,7 +359,7 @@ button:disabled {
 
 .list-title {
   font-weight: 600;
-  color: #3e2d28;
+  color: #111111;
   text-decoration: none;
 }
 
@@ -369,7 +369,7 @@ button:disabled {
 }
 
 .muted {
-  color: #90736b;
+  color: #6f675c;
   font-size: 14px;
 }
 
@@ -385,7 +385,7 @@ button:disabled {
 }
 
 .calendar-day {
-  background: #fdf9f7;
+  background: #f8f3ea;
   border-radius: 16px;
   padding: 16px;
 }
@@ -393,7 +393,7 @@ button:disabled {
 .calendar-date {
   font-weight: 700;
   margin: 0 0 12px;
-  color: #7d4d3f;
+  color: #5b5448;
 }
 
 .slots {
@@ -403,18 +403,18 @@ button:disabled {
 }
 
 .slot {
-  background: #fff;
+  background: #ffffff;
   border-radius: 999px;
   padding: 6px 12px;
-  border: 1px solid #ead7d0;
+  border: 1px solid #d7cbb8;
   font-size: 13px;
 }
 
 .slot-details {
-  background: #fff;
+  background: #ffffff;
   border-radius: 12px;
   padding: 8px 12px;
-  border: 1px solid #ead7d0;
+  border: 1px solid #d7cbb8;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -423,24 +423,85 @@ button:disabled {
 }
 
 .slot-details a {
-  color: #3e2d28;
+  color: #111111;
   text-decoration: none;
   font-weight: 600;
 }
 
 .slot-time {
   font-weight: 600;
-  color: #7d4d3f;
+  color: #5b5448;
 }
 
 .error {
-  border: 1px solid #f0c9c1;
-  color: #7d2d20;
-  background: #fff4f1;
+  border: 1px solid #e3c6a0;
+  color: #7a4a1b;
+  background: #fff6e8;
 }
 
 .success {
-  border: 1px solid #cbe9d6;
-  color: #1f5c36;
-  background: #f1fbf4;
+  border: 1px solid #cbd9c3;
+  color: #2f4b2d;
+  background: #f2f7ef;
+}
+
+.inline-field {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #d7cbb8;
+  background: #f8f3ea;
+  font-size: 13px;
+}
+
+.chip-button {
+  cursor: pointer;
+}
+
+.error-note {
+  margin: 0;
+  font-size: 13px;
+  color: #7a4a1b;
+}
+
+.list-item {
+  align-items: center;
+  gap: 12px;
+}
+
+.list-item-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid #d7cbb8;
+  background: #fffdf8;
+}
+
+.product-image {
+  width: 100%;
+  max-width: 320px;
+  border-radius: 16px;
+  border: 1px solid #d7cbb8;
+  object-fit: cover;
 }

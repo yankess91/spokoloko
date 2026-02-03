@@ -35,7 +35,14 @@ public sealed class AppointmentService : IAppointmentService
             ServiceId = request.ServiceId,
             StartAt = request.StartAt,
             EndAt = request.EndAt,
-            Notes = request.Notes
+            Notes = request.Notes,
+            AppointmentProducts = (request.ProductIds ?? new List<Guid>())
+                .Distinct()
+                .Select(productId => new AppointmentProduct
+                {
+                    ProductId = productId
+                })
+                .ToList()
         };
 
         await _appointmentRepository.AddAsync(appointment, cancellationToken);

@@ -50,6 +50,21 @@ export default function AppointmentDetailsPage() {
           </p>
           <p>Notatki: {appointment.notes || 'Brak notatek'}</p>
         </article>
+        <article className="card">
+          <h2>Użyte produkty</h2>
+          {appointment.usedProducts?.length ? (
+            <ul className="list stacked">
+              {appointment.usedProducts.map((product) => (
+                <li key={product.id}>
+                  <span className="list-title">{product.name}</span>
+                  <span className="muted">{product.brand || 'Brak marki'}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="muted">Brak zapisanych produktów.</p>
+          )}
+        </article>
       </section>
     </div>
   );

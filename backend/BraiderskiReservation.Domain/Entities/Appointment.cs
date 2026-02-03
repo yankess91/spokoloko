@@ -10,4 +10,5 @@ public sealed class Appointment
     public string Notes { get; set; } = string.Empty;
     public ClientProfile? ClientProfile { get; set; }
     public ServiceItem? ServiceItem { get; set; }
+    public List<AppointmentProduct> AppointmentProducts { get; set; } = new();
 }

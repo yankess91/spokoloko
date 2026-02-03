@@ -5,4 +5,6 @@ public sealed record ClientProfileResponse(
     string FullName,
     string Email,
     string PhoneNumber,
-    List<UsedProductResponse> UsedProducts);
+    string Notes,
+    List<UsedProductResponse> UsedProducts,
+    List<ClientServiceHistoryResponse> ServiceHistory);

@@ -29,5 +29,14 @@ export default function useServices() {
     load();
   }, [load]);
 
-  return { services, isLoading, error, reload: load };
+  const addService = useCallback(
+    async (payload) => {
+      const created = await servicesApi.create(payload);
+      await load();
+      return created;
+    },
+    [load]
+  );
+
+  return { services, isLoading, error, reload: load, addService };
 }
