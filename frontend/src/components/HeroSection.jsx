@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export default function HeroSection({ summary, upcomingAppointment, isLoading }) {
   return (
     <header className="hero">
@@ -8,8 +10,12 @@ export default function HeroSection({ summary, upcomingAppointment, isLoading })
           Profil klienta, lista produktów i usług oraz kalendarz wizyt bez modułu płatności.
         </p>
         <div className="hero-actions">
-          <button className="primary">Dodaj klienta</button>
-          <button className="ghost">Zaplanuj wizytę</button>
+          <Link className="primary" to="/clients">
+            Dodaj klienta
+          </Link>
+          <Link className="ghost" to="/appointments">
+            Zaplanuj wizytę
+          </Link>
         </div>
         <dl className="hero-stats">
           <div>
@@ -37,7 +43,9 @@ export default function HeroSection({ summary, upcomingAppointment, isLoading })
             <p>
               Data: {upcomingAppointment.date}, {upcomingAppointment.time}
             </p>
-            <button className="secondary">Edytuj szczegóły</button>
+            <Link className="secondary" to={`/appointments/${upcomingAppointment.id}`}>
+              Zobacz szczegóły
+            </Link>
           </>
         ) : (
           <p className="muted">Brak zaplanowanych wizyt.</p>

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
-export default function ClientForm({ onSubmit, isSubmitting }) {
+export default function ProductForm({ onSubmit, isSubmitting }) {
   const [formState, setFormState] = useState({
-    fullName: '',
-    email: '',
-    phoneNumber: ''
+    name: '',
+    brand: '',
+    notes: ''
   });
 
   const handleChange = (event) => {
@@ -15,44 +15,44 @@ export default function ClientForm({ onSubmit, isSubmitting }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     await onSubmit?.(formState);
-    setFormState({ fullName: '', email: '', phoneNumber: '' });
+    setFormState({ name: '', brand: '', notes: '' });
   };
 
   return (
     <article className="card">
-      <h2>Dodaj użytkowniczkę</h2>
+      <h2>Dodaj produkt</h2>
       <form className="form" onSubmit={handleSubmit}>
         <label>
-          Imię i nazwisko
+          Nazwa produktu
           <input
-            name="fullName"
-            placeholder="np. Anna Nowak"
-            value={formState.fullName}
+            name="name"
+            placeholder="np. Olej arganowy"
+            value={formState.name}
             onChange={handleChange}
             required
           />
         </label>
         <label>
-          Email
+          Marka
           <input
-            name="email"
-            type="email"
-            placeholder="anna@example.com"
-            value={formState.email}
+            name="brand"
+            placeholder="np. Moroccanoil"
+            value={formState.brand}
             onChange={handleChange}
           />
         </label>
         <label>
-          Telefon
-          <input
-            name="phoneNumber"
-            placeholder="+48 600 000 000"
-            value={formState.phoneNumber}
+          Notatki
+          <textarea
+            name="notes"
+            placeholder="Dodatkowe informacje"
+            rows="3"
+            value={formState.notes}
             onChange={handleChange}
           />
         </label>
         <button type="submit" className="primary" disabled={isSubmitting}>
-          {isSubmitting ? 'Zapisywanie...' : 'Zapisz profil'}
+          {isSubmitting ? 'Zapisywanie...' : 'Zapisz produkt'}
         </button>
       </form>
     </article>

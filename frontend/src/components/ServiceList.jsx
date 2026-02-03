@@ -1,4 +1,6 @@
-export default function ServiceList({ services, isLoading }) {
+import { Link } from 'react-router-dom';
+
+export default function ServiceList({ services, isLoading, linkBase }) {
   return (
     <article className="card">
       <h2>Wszystkie usługi</h2>
@@ -10,13 +12,18 @@ export default function ServiceList({ services, isLoading }) {
         <ul className="list">
           {services.map((service) => (
             <li key={service.id}>
-              <span>{service.name}</span>
+              {linkBase ? (
+                <Link className="list-title" to={`${linkBase}/${service.id}`}>
+                  {service.name}
+                </Link>
+              ) : (
+                <span className="list-title">{service.name}</span>
+              )}
               <span className="muted">{service.duration}</span>
             </li>
           ))}
         </ul>
       )}
-      <button className="ghost">Dodaj usługę</button>
     </article>
   );
 }
