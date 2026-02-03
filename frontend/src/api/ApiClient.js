@@ -1,12 +1,16 @@
+import { getAuthToken } from '../utils/auth';
+
 export default class ApiClient {
   constructor(baseUrl) {
     this.baseUrl = baseUrl;
   }
 
   async request(path, options = {}) {
+    const token = getAuthToken();
     const response = await fetch(`${this.baseUrl}${path}`, {
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...(options.headers ?? {})
       },
       ...options

@@ -1,10 +1,12 @@
 using BraiderskiReservation.Api.Application.DTOs;
 using BraiderskiReservation.Api.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BraiderskiReservation.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/products")]
 public sealed class ProductsController : ControllerBase
 {
