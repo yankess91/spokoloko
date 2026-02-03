@@ -1,30 +1,34 @@
-# Spokoloko infrastructure
+# System rezerwacyjny - salon braiderski
 
-This repo contains the Docker setup for local development and easy deployment later.
+Projekt zawiera prosty backend w C# (ASP.NET Core Web API) oraz frontend w React, przygotowane zgodnie z zasadami SOLID i bez modułu płatności.
 
-## Services
-- **PostgreSQL** for the primary database.
-- **Redis** for optional caching.
+## Backend (C#)
 
-## Quick start
-1. Copy environment defaults (optional):
-   ```bash
-   cp .env.example .env
-   ```
-2. Start the stack:
-   ```bash
-   docker compose up -d
-   ```
+**Zakres funkcji:**
+- tworzenie profilu klienta,
+- dodawanie użytych produktów do profilu klienta,
+- lista produktów,
+- lista usług,
+- kalendarz wizyt (terminy/spotkania).
 
-## Configuration
-Environment variables can be set in `.env` or provided inline:
+**Uruchomienie:**
+```bash
+cd backend/BraiderskiReservation.Api
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `POSTGRES_DB` | `spokoloko` | Database name |
-| `POSTGRES_USER` | `spokoloko` | Database user |
-| `POSTGRES_PASSWORD` | `spokoloko` | Database password |
-| `POSTGRES_PORT` | `5432` | Host port for PostgreSQL |
-| `REDIS_PORT` | `6379` | Host port for Redis |
+dotnet restore
 
-Data is persisted in Docker volumes: `postgres_data` and `redis_data`.
+dotnet run
+```
+
+Po uruchomieniu dostępne jest Swagger UI pod `https://localhost:5001/swagger` lub `http://localhost:5000/swagger`.
+
+## Frontend (React)
+
+**Uruchomienie:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+UI zawiera podstawowe sekcje: profil klienta, lista usług, lista produktów oraz kalendarz wizyt.
