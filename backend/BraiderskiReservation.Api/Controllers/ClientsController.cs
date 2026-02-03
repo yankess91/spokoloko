@@ -1,6 +1,5 @@
 using BraiderskiReservation.Api.Application.DTOs;
 using BraiderskiReservation.Api.Application.Interfaces;
-using BraiderskiReservation.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BraiderskiReservation.Api.Controllers;
@@ -17,18 +16,18 @@ public sealed class ClientsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ClientProfile>>> GetAll(CancellationToken cancellationToken) =>
+    public async Task<ActionResult<IEnumerable<ClientProfileResponse>>> GetAll(CancellationToken cancellationToken) =>
         Ok(await _clientService.GetAllAsync(cancellationToken));
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<ClientProfile>> GetById(Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult<ClientProfileResponse>> GetById(Guid id, CancellationToken cancellationToken)
     {
         var client = await _clientService.GetByIdAsync(id, cancellationToken);
         return client is null ? NotFound() : Ok(client);
     }
 
     [HttpPost]
-    public async Task<ActionResult<ClientProfile>> Create(CreateClientRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<ClientProfileResponse>> Create(CreateClientRequest request, CancellationToken cancellationToken)
     {
         var client = await _clientService.CreateAsync(request, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = client.Id }, client);

@@ -1,5 +1,6 @@
 using BraiderskiReservation.Api.Application.DTOs;
 using BraiderskiReservation.Api.Application.Interfaces;
+using System.Linq;
 using BraiderskiReservation.Domain.Interfaces;
 using BraiderskiReservation.Domain.Entities;
 
@@ -14,13 +15,19 @@ public sealed class AppointmentService : IAppointmentService
         _appointmentRepository = appointmentRepository;
     }
 
-    public Task<List<Appointment>> GetAllAsync(CancellationToken cancellationToken) =>
-        _appointmentRepository.GetAllAsync(cancellationToken);
+    public async Task<List<AppointmentResponse>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        var appointments = await _appointmentRepository.GetAllAsync(cancellationToken);
+        return appointments.Select(appointment => appointment.ToResponse()).ToList();
+    }
 
-    public Task<Appointment?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
-        _appointmentRepository.GetByIdAsync(id, cancellationToken);
+    public async Task<AppointmentResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var appointment = await _appointmentRepository.GetByIdAsync(id, cancellationToken);
+        return appointment?.ToResponse();
+    }
 
-    public async Task<Appointment> CreateAsync(CreateAppointmentRequest request, CancellationToken cancellationToken)
+    public async Task<AppointmentResponse> CreateAsync(CreateAppointmentRequest request, CancellationToken cancellationToken)
     {
         var appointment = new Appointment
         {
@@ -33,6 +40,6 @@ public sealed class AppointmentService : IAppointmentService
 
         await _appointmentRepository.AddAsync(appointment, cancellationToken);
         await _appointmentRepository.SaveChangesAsync(cancellationToken);
-        return appointment;
+        return appointment.ToResponse();
     }
 }
