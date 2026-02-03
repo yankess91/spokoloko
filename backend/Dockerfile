@@ -1,8 +1,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
+COPY BraiderskiReservation.sln ./
 COPY BraiderskiReservation.Api/BraiderskiReservation.Api.csproj BraiderskiReservation.Api/
-RUN dotnet restore BraiderskiReservation.Api/BraiderskiReservation.Api.csproj
+COPY BraiderskiReservation.Domain/BraiderskiReservation.Domain.csproj BraiderskiReservation.Domain/
+COPY BraiderskiReservation.Infrastructure/BraiderskiReservation.Infrastructure.csproj BraiderskiReservation.Infrastructure/
+RUN dotnet restore BraiderskiReservation.sln
 COPY BraiderskiReservation.Api/ BraiderskiReservation.Api/
+COPY BraiderskiReservation.Domain/ BraiderskiReservation.Domain/
+COPY BraiderskiReservation.Infrastructure/ BraiderskiReservation.Infrastructure/
 WORKDIR /src/BraiderskiReservation.Api
 RUN dotnet publish -c Release -o /app/publish
 

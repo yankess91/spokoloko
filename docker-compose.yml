@@ -1,6 +1,33 @@
 version: "3.9"
 
 services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: spokoloko-backend
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_URLS: http://0.0.0.0:8080
+      ConnectionStrings__Default: Host=postgres;Port=5432;Database=${POSTGRES_DB:-spokoloko};Username=${POSTGRES_USER:-spokoloko};Password=${POSTGRES_PASSWORD:-spokoloko}
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8080}
+    container_name: spokoloko-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+    depends_on:
+      - backend
+
   postgres:
     image: postgres:16-alpine
     container_name: spokoloko-postgres
