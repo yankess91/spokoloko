@@ -1,7 +1,8 @@
 using BraiderskiReservation.Api.Application.Interfaces;
 using BraiderskiReservation.Api.Application.Services;
-using BraiderskiReservation.Api.Infrastructure.Data;
-using BraiderskiReservation.Api.Infrastructure.Repositories;
+using BraiderskiReservation.Domain.Interfaces;
+using BraiderskiReservation.Infrastructure.Data;
+using BraiderskiReservation.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

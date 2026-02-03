@@ -1,4 +1,4 @@
-namespace BraiderskiReservation.Api.Domain.Entities;
+namespace BraiderskiReservation.Domain.Entities;
 
 public sealed class Product
 {
