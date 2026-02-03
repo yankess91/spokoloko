@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 export default function HeroSection({ summary, upcomingAppointment, isLoading }) {
   return (
     <header className="hero">
-      <div>
+      <div className="hero-main">
         <p className="eyebrow">System rezerwacyjny</p>
         <h1>Salon braiderski - panel zarządzania</h1>
         <p className="subtitle">
@@ -33,7 +33,9 @@ export default function HeroSection({ summary, upcomingAppointment, isLoading })
         </dl>
       </div>
       <div className="hero-card">
-        <h2>Nadchodząca wizyta</h2>
+        <div className="card-header">
+          <h2>Nadchodząca wizyta</h2>
+        </div>
         {isLoading ? (
           <p className="muted">Ładowanie danych o wizytach...</p>
         ) : upcomingAppointment ? (

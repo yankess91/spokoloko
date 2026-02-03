@@ -4,7 +4,9 @@ import { formatCurrency } from '../utils/formatters';
 export default function ServiceList({ services, isLoading, linkBase }) {
   return (
     <article className="card">
-      <h2>Wszystkie usługi</h2>
+      <header className="card-header">
+        <h2>Wszystkie usługi</h2>
+      </header>
       {isLoading ? (
         <p className="muted">Ładowanie usług...</p>
       ) : services.length === 0 ? (
@@ -13,16 +15,18 @@ export default function ServiceList({ services, isLoading, linkBase }) {
         <ul className="list">
           {services.map((service) => (
             <li key={service.id}>
-              {linkBase ? (
-                <Link className="list-title" to={`${linkBase}/${service.id}`}>
-                  {service.name}
-                </Link>
-              ) : (
-                <span className="list-title">{service.name}</span>
-              )}
-              <span className="muted">
-                {service.duration} · {formatCurrency(service.price)}
-              </span>
+              <div className="list-item-main">
+                {linkBase ? (
+                  <Link className="list-title" to={`${linkBase}/${service.id}`}>
+                    {service.name}
+                  </Link>
+                ) : (
+                  <span className="list-title">{service.name}</span>
+                )}
+                <span className="list-meta">
+                  {service.duration} · {formatCurrency(service.price)}
+                </span>
+              </div>
             </li>
           ))}
         </ul>

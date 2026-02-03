@@ -4,7 +4,9 @@ import { formatDate, formatTime } from '../utils/formatters';
 export default function AppointmentList({ appointments, clientsById, servicesById, isLoading }) {
   return (
     <article className="card">
-      <h2>Wizyty</h2>
+      <header className="card-header">
+        <h2>Wizyty</h2>
+      </header>
       {isLoading ? (
         <p className="muted">Ładowanie wizyt...</p>
       ) : appointments.length === 0 ? (
@@ -19,7 +21,7 @@ export default function AppointmentList({ appointments, clientsById, servicesByI
                 <Link className="list-title" to={`/appointments/${appointment.id}`}>
                   {service?.name ?? 'Nieznana usługa'}
                 </Link>
-                <span className="muted">
+                <span className="list-meta">
                   {formatDate(appointment.startAt)} · {formatTime(appointment.startAt)}
                 </span>
                 <span className="muted">{client?.fullName ?? 'Nieznana klientka'}</span>
