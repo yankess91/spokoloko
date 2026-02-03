@@ -1,6 +1,6 @@
-using BraiderskiReservation.Api.DTOs;
-using BraiderskiReservation.Api.Models;
-using BraiderskiReservation.Api.Services;
+using BraiderskiReservation.Api.Application.DTOs;
+using BraiderskiReservation.Api.Application.Interfaces;
+using BraiderskiReservation.Api.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BraiderskiReservation.Api.Controllers;
@@ -17,38 +17,27 @@ public sealed class ClientsController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<ClientProfile>> GetAll() => Ok(_clientService.GetAll());
+    public async Task<ActionResult<IEnumerable<ClientProfile>>> GetAll(CancellationToken cancellationToken) =>
+        Ok(await _clientService.GetAllAsync(cancellationToken));
 
     [HttpGet("{id:guid}")]
-    public ActionResult<ClientProfile> GetById(Guid id)
+    public async Task<ActionResult<ClientProfile>> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var client = _clientService.GetById(id);
+        var client = await _clientService.GetByIdAsync(id, cancellationToken);
         return client is null ? NotFound() : Ok(client);
     }
 
     [HttpPost]
-    public ActionResult<ClientProfile> Create(CreateClientRequest request)
+    public async Task<ActionResult<ClientProfile>> Create(CreateClientRequest request, CancellationToken cancellationToken)
     {
-        var client = new ClientProfile
-        {
-            FullName = request.FullName,
-            Email = request.Email,
-            PhoneNumber = request.PhoneNumber
-        };
-
-        _clientService.Create(client);
+        var client = await _clientService.CreateAsync(request, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = client.Id }, client);
     }
 
     [HttpPost("{id:guid}/used-products")]
-    public IActionResult AddUsedProduct(Guid id, AddUsedProductRequest request)
+    public async Task<IActionResult> AddUsedProduct(Guid id, AddUsedProductRequest request, CancellationToken cancellationToken)
     {
-        var added = _clientService.AddUsedProduct(id, new UsedProduct
-        {
-            Name = request.Name,
-            Notes = request.Notes,
-            UsedAt = request.UsedAt
-        });
+        var added = await _clientService.AddUsedProductAsync(id, request, cancellationToken);
 
         return added ? NoContent() : NotFound();
     }

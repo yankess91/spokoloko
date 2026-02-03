@@ -1,4 +1,4 @@
-namespace BraiderskiReservation.Api.DTOs;
+namespace BraiderskiReservation.Api.Application.DTOs;
 
 public sealed record CreateProductRequest(
     string Name,

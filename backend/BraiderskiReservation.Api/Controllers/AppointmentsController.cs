@@ -1,6 +1,6 @@
-using BraiderskiReservation.Api.DTOs;
-using BraiderskiReservation.Api.Models;
-using BraiderskiReservation.Api.Services;
+using BraiderskiReservation.Api.Application.DTOs;
+using BraiderskiReservation.Api.Application.Interfaces;
+using BraiderskiReservation.Api.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BraiderskiReservation.Api.Controllers;
@@ -17,28 +17,20 @@ public sealed class AppointmentsController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<Appointment>> GetAll() => Ok(_appointmentService.GetAll());
+    public async Task<ActionResult<IEnumerable<Appointment>>> GetAll(CancellationToken cancellationToken) =>
+        Ok(await _appointmentService.GetAllAsync(cancellationToken));
 
     [HttpGet("{id:guid}")]
-    public ActionResult<Appointment> GetById(Guid id)
+    public async Task<ActionResult<Appointment>> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var appointment = _appointmentService.GetById(id);
+        var appointment = await _appointmentService.GetByIdAsync(id, cancellationToken);
         return appointment is null ? NotFound() : Ok(appointment);
     }
 
     [HttpPost]
-    public ActionResult<Appointment> Create(CreateAppointmentRequest request)
+    public async Task<ActionResult<Appointment>> Create(CreateAppointmentRequest request, CancellationToken cancellationToken)
     {
-        var appointment = new Appointment
-        {
-            ClientId = request.ClientId,
-            ServiceId = request.ServiceId,
-            StartAt = request.StartAt,
-            EndAt = request.EndAt,
-            Notes = request.Notes
-        };
-
-        _appointmentService.Create(appointment);
+        var appointment = await _appointmentService.CreateAsync(request, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = appointment.Id }, appointment);
     }
 }

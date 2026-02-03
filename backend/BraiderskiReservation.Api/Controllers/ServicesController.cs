@@ -1,6 +1,6 @@
-using BraiderskiReservation.Api.DTOs;
-using BraiderskiReservation.Api.Models;
-using BraiderskiReservation.Api.Services;
+using BraiderskiReservation.Api.Application.DTOs;
+using BraiderskiReservation.Api.Application.Interfaces;
+using BraiderskiReservation.Api.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BraiderskiReservation.Api.Controllers;
@@ -17,26 +17,20 @@ public sealed class ServicesController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<ServiceItem>> GetAll() => Ok(_serviceCatalog.GetAll());
+    public async Task<ActionResult<IEnumerable<ServiceItem>>> GetAll(CancellationToken cancellationToken) =>
+        Ok(await _serviceCatalog.GetAllAsync(cancellationToken));
 
     [HttpGet("{id:guid}")]
-    public ActionResult<ServiceItem> GetById(Guid id)
+    public async Task<ActionResult<ServiceItem>> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var service = _serviceCatalog.GetById(id);
+        var service = await _serviceCatalog.GetByIdAsync(id, cancellationToken);
         return service is null ? NotFound() : Ok(service);
     }
 
     [HttpPost]
-    public ActionResult<ServiceItem> Create(CreateServiceRequest request)
+    public async Task<ActionResult<ServiceItem>> Create(CreateServiceRequest request, CancellationToken cancellationToken)
     {
-        var service = new ServiceItem
-        {
-            Name = request.Name,
-            Description = request.Description,
-            Duration = TimeSpan.FromMinutes(request.DurationMinutes)
-        };
-
-        _serviceCatalog.Create(service);
+        var service = await _serviceCatalog.CreateAsync(request, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = service.Id }, service);
     }
 }
