@@ -15,13 +15,26 @@ public sealed class ProductRepository : IProductRepository
     }
 
     public Task<List<Product>> GetAllAsync(CancellationToken cancellationToken) =>
-        _context.Products
-            .AsNoTracking()
+        BuildProductQuery().ToListAsync(cancellationToken);
+
+    public Task<List<Product>> SearchAsync(string? searchTerm, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            return GetAllAsync(cancellationToken);
+        }
+
+        var normalized = searchTerm.Trim().ToLowerInvariant();
+
+        return BuildProductQuery()
+            .Where(product =>
+                product.Name.ToLower().Contains(normalized) ||
+                product.Brand.ToLower().Contains(normalized))
             .ToListAsync(cancellationToken);
+    }
 
     public Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
-        _context.Products
-            .AsNoTracking()
+        BuildProductQuery()
             .FirstOrDefaultAsync(product => product.Id == id, cancellationToken);
 
     public async Task AddAsync(Product product, CancellationToken cancellationToken) =>
@@ -29,4 +42,7 @@ public sealed class ProductRepository : IProductRepository
 
     public Task SaveChangesAsync(CancellationToken cancellationToken) =>
         _context.SaveChangesAsync(cancellationToken);
+
+    private IQueryable<Product> BuildProductQuery() =>
+        _context.Products.AsNoTracking();
 }

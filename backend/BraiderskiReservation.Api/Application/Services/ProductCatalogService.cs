@@ -17,7 +17,12 @@ public sealed class ProductCatalogService : IProductCatalogService
 
     public async Task<List<ProductResponse>> GetAllAsync(CancellationToken cancellationToken)
     {
-        var products = await _productRepository.GetAllAsync(cancellationToken);
+        return await SearchAsync(null, cancellationToken);
+    }
+
+    public async Task<List<ProductResponse>> SearchAsync(string? searchTerm, CancellationToken cancellationToken)
+    {
+        var products = await _productRepository.SearchAsync(searchTerm, cancellationToken);
         return products.Select(product => product.ToResponse()).ToList();
     }
 

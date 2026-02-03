@@ -7,6 +7,11 @@ export default class ServicesApi {
     return this.client.get('/api/services');
   }
 
+  search(searchTerm = '') {
+    const query = searchTerm.trim();
+    return this.client.get(`/api/services${query ? `?search=${encodeURIComponent(query)}` : ''}`);
+  }
+
   getById(id) {
     return this.client.get(`/api/services/${id}`);
   }

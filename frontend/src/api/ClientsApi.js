@@ -7,6 +7,11 @@ export default class ClientsApi {
     return this.client.get('/api/clients');
   }
 
+  search(searchTerm = '') {
+    const query = searchTerm.trim();
+    return this.client.get(`/api/clients${query ? `?search=${encodeURIComponent(query)}` : ''}`);
+  }
+
   getById(id) {
     return this.client.get(`/api/clients/${id}`);
   }

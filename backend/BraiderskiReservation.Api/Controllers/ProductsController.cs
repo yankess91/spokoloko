@@ -18,8 +18,10 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProductResponse>>> GetAll(CancellationToken cancellationToken) =>
-        Ok(await _productService.GetAllAsync(cancellationToken));
+    public async Task<ActionResult<IEnumerable<ProductResponse>>> GetAll(
+        [FromQuery] string? search,
+        CancellationToken cancellationToken) =>
+        Ok(await _productService.SearchAsync(search, cancellationToken));
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ProductResponse>> GetById(Guid id, CancellationToken cancellationToken)

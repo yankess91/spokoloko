@@ -15,25 +15,27 @@ public sealed class ClientRepository : IClientRepository
     }
 
     public Task<List<ClientProfile>> GetAllAsync(CancellationToken cancellationToken) =>
-        _context.Clients
-            .Include(client => client.UsedProducts)
-            .Include(client => client.Appointments)
-            .ThenInclude(appointment => appointment.ServiceItem)
-            .Include(client => client.Appointments)
-            .ThenInclude(appointment => appointment.AppointmentProducts)
-            .ThenInclude(appointmentProduct => appointmentProduct.Product)
-            .AsNoTracking()
+        BuildClientQuery().ToListAsync(cancellationToken);
+
+    public Task<List<ClientProfile>> SearchAsync(string? searchTerm, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            return GetAllAsync(cancellationToken);
+        }
+
+        var normalized = searchTerm.Trim().ToLowerInvariant();
+
+        return BuildClientQuery()
+            .Where(client =>
+                client.FullName.ToLower().Contains(normalized) ||
+                client.Email.ToLower().Contains(normalized) ||
+                client.PhoneNumber.ToLower().Contains(normalized))
             .ToListAsync(cancellationToken);
+    }
 
     public Task<ClientProfile?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
-        _context.Clients
-            .Include(client => client.UsedProducts)
-            .Include(client => client.Appointments)
-            .ThenInclude(appointment => appointment.ServiceItem)
-            .Include(client => client.Appointments)
-            .ThenInclude(appointment => appointment.AppointmentProducts)
-            .ThenInclude(appointmentProduct => appointmentProduct.Product)
-            .AsNoTracking()
+        BuildClientQuery()
             .FirstOrDefaultAsync(client => client.Id == id, cancellationToken);
 
     public async Task AddAsync(ClientProfile client, CancellationToken cancellationToken) =>
@@ -44,4 +46,14 @@ public sealed class ClientRepository : IClientRepository
 
     public Task SaveChangesAsync(CancellationToken cancellationToken) =>
         _context.SaveChangesAsync(cancellationToken);
+
+    private IQueryable<ClientProfile> BuildClientQuery() =>
+        _context.Clients
+            .Include(client => client.UsedProducts)
+            .Include(client => client.Appointments)
+            .ThenInclude(appointment => appointment.ServiceItem)
+            .Include(client => client.Appointments)
+            .ThenInclude(appointment => appointment.AppointmentProducts)
+            .ThenInclude(appointmentProduct => appointmentProduct.Product)
+            .AsNoTracking();
 }
