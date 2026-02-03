@@ -1,5 +1,6 @@
 using BraiderskiReservation.Api.Application.DTOs;
 using BraiderskiReservation.Api.Application.Interfaces;
+using System.Linq;
 using BraiderskiReservation.Domain.Interfaces;
 using BraiderskiReservation.Domain.Entities;
 
@@ -14,13 +15,19 @@ public sealed class ProductCatalogService : IProductCatalogService
         _productRepository = productRepository;
     }
 
-    public Task<List<Product>> GetAllAsync(CancellationToken cancellationToken) =>
-        _productRepository.GetAllAsync(cancellationToken);
+    public async Task<List<ProductResponse>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        var products = await _productRepository.GetAllAsync(cancellationToken);
+        return products.Select(product => product.ToResponse()).ToList();
+    }
 
-    public Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
-        _productRepository.GetByIdAsync(id, cancellationToken);
+    public async Task<ProductResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var product = await _productRepository.GetByIdAsync(id, cancellationToken);
+        return product?.ToResponse();
+    }
 
-    public async Task<Product> CreateAsync(CreateProductRequest request, CancellationToken cancellationToken)
+    public async Task<ProductResponse> CreateAsync(CreateProductRequest request, CancellationToken cancellationToken)
     {
         var product = new Product
         {
@@ -31,6 +38,6 @@ public sealed class ProductCatalogService : IProductCatalogService
 
         await _productRepository.AddAsync(product, cancellationToken);
         await _productRepository.SaveChangesAsync(cancellationToken);
-        return product;
+        return product.ToResponse();
     }
 }

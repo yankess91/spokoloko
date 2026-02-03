@@ -1,5 +1,6 @@
 using BraiderskiReservation.Api.Application.DTOs;
 using BraiderskiReservation.Api.Application.Interfaces;
+using System.Linq;
 using BraiderskiReservation.Domain.Interfaces;
 using BraiderskiReservation.Domain.Entities;
 
@@ -14,13 +15,19 @@ public sealed class ClientService : IClientService
         _clientRepository = clientRepository;
     }
 
-    public Task<List<ClientProfile>> GetAllAsync(CancellationToken cancellationToken) =>
-        _clientRepository.GetAllAsync(cancellationToken);
+    public async Task<List<ClientProfileResponse>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        var clients = await _clientRepository.GetAllAsync(cancellationToken);
+        return clients.Select(client => client.ToResponse()).ToList();
+    }
 
-    public Task<ClientProfile?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
-        _clientRepository.GetByIdAsync(id, cancellationToken);
+    public async Task<ClientProfileResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var client = await _clientRepository.GetByIdAsync(id, cancellationToken);
+        return client?.ToResponse();
+    }
 
-    public async Task<ClientProfile> CreateAsync(CreateClientRequest request, CancellationToken cancellationToken)
+    public async Task<ClientProfileResponse> CreateAsync(CreateClientRequest request, CancellationToken cancellationToken)
     {
         var client = new ClientProfile
         {
@@ -31,7 +38,7 @@ public sealed class ClientService : IClientService
 
         await _clientRepository.AddAsync(client, cancellationToken);
         await _clientRepository.SaveChangesAsync(cancellationToken);
-        return client;
+        return client.ToResponse();
     }
 
     public async Task<bool> AddUsedProductAsync(Guid clientId, AddUsedProductRequest request, CancellationToken cancellationToken)

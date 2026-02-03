@@ -1,5 +1,6 @@
 using BraiderskiReservation.Api.Application.DTOs;
 using BraiderskiReservation.Api.Application.Interfaces;
+using System.Linq;
 using BraiderskiReservation.Domain.Interfaces;
 using BraiderskiReservation.Domain.Entities;
 
@@ -14,13 +15,19 @@ public sealed class ServiceCatalogService : IServiceCatalogService
         _serviceRepository = serviceRepository;
     }
 
-    public Task<List<ServiceItem>> GetAllAsync(CancellationToken cancellationToken) =>
-        _serviceRepository.GetAllAsync(cancellationToken);
+    public async Task<List<ServiceItemResponse>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        var services = await _serviceRepository.GetAllAsync(cancellationToken);
+        return services.Select(service => service.ToResponse()).ToList();
+    }
 
-    public Task<ServiceItem?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
-        _serviceRepository.GetByIdAsync(id, cancellationToken);
+    public async Task<ServiceItemResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var service = await _serviceRepository.GetByIdAsync(id, cancellationToken);
+        return service?.ToResponse();
+    }
 
-    public async Task<ServiceItem> CreateAsync(CreateServiceRequest request, CancellationToken cancellationToken)
+    public async Task<ServiceItemResponse> CreateAsync(CreateServiceRequest request, CancellationToken cancellationToken)
     {
         var service = new ServiceItem
         {
@@ -31,6 +38,6 @@ public sealed class ServiceCatalogService : IServiceCatalogService
 
         await _serviceRepository.AddAsync(service, cancellationToken);
         await _serviceRepository.SaveChangesAsync(cancellationToken);
-        return service;
+        return service.ToResponse();
     }
 }
