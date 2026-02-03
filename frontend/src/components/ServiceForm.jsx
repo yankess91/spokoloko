@@ -1,12 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { productsApi } from '../api';
 import useAutocompleteSearch from '../hooks/useAutocompleteSearch';
 import AutocompleteField from './AutocompleteField';
+import { useToast } from './ToastProvider';
 
 const buildProductLabel = (product) =>
   product.brand ? `${product.name} (${product.brand})` : product.name;
 
 export default function ServiceForm({ onSubmit, isSubmitting }) {
+  const { showToast } = useToast();
   const [formState, setFormState] = useState({
     name: '',
     description: '',
@@ -14,7 +16,6 @@ export default function ServiceForm({ onSubmit, isSubmitting }) {
     price: '',
     selectedProducts: []
   });
-  const [error, setError] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const productSearch = useAutocompleteSearch({
@@ -30,19 +31,29 @@ export default function ServiceForm({ onSubmit, isSubmitting }) {
     [productSearch.options]
   );
 
+  const showError = useCallback(
+    (message) => showToast(message, { severity: 'error' }),
+    [showToast]
+  );
+
+  useEffect(() => {
+    if (productSearch.error) {
+      showError(productSearch.error);
+    }
+  }, [productSearch.error, showError]);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleAddProduct = () => {
-    setError('');
     if (!selectedProduct) {
-      setError('Wybierz produkt z listy podpowiedzi.');
+      showError('Wybierz produkt z listy podpowiedzi.');
       return;
     }
     if (formState.selectedProducts.some((item) => item.id === selectedProduct.id)) {
-      setError('Ten produkt został już dodany.');
+      showError('Ten produkt został już dodany.');
       return;
     }
     setFormState((prev) => ({
@@ -76,7 +87,6 @@ export default function ServiceForm({ onSubmit, isSubmitting }) {
       price: '',
       selectedProducts: []
     });
-    setError('');
     setSelectedProduct(null);
     productSearch.setInputValue('');
   };
@@ -152,8 +162,6 @@ export default function ServiceForm({ onSubmit, isSubmitting }) {
             </button>
           </div>
         </label>
-        {error ? <p className="error-note">{error}</p> : null}
-        {productSearch.error ? <p className="error-note">{productSearch.error}</p> : null}
         {formState.selectedProducts.length ? (
           <div className="chips">
             {formState.selectedProducts.map((product) => (

@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { clientsApi, productsApi, servicesApi } from '../api';
 import useAutocompleteSearch from '../hooks/useAutocompleteSearch';
 import AutocompleteField from './AutocompleteField';
+import { useToast } from './ToastProvider';
 
 const buildClientLabel = (client) => client.fullName;
 const buildServiceLabel = (service) => service.name;
@@ -12,6 +13,7 @@ export default function AppointmentForm({
   onSubmit,
   isSubmitting
 }) {
+  const { showToast } = useToast();
   const [formState, setFormState] = useState({
     startAt: '',
     endAt: '',
@@ -21,7 +23,6 @@ export default function AppointmentForm({
   const [selectedClient, setSelectedClient] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [error, setError] = useState('');
 
   const clientSearch = useAutocompleteSearch({
     searchFn: (query) => clientsApi.search(query)
@@ -51,19 +52,30 @@ export default function AppointmentForm({
     [productSearch.options]
   );
 
+  const showError = useCallback(
+    (message) => showToast(message, { severity: 'error' }),
+    [showToast]
+  );
+
+  useEffect(() => {
+    const errorMessage = clientSearch.error || serviceSearch.error || productSearch.error;
+    if (errorMessage) {
+      showError(errorMessage);
+    }
+  }, [clientSearch.error, productSearch.error, serviceSearch.error, showError]);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleAddProduct = () => {
-    setError('');
     if (!selectedProduct) {
-      setError('Wybierz produkt z listy podpowiedzi.');
+      showError('Wybierz produkt z listy podpowiedzi.');
       return;
     }
     if (formState.selectedProducts.some((item) => item.id === selectedProduct.id)) {
-      setError('Ten produkt został już dodany.');
+      showError('Ten produkt został już dodany.');
       return;
     }
     setFormState((prev) => ({
@@ -84,10 +96,9 @@ export default function AppointmentForm({
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!selectedClient || !selectedService) {
-      setError('Wybierz klientkę i usługę z listy podpowiedzi.');
+      showError('Wybierz klientkę i usługę z listy podpowiedzi.');
       return;
     }
-    setError('');
     await onSubmit?.({
       clientId: selectedClient.id,
       serviceId: selectedService.id,
@@ -190,12 +201,6 @@ export default function AppointmentForm({
             </button>
           </div>
         </div>
-        {error ? <p className="error-note">{error}</p> : null}
-        {clientSearch.error || serviceSearch.error || productSearch.error ? (
-          <p className="error-note">
-            {clientSearch.error || serviceSearch.error || productSearch.error}
-          </p>
-        ) : null}
         {formState.selectedProducts.length ? (
           <div className="chips">
             {formState.selectedProducts.map((product) => (

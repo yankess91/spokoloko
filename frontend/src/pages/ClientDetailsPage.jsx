@@ -1,20 +1,29 @@
+import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import useClientDetails from '../hooks/useClientDetails';
+import { useToast } from '../components/ToastProvider';
 
 export default function ClientDetailsPage() {
   const { id } = useParams();
   const { client, isLoading, error } = useClientDetails(id);
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    if (error) {
+      showToast(error, { severity: 'error' });
+    }
+  }, [error, showToast]);
 
   if (isLoading) {
     return <p className="card muted">Ładowanie profilu klientki...</p>;
   }
 
-  if (error) {
-    return <p className="card error">{error}</p>;
+  if (!client && !error) {
+    return <p className="card muted">Nie znaleziono profilu klientki.</p>;
   }
 
-  if (!client) {
-    return <p className="card muted">Nie znaleziono profilu klientki.</p>;
+  if (error) {
+    return <div className="page-content" />;
   }
 
   return (

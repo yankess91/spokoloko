@@ -1,28 +1,37 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import ProductForm from '../components/ProductForm';
 import ProductList from '../components/ProductList';
 import useProducts from '../hooks/useProducts';
+import { useToast } from '../components/ToastProvider';
 
 export default function ProductsPage() {
   const { products, isLoading, error, addProduct } = useProducts();
-  const [formError, setFormError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { showToast } = useToast();
 
   const sortedProducts = useMemo(
     () => [...products].sort((a, b) => a.name.localeCompare(b.name)),
     [products]
   );
 
+  const showError = useCallback(
+    (message) => showToast(message, { severity: 'error' }),
+    [showToast]
+  );
+
+  useEffect(() => {
+    if (error) {
+      showError(error);
+    }
+  }, [error, showError]);
+
   const handleSubmit = async (payload) => {
     setIsSubmitting(true);
-    setFormError('');
-    setSuccessMessage('');
     try {
       await addProduct(payload);
-      setSuccessMessage('Produkt został zapisany.');
+      showToast('Produkt został zapisany.');
     } catch (err) {
-      setFormError(err.message ?? 'Nie udało się zapisać produktu.');
+      showError(err.message ?? 'Nie udało się zapisać produktu.');
     } finally {
       setIsSubmitting(false);
     }
@@ -38,9 +47,6 @@ export default function ProductsPage() {
       <section className="grid">
         <ProductForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
         <div className="stack">
-          {formError ? <p className="card error">{formError}</p> : null}
-          {successMessage ? <p className="card success">{successMessage}</p> : null}
-          {error ? <p className="card error">{error}</p> : null}
           <ProductList products={sortedProducts} isLoading={isLoading} linkBase="/products" />
         </div>
       </section>

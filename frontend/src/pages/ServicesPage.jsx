@@ -1,28 +1,37 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import ServiceForm from '../components/ServiceForm';
 import ServiceList from '../components/ServiceList';
 import useServices from '../hooks/useServices';
+import { useToast } from '../components/ToastProvider';
 
 export default function ServicesPage() {
   const { services, isLoading, error, addService } = useServices();
-  const [formError, setFormError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { showToast } = useToast();
 
   const sortedServices = useMemo(
     () => [...services].sort((a, b) => a.name.localeCompare(b.name)),
     [services]
   );
 
+  const showError = useCallback(
+    (message) => showToast(message, { severity: 'error' }),
+    [showToast]
+  );
+
+  useEffect(() => {
+    if (error) {
+      showError(error);
+    }
+  }, [error, showError]);
+
   const handleSubmit = async (payload) => {
     setIsSubmitting(true);
-    setFormError('');
-    setSuccessMessage('');
     try {
       await addService(payload);
-      setSuccessMessage('Usługa została zapisana.');
+      showToast('Usługa została zapisana.');
     } catch (err) {
-      setFormError(err.message ?? 'Nie udało się zapisać usługi.');
+      showError(err.message ?? 'Nie udało się zapisać usługi.');
     } finally {
       setIsSubmitting(false);
     }
@@ -41,9 +50,6 @@ export default function ServicesPage() {
           isSubmitting={isSubmitting}
         />
         <div className="stack">
-          {formError ? <p className="card error">{formError}</p> : null}
-          {successMessage ? <p className="card success">{successMessage}</p> : null}
-          {error ? <p className="card error">{error}</p> : null}
           <ServiceList services={sortedServices} isLoading={isLoading} linkBase="/services" />
         </div>
       </section>

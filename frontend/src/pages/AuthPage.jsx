@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../components/ToastProvider';
 
 const INITIAL_VALUES = {
   fullName: '',
@@ -13,6 +14,13 @@ const AuthPage = ({ mode }) => {
   const { login, register, loading, error } = useAuth();
   const navigate = useNavigate();
   const isRegister = mode === 'register';
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    if (error) {
+      showToast(error, { severity: 'error' });
+    }
+  }, [error, showToast]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -100,7 +108,6 @@ const AuthPage = ({ mode }) => {
                 required
               />
             </label>
-            {error && <div className="auth-error">{error}</div>}
             <button className="primary" type="submit" disabled={loading}>
               {loading ? 'Przetwarzanie…' : isRegister ? 'Załóż konto' : 'Zaloguj się'}
             </button>
