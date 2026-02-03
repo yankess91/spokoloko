@@ -1,5 +1,5 @@
 using BraiderskiReservation.Api.Application.DTOs;
-using BraiderskiReservation.Api.Domain.Entities;
+using BraiderskiReservation.Domain.Entities;
 
 namespace BraiderskiReservation.Api.Application.Interfaces;
 

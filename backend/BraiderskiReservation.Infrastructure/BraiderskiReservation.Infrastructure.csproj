@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -7,15 +7,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.6" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BraiderskiReservation.Domain\BraiderskiReservation.Domain.csproj" />
-    <ProjectReference Include="..\BraiderskiReservation.Infrastructure\BraiderskiReservation.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

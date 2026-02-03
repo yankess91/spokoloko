@@ -1,9 +1,9 @@
-using BraiderskiReservation.Api.Application.Interfaces;
-using BraiderskiReservation.Api.Domain.Entities;
-using BraiderskiReservation.Api.Infrastructure.Data;
+using BraiderskiReservation.Domain.Interfaces;
+using BraiderskiReservation.Domain.Entities;
+using BraiderskiReservation.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace BraiderskiReservation.Api.Infrastructure.Repositories;
+namespace BraiderskiReservation.Infrastructure.Repositories;
 
 public sealed class ClientRepository : IClientRepository
 {

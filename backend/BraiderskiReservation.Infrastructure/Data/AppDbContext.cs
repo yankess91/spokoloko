@@ -1,7 +1,7 @@
-using BraiderskiReservation.Api.Domain.Entities;
+using BraiderskiReservation.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace BraiderskiReservation.Api.Infrastructure.Data;
+namespace BraiderskiReservation.Infrastructure.Data;
 
 public sealed class AppDbContext : DbContext
 {

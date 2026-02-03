@@ -1,6 +1,6 @@
 using BraiderskiReservation.Api.Application.DTOs;
 using BraiderskiReservation.Api.Application.Interfaces;
-using BraiderskiReservation.Api.Domain.Entities;
+using BraiderskiReservation.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BraiderskiReservation.Api.Controllers;
