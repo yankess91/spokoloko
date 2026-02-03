@@ -1,6 +1,6 @@
-using BraiderskiReservation.Api.DTOs;
-using BraiderskiReservation.Api.Models;
-using BraiderskiReservation.Api.Services;
+using BraiderskiReservation.Api.Application.DTOs;
+using BraiderskiReservation.Api.Application.Interfaces;
+using BraiderskiReservation.Api.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BraiderskiReservation.Api.Controllers;
@@ -17,26 +17,20 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<Product>> GetAll() => Ok(_productService.GetAll());
+    public async Task<ActionResult<IEnumerable<Product>>> GetAll(CancellationToken cancellationToken) =>
+        Ok(await _productService.GetAllAsync(cancellationToken));
 
     [HttpGet("{id:guid}")]
-    public ActionResult<Product> GetById(Guid id)
+    public async Task<ActionResult<Product>> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var product = _productService.GetById(id);
+        var product = await _productService.GetByIdAsync(id, cancellationToken);
         return product is null ? NotFound() : Ok(product);
     }
 
     [HttpPost]
-    public ActionResult<Product> Create(CreateProductRequest request)
+    public async Task<ActionResult<Product>> Create(CreateProductRequest request, CancellationToken cancellationToken)
     {
-        var product = new Product
-        {
-            Name = request.Name,
-            Brand = request.Brand,
-            Notes = request.Notes
-        };
-
-        _productService.Create(product);
+        var product = await _productService.CreateAsync(request, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
     }
 }
