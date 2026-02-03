@@ -14,6 +14,7 @@ public sealed class AppDbContext : DbContext
     public DbSet<Product> Products => Set<Product>();
     public DbSet<ServiceItem> Services => Set<ServiceItem>();
     public DbSet<Appointment> Appointments => Set<Appointment>();
+    public DbSet<UserAccount> Users => Set<UserAccount>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -78,6 +79,18 @@ public sealed class AppDbContext : DbContext
             entity.HasOne(appointment => appointment.ClientProfile)
                 .WithMany()
                 .HasForeignKey(appointment => appointment.ClientId);
+        });
+
+        modelBuilder.Entity<UserAccount>(entity =>
+        {
+            entity.ToTable("users");
+            entity.HasKey(user => user.Id);
+            entity.Property(user => user.Id).HasColumnName("id");
+            entity.Property(user => user.FullName).HasColumnName("full_name");
+            entity.Property(user => user.Email).HasColumnName("email");
+            entity.Property(user => user.PasswordHash).HasColumnName("password_hash");
+            entity.Property(user => user.CreatedAt).HasColumnName("created_at");
+            entity.HasIndex(user => user.Email).IsUnique();
         });
     }
 }

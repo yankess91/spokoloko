@@ -57,6 +57,129 @@ body {
   gap: 32px;
 }
 
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  color: #7d4d3f;
+}
+
+.auth-shell {
+  min-height: calc(100vh - 64px);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+  align-items: center;
+}
+
+.auth-brand {
+  background: linear-gradient(140deg, #1f1f1f, #3f2b23 60%, #a36b5c);
+  color: #ffffff;
+  border-radius: 28px;
+  padding: 48px;
+  position: relative;
+  overflow: hidden;
+  min-height: 520px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.auth-brand::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.2), transparent 55%);
+}
+
+.auth-brand-card {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 20px;
+}
+
+.auth-logo {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.auth-tagline {
+  font-size: 18px;
+  margin: 0;
+  max-width: 320px;
+}
+
+.auth-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.auth-badges span {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 10px 14px;
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.auth-form {
+  display: flex;
+  justify-content: center;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 460px;
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 40px;
+  box-shadow: 0 18px 40px rgba(19, 12, 9, 0.12);
+  display: grid;
+  gap: 16px;
+}
+
+.auth-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 12px;
+  margin: 0;
+  color: #a36b5c;
+}
+
+.auth-subtitle {
+  margin: 0;
+  color: #5c4d49;
+}
+
+.auth-fields {
+  display: grid;
+  gap: 16px;
+}
+
+.auth-error {
+  background: #fff0f0;
+  color: #a13b3b;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.auth-switch {
+  font-size: 14px;
+  color: #5c4d49;
+}
+
+.auth-switch a {
+  color: #a36b5c;
+  font-weight: 600;
+  text-decoration: none;
+}
+
 .page-content {
   display: flex;
   flex-direction: column;
