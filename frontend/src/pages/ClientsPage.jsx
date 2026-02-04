@@ -94,7 +94,7 @@ export default function ClientsPage() {
       <header className="section-header">
         <h1>Użytkowniczki</h1>
         <p className="muted">
-          Dodawaj nowe profile klientek i sprawdzaj historię ich produktów.
+          Dodawaj nowe profile klientek i sprawdzaj historię ich usług.
         </p>
       </header>
 
@@ -105,10 +105,12 @@ export default function ClientsPage() {
               <h2>Lista klientek</h2>
               <p className="muted">Przeglądaj dane oraz zarządzaj statusem profilu.</p>
             </div>
+          </header>
+          <div className="grid-actions">
             <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
               Nowa klientka
             </button>
-          </header>
+          </div>
           <div className="list-controls grid-controls">
             <label className="filter-field">
               Filtruj
