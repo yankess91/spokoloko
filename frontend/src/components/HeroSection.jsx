@@ -5,32 +5,23 @@ export default function HeroSection({ summary, upcomingAppointment, isLoading })
     <header className="hero">
       <div className="hero-main">
         <p className="eyebrow">System rezerwacyjny</p>
-        <h1>Salon braiderski - panel zarządzania</h1>
+        <h1>Nowoczesny panel do obsługi salonu i rezerwacji</h1>
         <p className="subtitle">
-          Profil klienta, lista produktów i usług oraz kalendarz wizyt bez modułu płatności.
+          Zarządzaj klientkami, usługami i produktami w jednym miejscu. Buduj plan
+          tygodnia dzięki intuicyjnemu kalendarzowi wizyt.
         </p>
         <div className="hero-actions">
           <Link className="primary" to="/clients">
-            Dodaj klienta
+            Dodaj klientkę
           </Link>
-          <Link className="ghost" to="/appointments">
+          <Link className="secondary" to="/appointments">
             Zaplanuj wizytę
           </Link>
         </div>
-        <dl className="hero-stats">
-          <div>
-            <dt>Klientki</dt>
-            <dd>{summary.clients}</dd>
-          </div>
-          <div>
-            <dt>Usługi</dt>
-            <dd>{summary.services}</dd>
-          </div>
-          <div>
-            <dt>Produkty</dt>
-            <dd>{summary.products}</dd>
-          </div>
-        </dl>
+        <p className="muted">
+          Aktualny stan: {summary.clients} klientek, {summary.services} usług,{' '}
+          {summary.products} produktów.
+        </p>
       </div>
       <div className="hero-card">
         <div className="card-header">

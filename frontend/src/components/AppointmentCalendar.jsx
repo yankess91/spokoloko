@@ -23,9 +23,10 @@ export default function AppointmentCalendar({
   }));
 
   return (
-    <section className="card calendar">
-      <header className="card-header">
+    <section className="section calendar">
+      <header className="section-header">
         <h2>Kalendarz wizyt</h2>
+        <p className="muted">Szybki podgląd terminów z podziałem na dni.</p>
       </header>
       {isLoading ? (
         <p className="muted">Ładowanie wizyt...</p>

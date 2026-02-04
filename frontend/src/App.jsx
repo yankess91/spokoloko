@@ -4,9 +4,13 @@ import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -32,13 +36,13 @@ import DesignServicesRoundedIcon from '@mui/icons-material/DesignServicesRounded
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 
 const navLinkStyles = {
-  color: 'var(--color-muted)',
+  color: 'var(--color-text)',
   fontWeight: 600,
   borderRadius: '10px',
   paddingX: 1.8,
   paddingY: 0.9,
   textTransform: 'none',
-  backgroundColor: 'var(--color-surface-muted)',
+  backgroundColor: 'transparent',
   border: '1px solid transparent',
   minHeight: 40,
   gap: 1,
@@ -52,14 +56,14 @@ const navLinkStyles = {
   },
   '&.active': {
     backgroundColor: 'var(--color-accent)',
-    color: '#1f1f1f',
+    color: 'var(--accent-contrast)',
     borderColor: 'transparent',
   },
 };
 
 export default function App() {
   const { isAuthenticated, user, logout } = useAuth();
-  const [menuAnchor, setMenuAnchor] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const navItems = useMemo(
     () => [
       { label: 'Start', to: '/', icon: <HomeRoundedIcon fontSize="small" /> },
@@ -87,12 +91,8 @@ export default function App() {
     [],
   );
 
-  const handleMenuOpen = (event) => {
-    setMenuAnchor(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setMenuAnchor(null);
+  const handleDrawerToggle = (open) => () => {
+    setDrawerOpen(open);
   };
 
   return (
@@ -102,26 +102,39 @@ export default function App() {
           position="sticky"
           elevation={0}
           sx={{
-            backgroundColor: 'rgba(255, 255, 255, 0.92)',
-            borderRadius: '18px',
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            borderRadius: '20px',
             boxShadow: 'var(--shadow-sm)',
             border: '1px solid var(--color-border)',
             paddingX: { xs: 1, md: 2 },
-            backdropFilter: 'blur(12px)',
+            backdropFilter: 'blur(16px)',
             width: '100%',
             maxWidth: 'var(--max-width)',
             alignSelf: 'center',
           }}
         >
           <Toolbar disableGutters sx={{ gap: 2, paddingY: 1, paddingX: 2 }}>
-            <Stack direction="row" spacing={1.2} alignItems="center">
-              <Avatar sx={{ bgcolor: 'var(--color-accent)', width: 36, height: 36 }}>B</Avatar>
+            <Stack direction="row" spacing={1.5} alignItems="center">
+              <IconButton
+                onClick={handleDrawerToggle(true)}
+                sx={{
+                  display: { xs: 'inline-flex', md: 'none' },
+                  backgroundColor: 'var(--color-surface-muted)',
+                  borderRadius: '10px',
+                  border: '1px solid var(--color-border)',
+                }}
+                size="small"
+                aria-label="Otwórz menu nawigacji"
+              >
+                <MenuRoundedIcon />
+              </IconButton>
+              <Avatar sx={{ bgcolor: 'var(--color-accent)', width: 38, height: 38 }}>B</Avatar>
               <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#1f1f1f' }}>
+                <Typography variant="subtitle1" className="topbar-title">
                   Braiderski Panel
                 </Typography>
                 <Typography variant="caption" sx={{ color: 'var(--color-muted)' }}>
-                  Zarządzaj rezerwacjami w jednym miejscu
+                  Studio rezerwacji i obsługi klientów
                 </Typography>
               </Box>
             </Stack>
@@ -136,63 +149,19 @@ export default function App() {
                   to={item.to}
                   startIcon={item.icon}
                   sx={navLinkStyles}
-                  onClick={handleMenuClose}
                 >
                   {item.label}
                 </Button>
               ))}
             </Box>
 
-            <IconButton
-              onClick={handleMenuOpen}
-              sx={{
-                display: { xs: 'inline-flex', md: 'none' },
-                backgroundColor: 'var(--color-surface-muted)',
-                borderRadius: '10px',
-                border: '1px solid var(--color-border)',
-              }}
-              size="small"
-              aria-label="Otwórz menu nawigacji"
+            <Stack
+              direction="row"
+              spacing={1.5}
+              alignItems="center"
+              className="topbar-actions"
+              sx={{ display: { xs: 'none', md: 'flex' } }}
             >
-              <MenuRoundedIcon />
-            </IconButton>
-
-            <Menu
-              anchorEl={menuAnchor}
-              open={Boolean(menuAnchor)}
-              onClose={handleMenuClose}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-              PaperProps={{
-                sx: {
-                  marginTop: 1,
-                  borderRadius: 3,
-                  minWidth: 200,
-                  border: '1px solid var(--color-border)',
-                },
-              }}
-            >
-              {navItems.map((item) => (
-                <MenuItem
-                  key={item.to}
-                  component={NavLink}
-                  to={item.to}
-                  onClick={handleMenuClose}
-                  sx={{
-                    gap: 1.5,
-                    '&.active': {
-                      backgroundColor: 'var(--color-bg-accent)',
-                      color: '#1f1f1f',
-                    },
-                  }}
-                >
-                  {item.icon}
-                  {item.label}
-                </MenuItem>
-              ))}
-            </Menu>
-
-            <Stack direction="row" spacing={1.5} alignItems="center">
               <Typography variant="body2" sx={{ color: 'var(--color-muted)', fontWeight: 600 }}>
                 Witaj, {user?.fullName}
               </Typography>
@@ -224,6 +193,81 @@ export default function App() {
           </Toolbar>
         </AppBar>
       )}
+
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={handleDrawerToggle(false)}
+        PaperProps={{
+          sx: {
+            width: 280,
+            padding: 2,
+            borderTopLeftRadius: 20,
+            borderBottomLeftRadius: 20,
+          },
+        }}
+      >
+        <Stack spacing={2}>
+          <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+              Nawigacja
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'var(--color-muted)' }}>
+              Szybki dostęp do kluczowych sekcji.
+            </Typography>
+          </Box>
+          <List disablePadding>
+            {navItems.map((item) => (
+              <ListItemButton
+                key={item.to}
+                component={NavLink}
+                to={item.to}
+                onClick={handleDrawerToggle(false)}
+                sx={{
+                  borderRadius: 2,
+                  marginBottom: 0.5,
+                  '&.active': {
+                    backgroundColor: 'var(--color-bg-accent)',
+                    color: 'var(--color-text)',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 36 }}>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.label} />
+              </ListItemButton>
+            ))}
+          </List>
+          <Divider />
+          <Box>
+            <Typography variant="body2" sx={{ color: 'var(--color-muted)' }}>
+              Zalogowano jako
+            </Typography>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+              {user?.fullName}
+            </Typography>
+          </Box>
+          <Button
+            onClick={() => {
+              handleDrawerToggle(false)();
+              logout();
+            }}
+            variant="outlined"
+            startIcon={<LogoutRoundedIcon fontSize="small" />}
+            sx={{
+              textTransform: 'none',
+              borderRadius: '10px',
+              borderColor: 'var(--color-border)',
+              color: 'var(--color-muted)',
+              minHeight: 40,
+              '&:hover': {
+                backgroundColor: 'var(--color-bg-accent)',
+              },
+            }}
+          >
+            Wyloguj
+          </Button>
+        </Stack>
+      </Drawer>
 
       <Routes>
         <Route path="/login" element={<LoginPage />} />
