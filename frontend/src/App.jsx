@@ -137,11 +137,12 @@ export default function App() {
                 backgroundColor: 'var(--color-surface-muted)',
                 borderRadius: '10px',
                 border: '1px solid var(--color-border)',
+                padding: 1,
               }}
-              size="small"
+              size="medium"
               aria-label="Otwórz menu nawigacji"
             >
-              <MenuRoundedIcon />
+              <MenuRoundedIcon fontSize="large" />
             </IconButton>
 
             <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
@@ -168,17 +169,16 @@ export default function App() {
               <Typography variant="body2" sx={{ color: 'var(--color-muted)', fontWeight: 600 }}>
                 Witaj, {user?.fullName}
               </Typography>
-              <Button
+              <IconButton
                 onClick={logout}
-                variant="outlined"
-                startIcon={<LogoutRoundedIcon fontSize="small" />}
+                aria-label="Wyloguj"
                 sx={{
-                  textTransform: 'none',
+                  border: '1px solid var(--color-border)',
                   borderRadius: '10px',
                   backgroundColor: 'transparent',
-                  borderColor: 'var(--color-border)',
                   color: 'var(--color-muted)',
                   minHeight: 40,
+                  minWidth: 40,
                   boxShadow: 'none',
                   '&:focus-visible': {
                     outline: 'none',
@@ -190,7 +190,8 @@ export default function App() {
                   },
                 }}
               >
-              </Button>
+                <LogoutRoundedIcon fontSize="small" />
+              </IconButton>
             </Stack>
           </Toolbar>
         </AppBar>
@@ -208,7 +209,7 @@ export default function App() {
           },
         }}
       >
-        <Stack spacing={2} sx={{ padding: 0 }}>
+        <Stack spacing={2} sx={{ padding: 3 }}>
           <Box>
             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
               Nawigacja
@@ -227,14 +228,20 @@ export default function App() {
                 sx={{
                   borderRadius: 2,
                   marginBottom: 0.5,
+                  paddingY: 1.4,
+                  paddingX: 2,
+                  minHeight: 52,
                   '&.active': {
                     backgroundColor: 'var(--color-bg-accent)',
                     color: 'var(--color-text)',
                   },
                 }}
               >
-                <ListItemIcon sx={{ minWidth: 36 }}>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.label} />
+                <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
+                <ListItemText
+                  primary={item.label}
+                  primaryTypographyProps={{ fontSize: '1rem', fontWeight: 600 }}
+                />
               </ListItemButton>
             ))}
           </List>
@@ -247,25 +254,25 @@ export default function App() {
               {user?.fullName}
             </Typography>
           </Box>
-          <Button
+          <IconButton
             onClick={() => {
               handleDrawerToggle(false)();
               logout();
             }}
-            variant="outlined"
-            startIcon={<LogoutRoundedIcon fontSize="small" />}
+            aria-label="Wyloguj"
             sx={{
-              textTransform: 'none',
+              border: '1px solid var(--color-border)',
               borderRadius: '10px',
-              borderColor: 'var(--color-border)',
               color: 'var(--color-muted)',
               minHeight: 40,
+              minWidth: 40,
               '&:hover': {
                 backgroundColor: 'var(--color-bg-accent)',
               },
             }}
           >
-          </Button>
+            <LogoutRoundedIcon fontSize="small" />
+          </IconButton>
         </Stack>
       </Drawer>
 
