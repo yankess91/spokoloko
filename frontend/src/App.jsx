@@ -109,19 +109,6 @@ export default function App() {
           }}
         >
           <Toolbar disableGutters sx={{ gap: 2, paddingY: 1, paddingX: 0 }}>
-            <IconButton
-              onClick={handleDrawerToggle(true)}
-              sx={{
-                display: { xs: 'inline-flex', md: 'none' },
-                backgroundColor: 'var(--color-surface-muted)',
-                borderRadius: '10px',
-                border: '1px solid var(--color-border)',
-              }}
-              size="small"
-              aria-label="Otwórz menu nawigacji"
-            >
-              <MenuRoundedIcon />
-            </IconButton>
             <Stack
               direction="row"
               spacing={1.5}
@@ -142,6 +129,20 @@ export default function App() {
             </Stack>
 
             <Box sx={{ flexGrow: 1 }} />
+
+            <IconButton
+              onClick={handleDrawerToggle(true)}
+              sx={{
+                display: { xs: 'inline-flex', md: 'none' },
+                backgroundColor: 'var(--color-surface-muted)',
+                borderRadius: '10px',
+                border: '1px solid var(--color-border)',
+              }}
+              size="small"
+              aria-label="Otwórz menu nawigacji"
+            >
+              <MenuRoundedIcon />
+            </IconButton>
 
             <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
               {navItems.map((item) => (
@@ -203,13 +204,12 @@ export default function App() {
         PaperProps={{
           sx: {
             width: 280,
-            padding: 2,
             borderTopLeftRadius: 20,
             borderBottomLeftRadius: 20,
           },
         }}
       >
-        <Stack spacing={2}>
+        <Stack spacing={2} sx={{ padding: 0 }}>
           <Box>
             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
               Nawigacja
