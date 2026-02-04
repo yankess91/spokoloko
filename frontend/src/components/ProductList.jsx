@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
-export default function ProductList({ products, isLoading, linkBase }) {
+export default function ProductList({ products, isLoading, linkBase, onDelete }) {
   if (isLoading) {
     return <p className="muted">Ładowanie produktów...</p>;
   }
@@ -8,6 +10,8 @@ export default function ProductList({ products, isLoading, linkBase }) {
   if (products.length === 0) {
     return <p className="muted">Brak produktów do wyświetlenia.</p>;
   }
+
+  const isDeleteDisabled = !onDelete;
 
   return (
     <div className="data-grid data-grid-products" role="table" aria-label="Lista produktów">
@@ -44,9 +48,20 @@ export default function ProductList({ products, isLoading, linkBase }) {
           <div className="data-grid-cell data-grid-actions" role="cell">
             {linkBase ? (
               <Link className="ghost" to={`${linkBase}/${product.id}`}>
+                <VisibilityOutlinedIcon fontSize="small" />
                 Szczegóły
               </Link>
             ) : null}
+            <button
+              type="button"
+              className="ghost danger icon-button"
+              onClick={() => onDelete?.(product)}
+              disabled={isDeleteDisabled}
+              title={isDeleteDisabled ? 'Usuwanie dostępne tylko w widoku szczegółowym' : 'Usuń'}
+            >
+              <DeleteOutlineIcon fontSize="small" />
+              Usuń
+            </button>
           </div>
         </div>
       ))}

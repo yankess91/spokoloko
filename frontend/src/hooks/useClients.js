@@ -41,5 +41,9 @@ export default function useClients() {
     [load]
   );
 
-  return { clients, isLoading, error, reload: load, addClient, updateStatus };
+  const removeClient = useCallback((clientId) => {
+    setClients((prev) => prev.filter((client) => client.id !== clientId));
+  }, []);
+
+  return { clients, isLoading, error, reload: load, addClient, updateStatus, removeClient };
 }

@@ -32,5 +32,9 @@ export default function useAppointments() {
     [load]
   );
 
-  return { appointments, isLoading, error, reload: load, addAppointment };
+  const removeAppointment = useCallback((appointmentId) => {
+    setAppointments((prev) => prev.filter((appointment) => appointment.id !== appointmentId));
+  }, []);
+
+  return { appointments, isLoading, error, reload: load, addAppointment, removeAppointment };
 }

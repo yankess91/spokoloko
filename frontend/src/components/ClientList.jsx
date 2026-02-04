@@ -4,7 +4,7 @@ export default function ClientList({ clients, isLoading, linkBase }) {
   return (
     <article className="card">
       <header className="card-header">
-        <h2>Wszystkie klientki</h2>
+        <h2>Klientki (podgląd)</h2>
       </header>
       {isLoading ? (
         <p className="muted">Ładowanie klientek...</p>

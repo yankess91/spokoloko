@@ -4,9 +4,10 @@ import ProductList from '../components/ProductList';
 import Modal from '../components/Modal';
 import useProducts from '../hooks/useProducts';
 import { useToast } from '../components/ToastProvider';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function ProductsPage() {
-  const { products, isLoading, error, addProduct } = useProducts();
+  const { products, isLoading, error, addProduct, removeProduct } = useProducts();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { showToast } = useToast();
@@ -40,6 +41,18 @@ export default function ProductsPage() {
     }
   };
 
+  const handleDelete = async (product) => {
+    if (!window.confirm(`Czy na pewno chcesz usunąć produkt "${product.name}"?`)) {
+      return;
+    }
+    try {
+      await removeProduct(product.id);
+      showToast('Produkt został usunięty.');
+    } catch (err) {
+      showError(err.message ?? 'Nie udało się usunąć produktu.');
+    }
+  };
+
   return (
     <div className="page-content">
       <header className="section-header">
@@ -57,10 +70,16 @@ export default function ProductsPage() {
           </header>
           <div className="grid-actions">
             <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
+              <AddIcon fontSize="small" />
               Nowy produkt
             </button>
           </div>
-          <ProductList products={sortedProducts} isLoading={isLoading} linkBase="/products" />
+          <ProductList
+            products={sortedProducts}
+            isLoading={isLoading}
+            linkBase="/products"
+            onDelete={handleDelete}
+          />
         </article>
       </section>
 

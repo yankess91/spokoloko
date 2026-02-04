@@ -1,7 +1,15 @@
 import { Link } from 'react-router-dom';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { formatDate, formatTime } from '../utils/formatters';
 
-export default function AppointmentList({ appointments, clientsById, servicesById, isLoading }) {
+export default function AppointmentList({
+  appointments,
+  clientsById,
+  servicesById,
+  isLoading,
+  onDelete
+}) {
   if (isLoading) {
     return <p className="muted">Ładowanie wizyt...</p>;
   }
@@ -9,6 +17,8 @@ export default function AppointmentList({ appointments, clientsById, servicesByI
   if (appointments.length === 0) {
     return <p className="muted">Brak wizyt do wyświetlenia.</p>;
   }
+
+  const isDeleteDisabled = !onDelete;
 
   return (
     <div className="data-grid data-grid-appointments" role="table" aria-label="Lista wizyt">
@@ -47,8 +57,19 @@ export default function AppointmentList({ appointments, clientsById, servicesByI
             </div>
             <div className="data-grid-cell data-grid-actions" role="cell">
               <Link className="ghost" to={`/appointments/${appointment.id}`}>
+                <VisibilityOutlinedIcon fontSize="small" />
                 Szczegóły
               </Link>
+              <button
+                type="button"
+                className="ghost danger icon-button"
+                onClick={() => onDelete?.(appointment)}
+                disabled={isDeleteDisabled}
+                title={isDeleteDisabled ? 'Usuwanie niedostępne' : 'Usuń'}
+              >
+                <DeleteOutlineIcon fontSize="small" />
+                Usuń
+              </button>
             </div>
           </div>
         );

@@ -4,9 +4,10 @@ import ClientGrid from '../components/ClientGrid';
 import Modal from '../components/Modal';
 import useClients from '../hooks/useClients';
 import { useToast } from '../components/ToastProvider';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function ClientsPage() {
-  const { clients, isLoading, error, addClient, updateStatus } = useClients();
+  const { clients, isLoading, error, addClient, updateStatus, removeClient } = useClients();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
@@ -89,6 +90,14 @@ export default function ClientsPage() {
     }
   };
 
+  const handleDelete = (client) => {
+    if (!window.confirm(`Czy na pewno chcesz usunąć klientkę "${client.fullName}"?`)) {
+      return;
+    }
+    removeClient(client.id);
+    showToast('Klientka została usunięta z listy.');
+  };
+
   return (
     <div className="page-content">
       <header className="section-header">
@@ -108,6 +117,7 @@ export default function ClientsPage() {
           </header>
           <div className="grid-actions">
             <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
+              <AddIcon fontSize="small" />
               Nowa klientka
             </button>
           </div>
@@ -136,6 +146,7 @@ export default function ClientsPage() {
             linkBase="/clients"
             onToggleStatus={handleStatusToggle}
             updatingClientId={updatingClientId}
+            onDelete={handleDelete}
           />
         </article>
       </section>
