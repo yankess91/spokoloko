@@ -1,45 +1,49 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { clientsApi } from '../api';
 
 export default function useClientDetails(clientId) {
   const [client, setClient] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const isMountedRef = useRef(true);
 
-  useEffect(() => {
-    let isMounted = true;
-
-    const load = async () => {
-      if (!clientId) {
+  const load = useCallback(async () => {
+    if (!clientId) {
+      if (isMountedRef.current) {
         setClient(null);
         setIsLoading(false);
-        return;
       }
+      return;
+    }
 
-      try {
+    try {
+      if (isMountedRef.current) {
         setIsLoading(true);
-        const data = await clientsApi.getById(clientId);
-        if (isMounted) {
-          setClient(data);
-          setError('');
-        }
-      } catch (err) {
-        if (isMounted) {
-          setError(err.message ?? 'Nie udało się pobrać klientki.');
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
       }
-    };
+      const data = await clientsApi.getById(clientId);
+      if (isMountedRef.current) {
+        setClient(data);
+        setError('');
+      }
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message ?? 'Nie udało się pobrać klientki.');
+      }
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [clientId]);
 
+  useEffect(() => {
+    isMountedRef.current = true;
     load();
 
     return () => {
-      isMounted = false;
+      isMountedRef.current = false;
     };
-  }, [clientId]);
+  }, [load]);
 
-  return { client, isLoading, error };
+  return { client, isLoading, error, reload: load };
 }

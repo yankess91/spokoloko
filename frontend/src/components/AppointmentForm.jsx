@@ -11,7 +11,9 @@ const buildProductLabel = (product) =>
 
 export default function AppointmentForm({
   onSubmit,
-  isSubmitting
+  isSubmitting,
+  defaultClient,
+  clientLocked = false
 }) {
   const { showToast } = useToast();
   const [formState, setFormState] = useState({
@@ -20,7 +22,7 @@ export default function AppointmentForm({
     notes: '',
     selectedProducts: []
   });
-  const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedClient, setSelectedClient] = useState(defaultClient ?? null);
   const [selectedService, setSelectedService] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -63,6 +65,13 @@ export default function AppointmentForm({
       showError(errorMessage);
     }
   }, [clientSearch.error, productSearch.error, serviceSearch.error, showError]);
+
+  useEffect(() => {
+    if (defaultClient) {
+      setSelectedClient(defaultClient);
+      clientSearch.setInputValue(defaultClient.label ?? '');
+    }
+  }, [defaultClient, clientSearch]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -113,10 +122,12 @@ export default function AppointmentForm({
       notes: '',
       selectedProducts: []
     });
-    setSelectedClient(null);
+    if (!clientLocked) {
+      setSelectedClient(null);
+      clientSearch.setInputValue('');
+    }
     setSelectedService(null);
     setSelectedProduct(null);
-    clientSearch.setInputValue('');
     serviceSearch.setInputValue('');
     productSearch.setInputValue('');
   };
@@ -125,18 +136,30 @@ export default function AppointmentForm({
     <article className="card">
       <h2>Zaplanuj wizytę</h2>
       <form className="form" onSubmit={handleSubmit}>
-        <AutocompleteField
-          label="Klientka"
-          placeholder="Wybierz klientkę"
-          options={clientOptions}
-          value={selectedClient}
-          inputValue={clientSearch.inputValue}
-          onChange={(_, newValue) => setSelectedClient(newValue)}
-          onInputChange={(_, newValue) => clientSearch.setInputValue(newValue)}
-          loading={clientSearch.isLoading}
-          disabled={isSubmitting}
-          isOptionEqualToValue={(option, value) => option.id === value.id}
-        />
+        {clientLocked ? (
+          <label>
+            Klientka
+            <input
+              type="text"
+              value={selectedClient?.label ?? ''}
+              disabled
+              aria-disabled="true"
+            />
+          </label>
+        ) : (
+          <AutocompleteField
+            label="Klientka"
+            placeholder="Wybierz klientkę"
+            options={clientOptions}
+            value={selectedClient}
+            inputValue={clientSearch.inputValue}
+            onChange={(_, newValue) => setSelectedClient(newValue)}
+            onInputChange={(_, newValue) => clientSearch.setInputValue(newValue)}
+            loading={clientSearch.isLoading}
+            disabled={isSubmitting}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+          />
+        )}
         <AutocompleteField
           label="Usługa"
           placeholder="Wybierz usługę"
