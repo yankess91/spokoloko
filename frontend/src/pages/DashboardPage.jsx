@@ -76,10 +76,53 @@ export default function DashboardPage() {
         isLoading={isLoading}
       />
 
-      <section className="grid">
-        <ClientList clients={clients} isLoading={isLoading} linkBase="/clients" />
-        <ServiceList services={services} isLoading={isLoading} linkBase="/services" />
-        <ProductList products={products} isLoading={isLoading} linkBase="/products" />
+      <section className="section">
+        <div className="section-header">
+          <h2>Podsumowanie panelu</h2>
+          <p className="muted">
+            Najważniejsze wskaźniki dla szybkiego przeglądu pracy salonu.
+          </p>
+        </div>
+        <div className="grid metrics-grid">
+          <article className="card metric-card">
+            <span className="metric-label">Aktywne klientki</span>
+            <span className="metric-value">{clients.length}</span>
+            <p className="muted">Zaktualizuj dane, aby planować kolejne wizyty.</p>
+          </article>
+          <article className="card metric-card">
+            <span className="metric-label">Usługi w ofercie</span>
+            <span className="metric-value">{services.length}</span>
+            <p className="muted">Sprawdzaj popularność pakietów i stylizacji.</p>
+          </article>
+          <article className="card metric-card">
+            <span className="metric-label">Produkty na stanie</span>
+            <span className="metric-value">{products.length}</span>
+            <p className="muted">Uzupełniaj magazyn przed intensywnym tygodniem.</p>
+          </article>
+          <article className="card metric-card">
+            <span className="metric-label">Najbliższa wizyta</span>
+            <span className="metric-value">
+              {upcomingAppointment ? `${upcomingAppointment.date}` : 'Brak'}
+            </span>
+            <p className="muted">
+              {upcomingAppointment
+                ? `${upcomingAppointment.clientName} · ${upcomingAppointment.time}`
+                : 'Wypełnij kalendarz, aby rozpocząć planowanie.'}
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-header">
+          <h2>Operacje codzienne</h2>
+          <p className="muted">Zarządzaj klientkami, usługami i produktami w jednym miejscu.</p>
+        </div>
+        <div className="grid">
+          <ClientList clients={clients} isLoading={isLoading} linkBase="/clients" />
+          <ServiceList services={services} isLoading={isLoading} linkBase="/services" />
+          <ProductList products={products} isLoading={isLoading} linkBase="/products" />
+        </div>
       </section>
 
       <AppointmentCalendar

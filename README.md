@@ -34,6 +34,8 @@ npm run dev
 UI zawiera podstawowe sekcje: profil klienta, lista usług, lista produktów oraz kalendarz wizyt.
 
 ### Notatka o stylach UI
-- Główne tokeny kolorów/typografii i layoutu są w `frontend/src/styles.css` (sekcja `:root`).
-- Komponenty/stylowanie: `card`, `card-header`, `list`, `list-meta`, `primary`, `secondary`, `ghost` oraz globalne style linków i focus-visible.
-- Layout dashboardu i spacing opierają się o klasy `page` oraz `page-content`.
+- Główne tokeny kolorów/typografii i layoutu są w `frontend/src/styles.css` (sekcja `:root`),
+  z podstawowymi zmiennymi (`--bg`, `--surface`, `--text`, `--muted`, `--border`, `--accent`).
+- Komponenty/stylowanie: `card`, `section`, `grid`, `primary`, `secondary`, `ghost`, `link-button`
+  oraz globalne style linków i focus-visible.
+- Layout dashboardu i spacing opierają się o klasy `page`, `page-content` i `section`.
