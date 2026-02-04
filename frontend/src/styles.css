@@ -168,7 +168,6 @@ a:focus-visible {
 }
 
 .auth-brand {
-  background: linear-gradient(140deg, #111111, #3b352a 55%, #c9a227);
   color: #ffffff;
   border-radius: 28px;
   padding: 48px;
@@ -201,7 +200,7 @@ a:focus-visible {
 }
 
 .auth-logo-image {
-  width: min(260px, 100%);
+  width: min(520px, 100%);
   height: auto;
   display: block;
   background-color: #ffffff;
@@ -421,7 +420,7 @@ p {
   align-items: center;
   justify-content: center;
   padding: var(--space-5);
-  z-index: 9999;
+  z-index: 1000;
 }
 
 .modal {

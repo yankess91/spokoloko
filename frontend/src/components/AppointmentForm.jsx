@@ -33,10 +33,12 @@ export default function AppointmentForm({
     loadOnEmpty: true
   });
   const serviceSearch = useAutocompleteSearch({
-    searchFn: (query) => servicesApi.search(query)
+    searchFn: (query) => servicesApi.search(query),
+     loadOnEmpty: true
   });
   const productSearch = useAutocompleteSearch({
-    searchFn: (query) => productsApi.search(query)
+    searchFn: (query) => productsApi.search(query),
+     loadOnEmpty: true
   });
 
   const clientOptions = useMemo(

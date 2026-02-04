@@ -47,21 +47,13 @@ const AuthPage = ({ mode }) => {
     }
   };
 
-  const logoSrc = '/src/assets/spokoloko-logo.png';
+  const logoSrc = '/src/assets/spokoloko-logo2.png';
 
   return (
     <div className="auth-shell">
       <section className="auth-brand">
         <div className="auth-brand-card">
           <img className="auth-logo-image" src={logoSrc} alt="Spoko Loko logo" />
-          <p className="auth-tagline">
-            Nowoczesny panel do zarządzania klientkami, wizytami i produktami w salonie.
-          </p>
-          <div className="auth-badges">
-            <span>Bezpieczne logowanie</span>
-            <span>Panel w czasie rzeczywistym</span>
-            <span>Pełna kontrola</span>
-          </div>
         </div>
       </section>
       <section className="auth-form">
