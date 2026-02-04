@@ -45,6 +45,11 @@ export default function DashboardPage() {
     [clients]
   );
 
+  const previewClients = useMemo(() => clients.slice(0, 3), [clients]);
+  const previewServices = useMemo(() => services.slice(0, 3), [services]);
+  const previewProducts = useMemo(() => products.slice(0, 3), [products]);
+  const previewAppointments = useMemo(() => appointments.slice(0, 4), [appointments]);
+
   const upcomingAppointment = useMemo(() => {
     if (appointments.length === 0) {
       return null;
@@ -124,24 +129,24 @@ export default function DashboardPage() {
           <p className="muted">Zarządzaj klientkami, usługami i produktami w jednym miejscu.</p>
         </div>
         <div className="grid">
-          <ClientList clients={clients} isLoading={isLoading} linkBase="/clients" />
+          <ClientList clients={previewClients} isLoading={isLoading} linkBase="/clients" />
           <article className="card">
             <header className="card-header">
-              <h3>Usługi</h3>
+              <h3>Usługi (podgląd)</h3>
             </header>
-            <ServiceList services={services} isLoading={isLoading} linkBase="/services" />
+            <ServiceList services={previewServices} isLoading={isLoading} linkBase="/services" />
           </article>
           <article className="card">
             <header className="card-header">
-              <h3>Produkty</h3>
+              <h3>Produkty (podgląd)</h3>
             </header>
-            <ProductList products={products} isLoading={isLoading} linkBase="/products" />
+            <ProductList products={previewProducts} isLoading={isLoading} linkBase="/products" />
           </article>
         </div>
       </section>
 
       <AppointmentCalendar
-        appointments={appointments}
+        appointments={previewAppointments}
         clientsById={clientsById}
         servicesById={servicesById}
         isLoading={isLoading}

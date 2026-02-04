@@ -1,4 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import AddIcon from '@mui/icons-material/Add';
+import SaveIcon from '@mui/icons-material/Save';
 import { clientsApi, productsApi, servicesApi } from '../api';
 import useAutocompleteSearch from '../hooks/useAutocompleteSearch';
 import AutocompleteField from './AutocompleteField';
@@ -19,8 +24,8 @@ export default function AppointmentForm({
 }) {
   const { showToast } = useToast();
   const [formState, setFormState] = useState({
-    startAt: '',
-    endAt: '',
+    startAt: null,
+    endAt: null,
     notes: '',
     selectedProducts: []
   });
@@ -81,6 +86,10 @@ export default function AppointmentForm({
     setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleDateChange = (field) => (newValue) => {
+    setFormState((prev) => ({ ...prev, [field]: newValue }));
+  };
+
   const handleAddProduct = () => {
     if (!selectedProduct) {
       showError('Wybierz produkt z listy podpowiedzi.');
@@ -111,17 +120,21 @@ export default function AppointmentForm({
       showError('Wybierz klientkę i usługę z listy podpowiedzi.');
       return;
     }
+    if (!formState.startAt || !formState.endAt) {
+      showError('Uzupełnij daty rozpoczęcia i zakończenia wizyty.');
+      return;
+    }
     await onSubmit?.({
       clientId: selectedClient.id,
       serviceId: selectedService.id,
-      startAt: new Date(formState.startAt).toISOString(),
-      endAt: new Date(formState.endAt).toISOString(),
+      startAt: formState.startAt.toISOString(),
+      endAt: formState.endAt.toISOString(),
       notes: formState.notes,
       productIds: formState.selectedProducts.map((product) => product.id)
     });
     setFormState({
-      startAt: '',
-      endAt: '',
+      startAt: null,
+      endAt: null,
       notes: '',
       selectedProducts: []
     });
@@ -133,6 +146,26 @@ export default function AppointmentForm({
     setSelectedProduct(null);
     serviceSearch.setInputValue('');
     productSearch.setInputValue('');
+  };
+
+  const textFieldSx = {
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '12px',
+      backgroundColor: '#fffdf8',
+      '& fieldset': {
+        borderColor: '#d7cbb8'
+      },
+      '&:hover fieldset': {
+        borderColor: '#d7cbb8'
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#c9a227'
+      }
+    },
+    '& .MuiOutlinedInput-input': {
+      padding: '10px 12px',
+      fontSize: '14px'
+    }
   };
 
   const formContent = (
@@ -175,26 +208,36 @@ export default function AppointmentForm({
           disabled={isSubmitting}
           isOptionEqualToValue={(option, value) => option.id === value?.id}
         />
-        <label>
-          Start wizyty
-          <input
-            name="startAt"
-            type="datetime-local"
-            value={formState.startAt}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        <label>
-          Koniec wizyty
-          <input
-            name="endAt"
-            type="datetime-local"
-            value={formState.endAt}
-            onChange={handleChange}
-            required
-          />
-        </label>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <div className="datetime-row">
+            <DateTimePicker
+              label="Start wizyty"
+              value={formState.startAt}
+              onChange={handleDateChange('startAt')}
+              slotProps={{
+                textField: {
+                  required: true,
+                  fullWidth: true,
+                  size: 'small',
+                  sx: textFieldSx
+                }
+              }}
+            />
+            <DateTimePicker
+              label="Koniec wizyty"
+              value={formState.endAt}
+              onChange={handleDateChange('endAt')}
+              slotProps={{
+                textField: {
+                  required: true,
+                  fullWidth: true,
+                  size: 'small',
+                  sx: textFieldSx
+                }
+              }}
+            />
+          </div>
+        </LocalizationProvider>
         <label>
           Notatki
           <textarea
@@ -223,6 +266,7 @@ export default function AppointmentForm({
               containerClassName="autocomplete-inline"
             />
             <button type="button" className="secondary" onClick={handleAddProduct}>
+              <AddIcon fontSize="small" />
               Dodaj
             </button>
           </div>
@@ -244,6 +288,7 @@ export default function AppointmentForm({
           <p className="muted">Brak zapisanych produktów.</p>
         )}
         <button type="submit" className="primary" disabled={isSubmitting}>
+          <SaveIcon fontSize="small" />
           {isSubmitting ? 'Zapisywanie...' : 'Zapisz wizytę'}
         </button>
       </form>

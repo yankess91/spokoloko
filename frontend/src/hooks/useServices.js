@@ -38,5 +38,13 @@ export default function useServices() {
     [load]
   );
 
-  return { services, isLoading, error, reload: load, addService };
+  const removeService = useCallback(
+    async (serviceId) => {
+      await servicesApi.delete(serviceId);
+      await load();
+    },
+    [load]
+  );
+
+  return { services, isLoading, error, reload: load, addService, removeService };
 }

@@ -533,6 +533,7 @@ p {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-width: 0;
 }
 
 .card-header {
@@ -548,6 +549,12 @@ p {
 
 .form {
   display: grid;
+  gap: 16px;
+}
+
+.datetime-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 16px;
 }
 
@@ -665,6 +672,18 @@ button:focus-visible {
   background: transparent;
   color: var(--color-muted);
   border: 1px solid var(--color-border);
+}
+
+.ghost.danger {
+  color: var(--color-danger);
+  border-color: rgba(196, 73, 59, 0.45);
+  background: rgba(196, 73, 59, 0.08);
+}
+
+.icon-button {
+  padding: 8px 12px;
+  min-height: 36px;
+  font-size: 13px;
 }
 
 .primary:hover,
@@ -786,6 +805,9 @@ button:focus-visible {
 .data-grid {
   display: grid;
   gap: 10px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .data-grid-row {
@@ -797,6 +819,7 @@ button:focus-visible {
   border-radius: 14px;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
+  min-width: 0;
 }
 
 .data-grid-row:not(.data-grid-header):hover {
@@ -818,6 +841,7 @@ button:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
 }
 
 .data-grid-title {
