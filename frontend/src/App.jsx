@@ -229,7 +229,7 @@ export default function App() {
                   borderRadius: 2,
                   marginBottom: 0.5,
                   paddingY: 1.4,
-                  paddingX: 2,
+                  paddingX: 2.5,
                   minHeight: 52,
                   '&.active': {
                     backgroundColor: 'var(--color-bg-accent)',
@@ -237,7 +237,7 @@ export default function App() {
                   },
                 }}
               >
-                <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
+                <ListItemIcon sx={{ minWidth: 32, paddingX: 0.5 }}>{item.icon}</ListItemIcon>
                 <ListItemText
                   primary={item.label}
                   primaryTypographyProps={{ fontSize: '1rem', fontWeight: 600 }}
