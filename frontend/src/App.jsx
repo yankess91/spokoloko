@@ -108,7 +108,7 @@ export default function App() {
             width: '100%',
           }}
         >
-          <Toolbar disableGutters sx={{ gap: 2, paddingY: 1, paddingX: 0 }}>
+          <Toolbar disableGutters sx={{ gap: 2, paddingY: 2, paddingX: 2 }}>
             <Stack
               direction="row"
               spacing={1.5}
@@ -190,7 +190,6 @@ export default function App() {
                   },
                 }}
               >
-                Wyloguj
               </Button>
             </Stack>
           </Toolbar>
@@ -266,7 +265,6 @@ export default function App() {
               },
             }}
           >
-            Wyloguj
           </Button>
         </Stack>
       </Drawer>

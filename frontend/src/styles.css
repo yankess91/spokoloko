@@ -776,7 +776,6 @@ button:focus-visible {
 
 @media (max-width: 900px) {
   .page {
-    padding: 20px 16px 48px;
   }
 
   .hero {
