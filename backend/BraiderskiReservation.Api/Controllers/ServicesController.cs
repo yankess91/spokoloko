@@ -36,4 +36,11 @@ public sealed class ServicesController : ControllerBase
         var service = await _serviceCatalog.CreateAsync(request, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = service.Id }, service);
     }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    {
+        var deleted = await _serviceCatalog.DeleteAsync(id, cancellationToken);
+        return deleted ? NoContent() : NotFound();
+    }
 }

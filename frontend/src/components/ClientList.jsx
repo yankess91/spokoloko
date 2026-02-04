@@ -26,7 +26,12 @@ export default function ClientList({ clients, isLoading, linkBase }) {
                   {client.email || 'Brak emaila'} · {client.phoneNumber || 'Brak telefonu'}
                 </span>
               </div>
-              <span className="muted">Produkty użyte: {client.usedProducts?.length ?? 0}</span>
+              <div className="list-item-info">
+                <span className={`status-pill ${client.isActive ? 'active' : 'inactive'}`}>
+                  {client.isActive ? 'Aktywna' : 'Nieaktywna'}
+                </span>
+                <span className="muted">Produkty użyte: {client.usedProducts?.length ?? 0}</span>
+              </div>
             </li>
           ))}
         </ul>

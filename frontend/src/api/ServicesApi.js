@@ -19,4 +19,8 @@ export default class ServicesApi {
   create(payload) {
     return this.client.post('/api/services', payload);
   }
+
+  delete(id) {
+    return this.client.delete(`/api/services/${id}`);
+  }
 }

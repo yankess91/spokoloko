@@ -56,6 +56,60 @@ body {
   padding: 0;
 }
 
+.site-footer {
+  margin-top: auto;
+  padding: var(--space-6) clamp(20px, 4vw, 48px);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.footer-content {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-content h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.footer-social {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  background: var(--color-bg-accent);
+  border-color: rgba(201, 162, 39, 0.35);
+  text-decoration: none;
+}
+
 .nav-user {
   display: flex;
   align-items: center;
@@ -587,6 +641,12 @@ button:focus-visible {
   border: 1px solid var(--color-border);
 }
 
+.danger {
+  background: #fdecea;
+  color: var(--color-danger);
+  border: 1px solid rgba(196, 73, 59, 0.35);
+}
+
 .ghost {
   background: transparent;
   color: var(--color-muted);
@@ -655,6 +715,47 @@ button:focus-visible {
   flex-wrap: wrap;
   color: var(--color-muted);
   font-size: 13px;
+}
+
+.list-item-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.status-pill.active {
+  background: rgba(29, 138, 90, 0.12);
+  color: var(--color-success);
+  border-color: rgba(29, 138, 90, 0.35);
+}
+
+.status-pill.inactive {
+  background: rgba(196, 73, 59, 0.12);
+  color: var(--color-danger);
+  border-color: rgba(196, 73, 59, 0.3);
+}
+
+.list-controls {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.filter-field {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-muted);
 }
 
 .stack {

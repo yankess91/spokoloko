@@ -71,6 +71,7 @@ export default function ClientDetailsPage() {
           <p>Email: {client.email || 'Brak emaila'}</p>
           <p>Telefon: {client.phoneNumber || 'Brak telefonu'}</p>
           <p>Uwagi: {client.notes || 'Brak uwag'}</p>
+          <p>Status: {client.isActive ? 'Aktywna klientka' : 'Nieaktywna klientka'}</p>
         </article>
         <article className="card">
           <h2>Ostatnio użyte produkty</h2>

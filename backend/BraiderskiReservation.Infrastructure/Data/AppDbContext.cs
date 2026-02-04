@@ -29,6 +29,7 @@ public sealed class AppDbContext : DbContext
             entity.Property(client => client.Email).HasColumnName("email");
             entity.Property(client => client.PhoneNumber).HasColumnName("phone_number");
             entity.Property(client => client.Notes).HasColumnName("notes");
+            entity.Property(client => client.IsActive).HasColumnName("is_active");
             entity.HasMany(client => client.UsedProducts)
                 .WithOne(usedProduct => usedProduct.ClientProfile)
                 .HasForeignKey(usedProduct => usedProduct.ClientId)

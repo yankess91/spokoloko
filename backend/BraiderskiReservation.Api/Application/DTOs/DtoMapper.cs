@@ -26,6 +26,7 @@ public static class DtoMapper
             client.Email,
             client.PhoneNumber,
             client.Notes,
+            client.IsActive,
             client.UsedProducts.Select(product => product.ToResponse()).ToList(),
             client.Appointments
                 .OrderByDescending(appointment => appointment.StartAt)

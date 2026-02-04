@@ -6,5 +6,6 @@ public sealed record ClientProfileResponse(
     string Email,
     string PhoneNumber,
     string Notes,
+    bool IsActive,
     List<UsedProductResponse> UsedProducts,
     List<ClientServiceHistoryResponse> ServiceHistory);

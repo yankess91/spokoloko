@@ -40,6 +40,11 @@ export default function DashboardPage() {
     [services]
   );
 
+  const activeClientCount = useMemo(
+    () => clients.filter((client) => client.isActive).length,
+    [clients]
+  );
+
   const upcomingAppointment = useMemo(() => {
     if (appointments.length === 0) {
       return null;
@@ -86,7 +91,7 @@ export default function DashboardPage() {
         <div className="grid metrics-grid">
           <article className="card metric-card">
             <span className="metric-label">Aktywne klientki</span>
-            <span className="metric-value">{clients.length}</span>
+            <span className="metric-value">{activeClientCount}</span>
             <p className="muted">Zaktualizuj dane, aby planować kolejne wizyty.</p>
           </article>
           <article className="card metric-card">

@@ -40,6 +40,18 @@ public sealed class ProductRepository : IProductRepository
     public async Task AddAsync(Product product, CancellationToken cancellationToken) =>
         await _context.Products.AddAsync(product, cancellationToken);
 
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var product = await _context.Products.FirstOrDefaultAsync(item => item.Id == id, cancellationToken);
+        if (product is null)
+        {
+            return false;
+        }
+
+        _context.Products.Remove(product);
+        return true;
+    }
+
     public Task SaveChangesAsync(CancellationToken cancellationToken) =>
         _context.SaveChangesAsync(cancellationToken);
 

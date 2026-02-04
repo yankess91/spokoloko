@@ -8,5 +8,6 @@ public interface IProductRepository
     Task<List<Product>> SearchAsync(string? searchTerm, CancellationToken cancellationToken);
     Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task AddAsync(Product product, CancellationToken cancellationToken);
+    Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken);
     Task SaveChangesAsync(CancellationToken cancellationToken);
 }

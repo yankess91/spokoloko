@@ -7,4 +7,5 @@ public interface IServiceCatalogService
     Task<List<ServiceItemResponse>> SearchAsync(string? searchTerm, CancellationToken cancellationToken);
     Task<ServiceItemResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task<ServiceItemResponse> CreateAsync(CreateServiceRequest request, CancellationToken cancellationToken);
+    Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken);
 }
