@@ -32,6 +32,7 @@ export default function AutocompleteField({
   loading = false,
   disabled = false,
   isOptionEqualToValue,
+  getOptionLabel = (option) => option?.label ?? '',
   hideLabel = false,
   containerClassName = 'form-field'
 }) {
@@ -47,6 +48,8 @@ export default function AutocompleteField({
         loading={loading}
         disabled={disabled}
         isOptionEqualToValue={isOptionEqualToValue}
+        getOptionLabel={getOptionLabel}
+        filterOptions={(items) => items}
         renderInput={(params) => (
           <TextField
             {...params}
