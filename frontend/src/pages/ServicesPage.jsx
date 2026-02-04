@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ServiceForm from '../components/ServiceForm';
 import ServiceList from '../components/ServiceList';
+import Modal from '../components/Modal';
 import useServices from '../hooks/useServices';
 import { useToast } from '../components/ToastProvider';
 
 export default function ServicesPage() {
   const { services, isLoading, error, addService } = useServices();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { showToast } = useToast();
 
   const sortedServices = useMemo(
@@ -30,6 +32,7 @@ export default function ServicesPage() {
     try {
       await addService(payload);
       showToast('Usługa została zapisana.');
+      setIsModalOpen(false);
     } catch (err) {
       showError(err.message ?? 'Nie udało się zapisać usługi.');
     } finally {
@@ -44,15 +47,28 @@ export default function ServicesPage() {
         <p className="muted">Lista usług oferowanych w salonie.</p>
       </header>
 
-      <section className="grid">
-        <ServiceForm
-          onSubmit={handleSubmit}
-          isSubmitting={isSubmitting}
-        />
-        <div className="stack">
+      <section className="stack">
+        <article className="card">
+          <header className="card-header">
+            <div>
+              <h2>Lista usług</h2>
+              <p className="muted">Zarządzaj ofertą i aktualizuj szczegóły zabiegów.</p>
+            </div>
+          </header>
+          <div className="grid-actions">
+            <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
+              Nowa usługa
+            </button>
+          </div>
           <ServiceList services={sortedServices} isLoading={isLoading} linkBase="/services" />
-        </div>
+        </article>
       </section>
+
+      {isModalOpen ? (
+        <Modal title="Nowa usługa" onClose={() => setIsModalOpen(false)}>
+          <ServiceForm onSubmit={handleSubmit} isSubmitting={isSubmitting} showTitle={false} variant="plain" />
+        </Modal>
+      ) : null}
     </div>
   );
 }

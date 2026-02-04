@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import AppointmentForm from '../components/AppointmentForm';
 import AppointmentList from '../components/AppointmentList';
+import Modal from '../components/Modal';
 import useAppointments from '../hooks/useAppointments';
 import useClients from '../hooks/useClients';
 import useServices from '../hooks/useServices';
@@ -11,6 +12,7 @@ export default function AppointmentsPage() {
   const { clients, isLoading: clientsLoading } = useClients();
   const { services, isLoading: servicesLoading } = useServices();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { showToast } = useToast();
 
   const clientsById = useMemo(
@@ -39,6 +41,7 @@ export default function AppointmentsPage() {
     try {
       await addAppointment(payload);
       showToast('Wizyta została zapisana.');
+      setIsModalOpen(false);
     } catch (err) {
       showError(err.message ?? 'Nie udało się zapisać wizyty.');
     } finally {
@@ -53,20 +56,38 @@ export default function AppointmentsPage() {
         <p className="muted">Planowanie i podgląd zaplanowanych spotkań.</p>
       </header>
 
-      <section className="grid">
-        <AppointmentForm
-          onSubmit={handleSubmit}
-          isSubmitting={isSubmitting || clientsLoading || servicesLoading}
-        />
-        <div className="stack">
+      <section className="stack">
+        <article className="card">
+          <header className="card-header">
+            <div>
+              <h2>Lista wizyt</h2>
+              <p className="muted">Planowanie i kontrola nad zaplanowanymi spotkaniami.</p>
+            </div>
+          </header>
+          <div className="grid-actions">
+            <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
+              Nowa wizyta
+            </button>
+          </div>
           <AppointmentList
             appointments={appointments}
             clientsById={clientsById}
             servicesById={servicesById}
             isLoading={isLoading}
           />
-        </div>
+        </article>
       </section>
+
+      {isModalOpen ? (
+        <Modal title="Nowa wizyta" onClose={() => setIsModalOpen(false)}>
+          <AppointmentForm
+            onSubmit={handleSubmit}
+            isSubmitting={isSubmitting || clientsLoading || servicesLoading}
+            showTitle={false}
+            variant="plain"
+          />
+        </Modal>
+      ) : null}
     </div>
   );
 }

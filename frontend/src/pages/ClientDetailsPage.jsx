@@ -127,6 +127,8 @@ export default function ClientDetailsPage() {
             isSubmitting={isSubmitting}
             defaultClient={defaultClient}
             clientLocked
+            showTitle={false}
+            variant="plain"
           />
         </Modal>
       ) : null}

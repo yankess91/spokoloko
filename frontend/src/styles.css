@@ -841,6 +841,18 @@ button:focus-visible {
   align-items: center;
 }
 
+.data-grid-products .data-grid-row {
+  grid-template-columns: minmax(220px, 2fr) 180px 160px minmax(160px, 1fr);
+}
+
+.data-grid-services .data-grid-row {
+  grid-template-columns: minmax(220px, 2fr) 180px 140px minmax(160px, 1fr);
+}
+
+.data-grid-appointments .data-grid-row {
+  grid-template-columns: minmax(220px, 2fr) 170px 180px minmax(160px, 1fr);
+}
+
 .data-grid-row .data-grid-cell:nth-child(2),
 .data-grid-row .data-grid-cell:nth-child(3) {
   align-items: flex-start;

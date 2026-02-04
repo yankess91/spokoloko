@@ -13,7 +13,9 @@ export default function AppointmentForm({
   onSubmit,
   isSubmitting,
   defaultClient,
-  clientLocked = false
+  clientLocked = false,
+  showTitle = true,
+  variant = 'card'
 }) {
   const { showToast } = useToast();
   const [formState, setFormState] = useState({
@@ -132,9 +134,9 @@ export default function AppointmentForm({
     productSearch.setInputValue('');
   };
 
-  return (
-    <article className="card">
-      <h2>Zaplanuj wizytę</h2>
+  const formContent = (
+    <>
+      {showTitle ? <h2>Zaplanuj wizytę</h2> : null}
       <form className="form" onSubmit={handleSubmit}>
         {clientLocked ? (
           <label>
@@ -244,6 +246,12 @@ export default function AppointmentForm({
           {isSubmitting ? 'Zapisywanie...' : 'Zapisz wizytę'}
         </button>
       </form>
-    </article>
+    </>
   );
+
+  if (variant === 'card') {
+    return <article className="card">{formContent}</article>;
+  }
+
+  return <div>{formContent}</div>;
 }

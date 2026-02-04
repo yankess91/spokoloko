@@ -125,8 +125,18 @@ export default function DashboardPage() {
         </div>
         <div className="grid">
           <ClientList clients={clients} isLoading={isLoading} linkBase="/clients" />
-          <ServiceList services={services} isLoading={isLoading} linkBase="/services" />
-          <ProductList products={products} isLoading={isLoading} linkBase="/products" />
+          <article className="card">
+            <header className="card-header">
+              <h3>Usługi</h3>
+            </header>
+            <ServiceList services={services} isLoading={isLoading} linkBase="/services" />
+          </article>
+          <article className="card">
+            <header className="card-header">
+              <h3>Produkty</h3>
+            </header>
+            <ProductList products={products} isLoading={isLoading} linkBase="/products" />
+          </article>
         </div>
       </section>
 
