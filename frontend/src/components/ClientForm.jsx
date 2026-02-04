@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function ClientForm({ onSubmit, isSubmitting }) {
+export default function ClientForm({ onSubmit, isSubmitting, showTitle = true, variant = 'card' }) {
   const [formState, setFormState] = useState({
     fullName: '',
     email: '',
@@ -25,9 +25,9 @@ export default function ClientForm({ onSubmit, isSubmitting }) {
     setFormState({ fullName: '', email: '', phoneNumber: '', notes: '', isActive: true });
   };
 
-  return (
-    <article className="card">
-      <h2>Dodaj użytkowniczkę</h2>
+  const formContent = (
+    <>
+      {showTitle ? <h2>Dodaj użytkowniczkę</h2> : null}
       <form className="form" onSubmit={handleSubmit}>
         <label>
           Imię i nazwisko
@@ -79,6 +79,12 @@ export default function ClientForm({ onSubmit, isSubmitting }) {
           {isSubmitting ? 'Zapisywanie...' : 'Zapisz profil'}
         </button>
       </form>
-    </article>
+    </>
   );
+
+  if (variant === 'card') {
+    return <article className="card">{formContent}</article>;
+  }
+
+  return <div>{formContent}</div>;
 }

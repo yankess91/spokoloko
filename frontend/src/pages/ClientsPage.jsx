@@ -1,13 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ClientForm from '../components/ClientForm';
-import ClientList from '../components/ClientList';
+import ClientGrid from '../components/ClientGrid';
+import Modal from '../components/Modal';
 import useClients from '../hooks/useClients';
 import { useToast } from '../components/ToastProvider';
 
 export default function ClientsPage() {
-  const { clients, isLoading, error, addClient } = useClients();
+  const { clients, isLoading, error, addClient, updateStatus } = useClients();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [updatingClientId, setUpdatingClientId] = useState(null);
   const { showToast } = useToast();
 
   const sortedClients = useMemo(
@@ -16,14 +20,36 @@ export default function ClientsPage() {
   );
 
   const filteredClients = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
     if (statusFilter === 'active') {
-      return sortedClients.filter((client) => client.isActive);
+      return sortedClients.filter(
+        (client) =>
+          client.isActive &&
+          (!normalizedSearch ||
+            [client.fullName, client.email, client.phoneNumber]
+              .filter(Boolean)
+              .some((value) => value.toLowerCase().includes(normalizedSearch)))
+      );
     }
     if (statusFilter === 'inactive') {
-      return sortedClients.filter((client) => !client.isActive);
+      return sortedClients.filter(
+        (client) =>
+          !client.isActive &&
+          (!normalizedSearch ||
+            [client.fullName, client.email, client.phoneNumber]
+              .filter(Boolean)
+              .some((value) => value.toLowerCase().includes(normalizedSearch)))
+      );
     }
-    return sortedClients;
-  }, [sortedClients, statusFilter]);
+    if (!normalizedSearch) {
+      return sortedClients;
+    }
+    return sortedClients.filter((client) =>
+      [client.fullName, client.email, client.phoneNumber]
+        .filter(Boolean)
+        .some((value) => value.toLowerCase().includes(normalizedSearch))
+    );
+  }, [sortedClients, statusFilter, searchTerm]);
 
   const showError = useCallback(
     (message) => showToast(message, { severity: 'error' }),
@@ -41,10 +67,25 @@ export default function ClientsPage() {
     try {
       await addClient(payload);
       showToast('Profil klientki został zapisany.');
+      setIsModalOpen(false);
     } catch (err) {
       showError(err.message ?? 'Nie udało się zapisać profilu.');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleStatusToggle = async (client) => {
+    setUpdatingClientId(client.id);
+    try {
+      await updateStatus(client.id, !client.isActive);
+      showToast(
+        client.isActive ? 'Klientka została dezaktywowana.' : 'Klientka została aktywowana.'
+      );
+    } catch (err) {
+      showError(err.message ?? 'Nie udało się zmienić statusu.');
+    } finally {
+      setUpdatingClientId(null);
     }
   };
 
@@ -57,12 +98,29 @@ export default function ClientsPage() {
         </p>
       </header>
 
-      <section className="grid">
-        <ClientForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
-        <div className="stack">
-          <div className="list-controls">
+      <section className="stack">
+        <article className="card">
+          <header className="card-header">
+            <div>
+              <h2>Lista klientek</h2>
+              <p className="muted">Przeglądaj dane oraz zarządzaj statusem profilu.</p>
+            </div>
+            <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
+              Nowa klientka
+            </button>
+          </header>
+          <div className="list-controls grid-controls">
             <label className="filter-field">
-              Filtr statusu
+              Filtruj
+              <input
+                type="search"
+                placeholder="Wpisz imię, email lub telefon"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+              />
+            </label>
+            <label className="filter-field">
+              Status
               <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
                 <option value="all">Wszystkie klientki</option>
                 <option value="active">Aktywne klientki</option>
@@ -70,9 +128,21 @@ export default function ClientsPage() {
               </select>
             </label>
           </div>
-          <ClientList clients={filteredClients} isLoading={isLoading} linkBase="/clients" />
-        </div>
+          <ClientGrid
+            clients={filteredClients}
+            isLoading={isLoading}
+            linkBase="/clients"
+            onToggleStatus={handleStatusToggle}
+            updatingClientId={updatingClientId}
+          />
+        </article>
       </section>
+
+      {isModalOpen ? (
+        <Modal title="Nowa klientka" onClose={() => setIsModalOpen(false)}>
+          <ClientForm onSubmit={handleSubmit} isSubmitting={isSubmitting} showTitle={false} variant="plain" />
+        </Modal>
+      ) : null}
     </div>
   );
 }

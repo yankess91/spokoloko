@@ -19,4 +19,8 @@ export default class ClientsApi {
   create(payload) {
     return this.client.post('/api/clients', payload);
   }
+
+  updateStatus(id, payload) {
+    return this.client.patch(`/api/clients/${id}/status`, payload);
+  }
 }

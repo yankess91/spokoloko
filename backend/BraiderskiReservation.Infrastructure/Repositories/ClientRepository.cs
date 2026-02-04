@@ -38,6 +38,16 @@ public sealed class ClientRepository : IClientRepository
         BuildClientQuery()
             .FirstOrDefaultAsync(client => client.Id == id, cancellationToken);
 
+    public Task<ClientProfile?> GetByIdForUpdateAsync(Guid id, CancellationToken cancellationToken) =>
+        _context.Clients
+            .Include(client => client.UsedProducts)
+            .Include(client => client.Appointments)
+            .ThenInclude(appointment => appointment.ServiceItem)
+            .Include(client => client.Appointments)
+            .ThenInclude(appointment => appointment.AppointmentProducts)
+            .ThenInclude(appointmentProduct => appointmentProduct.Product)
+            .FirstOrDefaultAsync(client => client.Id == id, cancellationToken);
+
     public async Task AddAsync(ClientProfile client, CancellationToken cancellationToken) =>
         await _context.Clients.AddAsync(client, cancellationToken);
 
