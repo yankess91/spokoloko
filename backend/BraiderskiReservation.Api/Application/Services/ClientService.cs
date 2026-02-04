@@ -39,7 +39,8 @@ public sealed class ClientService : IClientService
             FullName = request.FullName,
             Email = request.Email,
             PhoneNumber = request.PhoneNumber,
-            Notes = request.Notes ?? string.Empty
+            Notes = request.Notes ?? string.Empty,
+            IsActive = request.IsActive
         };
 
         await _clientRepository.AddAsync(client, cancellationToken);

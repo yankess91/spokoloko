@@ -5,7 +5,8 @@ export default function ClientForm({ onSubmit, isSubmitting }) {
     fullName: '',
     email: '',
     phoneNumber: '',
-    notes: ''
+    notes: '',
+    isActive: true
   });
 
   const handleChange = (event) => {
@@ -13,10 +14,15 @@ export default function ClientForm({ onSubmit, isSubmitting }) {
     setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleStatusChange = (event) => {
+    const { value } = event.target;
+    setFormState((prev) => ({ ...prev, isActive: value === 'active' }));
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     await onSubmit?.(formState);
-    setFormState({ fullName: '', email: '', phoneNumber: '', notes: '' });
+    setFormState({ fullName: '', email: '', phoneNumber: '', notes: '', isActive: true });
   };
 
   return (
@@ -61,6 +67,13 @@ export default function ClientForm({ onSubmit, isSubmitting }) {
             value={formState.notes}
             onChange={handleChange}
           />
+        </label>
+        <label>
+          Status klientki
+          <select name="isActive" value={formState.isActive ? 'active' : 'inactive'} onChange={handleStatusChange}>
+            <option value="active">Aktywna klientka</option>
+            <option value="inactive">Nieaktywna klientka</option>
+          </select>
         </label>
         <button type="submit" className="primary" disabled={isSubmitting}>
           {isSubmitting ? 'Zapisywanie...' : 'Zapisz profil'}

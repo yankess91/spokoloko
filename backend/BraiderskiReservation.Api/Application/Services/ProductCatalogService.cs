@@ -46,4 +46,16 @@ public sealed class ProductCatalogService : IProductCatalogService
         await _productRepository.SaveChangesAsync(cancellationToken);
         return product.ToResponse();
     }
+
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var deleted = await _productRepository.DeleteAsync(id, cancellationToken);
+        if (!deleted)
+        {
+            return false;
+        }
+
+        await _productRepository.SaveChangesAsync(cancellationToken);
+        return true;
+    }
 }

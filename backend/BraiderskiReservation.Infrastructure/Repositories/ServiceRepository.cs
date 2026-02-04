@@ -40,6 +40,18 @@ public sealed class ServiceRepository : IServiceRepository
     public async Task AddAsync(ServiceItem service, CancellationToken cancellationToken) =>
         await _context.Services.AddAsync(service, cancellationToken);
 
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var service = await _context.Services.FirstOrDefaultAsync(item => item.Id == id, cancellationToken);
+        if (service is null)
+        {
+            return false;
+        }
+
+        _context.Services.Remove(service);
+        return true;
+    }
+
     public Task SaveChangesAsync(CancellationToken cancellationToken) =>
         _context.SaveChangesAsync(cancellationToken);
 

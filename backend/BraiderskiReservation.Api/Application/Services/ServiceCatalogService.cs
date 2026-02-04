@@ -53,4 +53,16 @@ public sealed class ServiceCatalogService : IServiceCatalogService
         await _serviceRepository.SaveChangesAsync(cancellationToken);
         return service.ToResponse();
     }
+
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var deleted = await _serviceRepository.DeleteAsync(id, cancellationToken);
+        if (!deleted)
+        {
+            return false;
+        }
+
+        await _serviceRepository.SaveChangesAsync(cancellationToken);
+        return true;
+    }
 }
