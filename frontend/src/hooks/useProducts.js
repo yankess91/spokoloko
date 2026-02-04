@@ -32,5 +32,13 @@ export default function useProducts() {
     [load]
   );
 
-  return { products, isLoading, error, reload: load, addProduct };
+  const removeProduct = useCallback(
+    async (productId) => {
+      await productsApi.delete(productId);
+      await load();
+    },
+    [load]
+  );
+
+  return { products, isLoading, error, reload: load, addProduct, removeProduct };
 }

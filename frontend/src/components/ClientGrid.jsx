@@ -1,11 +1,16 @@
 import { Link } from 'react-router-dom';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import ToggleOffIcon from '@mui/icons-material/ToggleOff';
+import ToggleOnIcon from '@mui/icons-material/ToggleOn';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
 export default function ClientGrid({
   clients,
   isLoading,
   linkBase,
   onToggleStatus,
-  updatingClientId
+  updatingClientId,
+  onDelete
 }) {
   if (isLoading) {
     return <p className="muted">Ładowanie klientek...</p>;
@@ -14,6 +19,8 @@ export default function ClientGrid({
   if (clients.length === 0) {
     return <p className="muted">Brak klientek do wyświetlenia.</p>;
   }
+
+  const isDeleteDisabled = !onDelete;
 
   return (
     <div className="data-grid" role="table" aria-label="Lista klientek">
@@ -52,6 +59,7 @@ export default function ClientGrid({
             <div className="data-grid-cell data-grid-actions" role="cell">
               {linkBase ? (
                 <Link className="ghost" to={`${linkBase}/${client.id}`}>
+                  <VisibilityOutlinedIcon fontSize="small" />
                   Szczegóły
                 </Link>
               ) : null}
@@ -61,11 +69,26 @@ export default function ClientGrid({
                 onClick={() => onToggleStatus?.(client)}
                 disabled={isUpdating}
               >
+                {client.isActive ? (
+                  <ToggleOffIcon fontSize="small" />
+                ) : (
+                  <ToggleOnIcon fontSize="small" />
+                )}
                 {isUpdating
                   ? 'Zapisywanie...'
                   : client.isActive
                   ? 'Dezaktywuj'
                   : 'Aktywuj'}
+              </button>
+              <button
+                type="button"
+                className="ghost danger icon-button"
+                onClick={() => onDelete?.(client)}
+                disabled={isDeleteDisabled}
+                title={isDeleteDisabled ? 'Usuwanie niedostępne' : 'Usuń'}
+              >
+                <DeleteOutlineIcon fontSize="small" />
+                Usuń
               </button>
             </div>
           </div>

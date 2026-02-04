@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { formatCurrency } from '../utils/formatters';
 
-export default function ServiceList({ services, isLoading, linkBase }) {
+export default function ServiceList({ services, isLoading, linkBase, onDelete }) {
   if (isLoading) {
     return <p className="muted">Ładowanie usług...</p>;
   }
@@ -9,6 +11,8 @@ export default function ServiceList({ services, isLoading, linkBase }) {
   if (services.length === 0) {
     return <p className="muted">Brak usług do wyświetlenia.</p>;
   }
+
+  const isDeleteDisabled = !onDelete;
 
   return (
     <div className="data-grid data-grid-services" role="table" aria-label="Lista usług">
@@ -45,9 +49,20 @@ export default function ServiceList({ services, isLoading, linkBase }) {
             <div className="data-grid-cell data-grid-actions" role="cell">
               {linkBase ? (
                 <Link className="ghost" to={`${linkBase}/${service.id}`}>
+                  <VisibilityOutlinedIcon fontSize="small" />
                   Szczegóły
                 </Link>
               ) : null}
+              <button
+                type="button"
+                className="ghost danger icon-button"
+                onClick={() => onDelete?.(service)}
+                disabled={isDeleteDisabled}
+                title={isDeleteDisabled ? 'Usuwanie dostępne tylko w widoku szczegółowym' : 'Usuń'}
+              >
+                <DeleteOutlineIcon fontSize="small" />
+                Usuń
+              </button>
             </div>
           </div>
         );

@@ -6,9 +6,10 @@ import useAppointments from '../hooks/useAppointments';
 import useClients from '../hooks/useClients';
 import useServices from '../hooks/useServices';
 import { useToast } from '../components/ToastProvider';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function AppointmentsPage() {
-  const { appointments, isLoading, error, addAppointment } = useAppointments();
+  const { appointments, isLoading, error, addAppointment, removeAppointment } = useAppointments();
   const { clients, isLoading: clientsLoading } = useClients();
   const { services, isLoading: servicesLoading } = useServices();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -49,6 +50,14 @@ export default function AppointmentsPage() {
     }
   };
 
+  const handleDelete = (appointment) => {
+    if (!window.confirm('Czy na pewno chcesz usunąć tę wizytę?')) {
+      return;
+    }
+    removeAppointment(appointment.id);
+    showToast('Wizyta została usunięta z listy.');
+  };
+
   return (
     <div className="page-content">
       <header className="section-header">
@@ -66,6 +75,7 @@ export default function AppointmentsPage() {
           </header>
           <div className="grid-actions">
             <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
+              <AddIcon fontSize="small" />
               Nowa wizyta
             </button>
           </div>
@@ -74,6 +84,7 @@ export default function AppointmentsPage() {
             clientsById={clientsById}
             servicesById={servicesById}
             isLoading={isLoading}
+            onDelete={handleDelete}
           />
         </article>
       </section>

@@ -4,9 +4,10 @@ import ServiceList from '../components/ServiceList';
 import Modal from '../components/Modal';
 import useServices from '../hooks/useServices';
 import { useToast } from '../components/ToastProvider';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function ServicesPage() {
-  const { services, isLoading, error, addService } = useServices();
+  const { services, isLoading, error, addService, removeService } = useServices();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { showToast } = useToast();
@@ -40,6 +41,18 @@ export default function ServicesPage() {
     }
   };
 
+  const handleDelete = async (service) => {
+    if (!window.confirm(`Czy na pewno chcesz usunąć usługę "${service.name}"?`)) {
+      return;
+    }
+    try {
+      await removeService(service.id);
+      showToast('Usługa została usunięta.');
+    } catch (err) {
+      showError(err.message ?? 'Nie udało się usunąć usługi.');
+    }
+  };
+
   return (
     <div className="page-content">
       <header className="section-header">
@@ -57,10 +70,16 @@ export default function ServicesPage() {
           </header>
           <div className="grid-actions">
             <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
+              <AddIcon fontSize="small" />
               Nowa usługa
             </button>
           </div>
-          <ServiceList services={sortedServices} isLoading={isLoading} linkBase="/services" />
+          <ServiceList
+            services={sortedServices}
+            isLoading={isLoading}
+            linkBase="/services"
+            onDelete={handleDelete}
+          />
         </article>
       </section>
 
