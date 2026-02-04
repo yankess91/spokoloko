@@ -8,13 +8,18 @@ export default function useAutocompleteSearch({ searchFn, debounceMs = DEFAULT_D
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const latestRequestRef = useRef(0);
+  const searchFnRef = useRef(searchFn);
+
+  useEffect(() => {
+    searchFnRef.current = searchFn;
+  }, [searchFn]);
 
   const load = useCallback(
     async (query) => {
       const requestId = ++latestRequestRef.current;
       setIsLoading(true);
       try {
-        const data = await searchFn(query);
+        const data = await searchFnRef.current(query);
         if (latestRequestRef.current !== requestId) {
           return;
         }
@@ -32,11 +37,18 @@ export default function useAutocompleteSearch({ searchFn, debounceMs = DEFAULT_D
         }
       }
     },
-    [searchFn]
+    []
   );
 
   useEffect(() => {
     const trimmed = inputValue.trim();
+    if (!trimmed) {
+      latestRequestRef.current += 1;
+      setOptions([]);
+      setError('');
+      setIsLoading(false);
+      return;
+    }
     const timeoutId = setTimeout(() => {
       load(trimmed);
     }, debounceMs);
