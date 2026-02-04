@@ -21,7 +21,10 @@ public sealed class ClientRepository : IClientRepository
     {
         if (string.IsNullOrWhiteSpace(searchTerm))
         {
-            return GetAllAsync(cancellationToken);
+            return BuildClientQuery()
+                .OrderBy(client => client.FullName)
+                .Take(10)
+                .ToListAsync(cancellationToken);
         }
 
         var normalized = searchTerm.Trim().ToLowerInvariant();

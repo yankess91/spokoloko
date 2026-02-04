@@ -29,7 +29,8 @@ export default function AppointmentForm({
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const clientSearch = useAutocompleteSearch({
-    searchFn: (query) => clientsApi.search(query)
+    searchFn: (query) => clientsApi.search(query),
+    loadOnEmpty: true
   });
   const serviceSearch = useAutocompleteSearch({
     searchFn: (query) => servicesApi.search(query)

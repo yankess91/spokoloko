@@ -2,7 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 const DEFAULT_DEBOUNCE_MS = 250;
 
-export default function useAutocompleteSearch({ searchFn, debounceMs = DEFAULT_DEBOUNCE_MS }) {
+export default function useAutocompleteSearch({
+  searchFn,
+  debounceMs = DEFAULT_DEBOUNCE_MS,
+  loadOnEmpty = false
+}) {
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +46,7 @@ export default function useAutocompleteSearch({ searchFn, debounceMs = DEFAULT_D
 
   useEffect(() => {
     const trimmed = inputValue.trim();
-    if (!trimmed) {
+    if (!trimmed && !loadOnEmpty) {
       latestRequestRef.current += 1;
       setOptions([]);
       setError('');
@@ -54,7 +58,7 @@ export default function useAutocompleteSearch({ searchFn, debounceMs = DEFAULT_D
     }, debounceMs);
 
     return () => clearTimeout(timeoutId);
-  }, [inputValue, debounceMs, load]);
+  }, [inputValue, debounceMs, load, loadOnEmpty]);
 
   return {
     options,
