@@ -28,7 +28,6 @@ import ServicesPage from './pages/ServicesPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuth } from './context/AuthContext';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
 import EventAvailableRoundedIcon from '@mui/icons-material/EventAvailableRounded';
 import Inventory2RoundedIcon from '@mui/icons-material/Inventory2Rounded';
@@ -66,7 +65,6 @@ export default function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navItems = useMemo(
     () => [
-      { label: 'Start', to: '/', icon: <HomeRoundedIcon fontSize="small" /> },
       {
         label: 'Użytkowniczki',
         to: '/clients',
@@ -103,31 +101,35 @@ export default function App() {
           elevation={0}
           sx={{
             backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            borderRadius: '20px',
+            borderRadius: 0,
             boxShadow: 'var(--shadow-sm)',
             border: '1px solid var(--color-border)',
-            paddingX: { xs: 1, md: 2 },
             backdropFilter: 'blur(16px)',
             width: '100%',
-            maxWidth: 'var(--max-width)',
-            alignSelf: 'center',
           }}
         >
-          <Toolbar disableGutters sx={{ gap: 2, paddingY: 1, paddingX: 2 }}>
-            <Stack direction="row" spacing={1.5} alignItems="center">
-              <IconButton
-                onClick={handleDrawerToggle(true)}
-                sx={{
-                  display: { xs: 'inline-flex', md: 'none' },
-                  backgroundColor: 'var(--color-surface-muted)',
-                  borderRadius: '10px',
-                  border: '1px solid var(--color-border)',
-                }}
-                size="small"
-                aria-label="Otwórz menu nawigacji"
-              >
-                <MenuRoundedIcon />
-              </IconButton>
+          <Toolbar disableGutters sx={{ gap: 2, paddingY: 1, paddingX: 0 }}>
+            <IconButton
+              onClick={handleDrawerToggle(true)}
+              sx={{
+                display: { xs: 'inline-flex', md: 'none' },
+                backgroundColor: 'var(--color-surface-muted)',
+                borderRadius: '10px',
+                border: '1px solid var(--color-border)',
+              }}
+              size="small"
+              aria-label="Otwórz menu nawigacji"
+            >
+              <MenuRoundedIcon />
+            </IconButton>
+            <Stack
+              direction="row"
+              spacing={1.5}
+              alignItems="center"
+              component={NavLink}
+              to="/"
+              className="topbar-logo"
+            >
               <Avatar sx={{ bgcolor: 'var(--color-accent)', width: 38, height: 38 }}>B</Avatar>
               <Box>
                 <Typography variant="subtitle1" className="topbar-title">
