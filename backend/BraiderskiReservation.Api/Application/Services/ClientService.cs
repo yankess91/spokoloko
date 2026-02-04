@@ -48,6 +48,22 @@ public sealed class ClientService : IClientService
         return client.ToResponse();
     }
 
+    public async Task<ClientProfileResponse?> UpdateStatusAsync(
+        Guid id,
+        UpdateClientStatusRequest request,
+        CancellationToken cancellationToken)
+    {
+        var client = await _clientRepository.GetByIdForUpdateAsync(id, cancellationToken);
+        if (client is null)
+        {
+            return null;
+        }
+
+        client.IsActive = request.IsActive;
+        await _clientRepository.SaveChangesAsync(cancellationToken);
+        return client.ToResponse();
+    }
+
     public async Task<bool> AddUsedProductAsync(Guid clientId, AddUsedProductRequest request, CancellationToken cancellationToken)
     {
         var client = await _clientRepository.GetByIdAsync(clientId, cancellationToken);

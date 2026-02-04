@@ -41,4 +41,11 @@ export default class ApiClient {
   delete(path) {
     return this.request(path, { method: 'DELETE' });
   }
+
+  patch(path, payload) {
+    return this.request(path, {
+      method: 'PATCH',
+      body: JSON.stringify(payload)
+    });
+  }
 }

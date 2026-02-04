@@ -32,5 +32,14 @@ export default function useClients() {
     [load]
   );
 
-  return { clients, isLoading, error, reload: load, addClient };
+  const updateStatus = useCallback(
+    async (clientId, isActive) => {
+      const updated = await clientsApi.updateStatus(clientId, { isActive });
+      await load();
+      return updated;
+    },
+    [load]
+  );
+
+  return { clients, isLoading, error, reload: load, addClient, updateStatus };
 }
