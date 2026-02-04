@@ -153,7 +153,7 @@ export default function ServiceForm({ onSubmit, isSubmitting, showTitle = true, 
               onInputChange={(_, newValue) => productSearch.setInputValue(newValue)}
               loading={productSearch.isLoading}
               disabled={isSubmitting}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
+              isOptionEqualToValue={(option, value) => option.id === value?.id}
               hideLabel
               containerClassName="autocomplete-inline"
             />

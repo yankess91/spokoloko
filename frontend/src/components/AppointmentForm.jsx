@@ -159,7 +159,7 @@ export default function AppointmentForm({
             onInputChange={(_, newValue) => clientSearch.setInputValue(newValue)}
             loading={clientSearch.isLoading}
             disabled={isSubmitting}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
+            isOptionEqualToValue={(option, value) => option.id === value?.id}
           />
         )}
         <AutocompleteField
@@ -172,7 +172,7 @@ export default function AppointmentForm({
           onInputChange={(_, newValue) => serviceSearch.setInputValue(newValue)}
           loading={serviceSearch.isLoading}
           disabled={isSubmitting}
-          isOptionEqualToValue={(option, value) => option.id === value.id}
+          isOptionEqualToValue={(option, value) => option.id === value?.id}
         />
         <label>
           Start wizyty
@@ -217,7 +217,7 @@ export default function AppointmentForm({
               onInputChange={(_, newValue) => productSearch.setInputValue(newValue)}
               loading={productSearch.isLoading}
               disabled={isSubmitting}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
+              isOptionEqualToValue={(option, value) => option.id === value?.id}
               hideLabel
               containerClassName="autocomplete-inline"
             />
