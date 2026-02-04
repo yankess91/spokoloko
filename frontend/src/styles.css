@@ -1,19 +1,19 @@
 :root {
   font-family: 'Inter', system-ui, sans-serif;
-  color: #0f172a;
-  background: #eef1f6;
-  --bg: #eef1f6;
+  color: #111111;
+  background: #f7f6f2;
+  --bg: #f7f6f2;
   --surface: #ffffff;
-  --surface-muted: #f6f8fb;
-  --text: #0f172a;
-  --muted: #5b6472;
-  --border: #dce2ec;
-  --accent: #2d6cdf;
-  --accent-contrast: #ffffff;
-  --accent-strong: #1f4fb7;
-  --focus: rgba(45, 108, 223, 0.25);
+  --surface-muted: #f4f2ed;
+  --text: #111111;
+  --muted: #4a4a4a;
+  --border: #d8d0c2;
+  --accent: #c9a227;
+  --accent-contrast: #111111;
+  --accent-strong: #a37b12;
+  --focus: rgba(201, 162, 39, 0.28);
   --color-bg: var(--bg);
-  --color-bg-accent: #e6ebf4;
+  --color-bg-accent: #efe9dc;
   --color-surface: var(--surface);
   --color-surface-muted: var(--surface-muted);
   --color-border: var(--border);
@@ -82,7 +82,7 @@ a:not(.primary):not(.secondary):not(.ghost):not(.list-title) {
 
 a:not(.primary):not(.secondary):not(.ghost):not(.list-title):hover {
   color: var(--color-accent-strong);
-  background: rgba(45, 108, 223, 0.08);
+  background: rgba(201, 162, 39, 0.12);
   text-decoration: underline;
 }
 
@@ -114,7 +114,7 @@ a:focus-visible {
 }
 
 .auth-brand {
-  background: linear-gradient(140deg, #1f1f1f, #5b5448 60%, #c9a227);
+  background: linear-gradient(140deg, #111111, #3b352a 55%, #c9a227);
   color: #ffffff;
   border-radius: 28px;
   padding: 48px;
@@ -296,8 +296,8 @@ p {
   gap: var(--space-6);
   padding: clamp(32px, 4vw, 56px);
   border-radius: 32px;
-  background: linear-gradient(130deg, #ffffff 0%, #f2f5fb 55%, #e9effa 100%);
-  border: 1px solid rgba(45, 108, 223, 0.08);
+  background: linear-gradient(130deg, #ffffff 0%, #f6f3eb 55%, #efe7d6 100%);
+  border: 1px solid rgba(201, 162, 39, 0.18);
   min-height: min(72vh, 680px);
   overflow: hidden;
 }
@@ -306,7 +306,7 @@ p {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 20% 15%, rgba(45, 108, 223, 0.12), transparent 55%);
+  background: radial-gradient(circle at 20% 15%, rgba(201, 162, 39, 0.18), transparent 55%);
   pointer-events: none;
 }
 
@@ -582,9 +582,9 @@ button:focus-visible {
 }
 
 .list li:hover {
-  background: #f9fbff;
-  border-color: rgba(45, 108, 223, 0.25);
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+  background: #f7f3ea;
+  border-color: rgba(201, 162, 39, 0.3);
+  box-shadow: 0 8px 20px rgba(17, 17, 17, 0.12);
 }
 
 .list.stacked li {
@@ -690,8 +690,8 @@ button:focus-visible {
   align-self: flex-start;
   padding: 4px 8px;
   border-radius: 8px;
-  background: #e6efff;
-  border: 1px solid rgba(45, 108, 223, 0.2);
+  background: #f6edcf;
+  border: 1px solid rgba(201, 162, 39, 0.35);
   font-weight: 600;
   color: var(--color-accent-strong);
 }
