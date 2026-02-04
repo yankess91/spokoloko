@@ -7,7 +7,7 @@ import { useToast } from './ToastProvider';
 const buildProductLabel = (product) =>
   product.brand ? `${product.name} (${product.brand})` : product.name;
 
-export default function ServiceForm({ onSubmit, isSubmitting }) {
+export default function ServiceForm({ onSubmit, isSubmitting, showTitle = true, variant = 'card' }) {
   const { showToast } = useToast();
   const [formState, setFormState] = useState({
     name: '',
@@ -91,9 +91,9 @@ export default function ServiceForm({ onSubmit, isSubmitting }) {
     productSearch.setInputValue('');
   };
 
-  return (
-    <article className="card">
-      <h2>Dodaj usługę</h2>
+  const formContent = (
+    <>
+      {showTitle ? <h2>Dodaj usługę</h2> : null}
       <form className="form" onSubmit={handleSubmit}>
         <label>
           Nazwa usługi
@@ -182,6 +182,12 @@ export default function ServiceForm({ onSubmit, isSubmitting }) {
           {isSubmitting ? 'Zapisywanie...' : 'Zapisz usługę'}
         </button>
       </form>
-    </article>
+    </>
   );
+
+  if (variant === 'card') {
+    return <article className="card">{formContent}</article>;
+  }
+
+  return <div>{formContent}</div>;
 }

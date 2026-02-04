@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function ProductForm({ onSubmit, isSubmitting }) {
+export default function ProductForm({ onSubmit, isSubmitting, showTitle = true, variant = 'card' }) {
   const [formState, setFormState] = useState({
     name: '',
     brand: '',
@@ -19,9 +19,9 @@ export default function ProductForm({ onSubmit, isSubmitting }) {
     setFormState({ name: '', brand: '', notes: '', imageUrl: '' });
   };
 
-  return (
-    <article className="card">
-      <h2>Dodaj produkt</h2>
+  const formContent = (
+    <>
+      {showTitle ? <h2>Dodaj produkt</h2> : null}
       <form className="form" onSubmit={handleSubmit}>
         <label>
           Nazwa produktu
@@ -66,6 +66,12 @@ export default function ProductForm({ onSubmit, isSubmitting }) {
           {isSubmitting ? 'Zapisywanie...' : 'Zapisz produkt'}
         </button>
       </form>
-    </article>
+    </>
   );
+
+  if (variant === 'card') {
+    return <article className="card">{formContent}</article>;
+  }
+
+  return <div>{formContent}</div>;
 }
