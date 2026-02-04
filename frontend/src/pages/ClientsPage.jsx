@@ -7,12 +7,23 @@ import { useToast } from '../components/ToastProvider';
 export default function ClientsPage() {
   const { clients, isLoading, error, addClient } = useClients();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusFilter, setStatusFilter] = useState('all');
   const { showToast } = useToast();
 
   const sortedClients = useMemo(
     () => [...clients].sort((a, b) => a.fullName.localeCompare(b.fullName)),
     [clients]
   );
+
+  const filteredClients = useMemo(() => {
+    if (statusFilter === 'active') {
+      return sortedClients.filter((client) => client.isActive);
+    }
+    if (statusFilter === 'inactive') {
+      return sortedClients.filter((client) => !client.isActive);
+    }
+    return sortedClients;
+  }, [sortedClients, statusFilter]);
 
   const showError = useCallback(
     (message) => showToast(message, { severity: 'error' }),
@@ -49,7 +60,17 @@ export default function ClientsPage() {
       <section className="grid">
         <ClientForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
         <div className="stack">
-          <ClientList clients={sortedClients} isLoading={isLoading} linkBase="/clients" />
+          <div className="list-controls">
+            <label className="filter-field">
+              Filtr statusu
+              <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+                <option value="all">Wszystkie klientki</option>
+                <option value="active">Aktywne klientki</option>
+                <option value="inactive">Nieaktywne klientki</option>
+              </select>
+            </label>
+          </div>
+          <ClientList clients={filteredClients} isLoading={isLoading} linkBase="/clients" />
         </div>
       </section>
     </div>

@@ -33,6 +33,8 @@ import EventAvailableRoundedIcon from '@mui/icons-material/EventAvailableRounded
 import Inventory2RoundedIcon from '@mui/icons-material/Inventory2Rounded';
 import DesignServicesRoundedIcon from '@mui/icons-material/DesignServicesRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import FacebookRoundedIcon from '@mui/icons-material/FacebookRounded';
 
 const navLinkStyles = {
   color: 'var(--color-text)',
@@ -288,6 +290,37 @@ export default function App() {
           <Route path="/appointments/:id" element={<AppointmentDetailsPage />} />
         </Route>
       </Routes>
+
+      <footer className="site-footer">
+        <div className="footer-content">
+          <div>
+            <h3>Kontakt</h3>
+            <p className="muted">Braiderski Studio · ul. Słoneczna 12, 00-001 Warszawa</p>
+            <p className="muted">Telefon: +48 555 123 456 · Email: kontakt@braiderski.pl</p>
+          </div>
+          <div className="footer-social">
+            <span className="muted">Obserwuj nas</span>
+            <div className="footer-links">
+              <a
+                href="https://www.instagram.com/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+              >
+                <InstagramIcon fontSize="small" /> Instagram
+              </a>
+              <a
+                href="https://www.facebook.com/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Facebook"
+              >
+                <FacebookRoundedIcon fontSize="small" /> Facebook
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

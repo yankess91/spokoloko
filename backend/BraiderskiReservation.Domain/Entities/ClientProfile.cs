@@ -7,6 +7,7 @@ public sealed class ClientProfile
     public string Email { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public string Notes { get; set; } = string.Empty;
+    public bool IsActive { get; set; } = true;
     public List<UsedProduct> UsedProducts { get; set; } = new();
     public List<Appointment> Appointments { get; set; } = new();
 }

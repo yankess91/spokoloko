@@ -37,4 +37,8 @@ export default class ApiClient {
       body: JSON.stringify(payload)
     });
   }
+
+  delete(path) {
+    return this.request(path, { method: 'DELETE' });
+  }
 }

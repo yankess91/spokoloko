@@ -1,12 +1,15 @@
-import { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import useProductDetails from '../hooks/useProductDetails';
 import { useToast } from '../components/ToastProvider';
+import { productsApi } from '../api';
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
   const { product, isLoading, error } = useProductDetails(id);
   const { showToast } = useToast();
+  const navigate = useNavigate();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (error) {
@@ -26,14 +29,41 @@ export default function ProductDetailsPage() {
     return <div className="page-content" />;
   }
 
+  const handleDelete = async () => {
+    if (!product || isDeleting) {
+      return;
+    }
+
+    const confirmed = window.confirm(`Czy na pewno chcesz usunąć produkt: ${product.name}?`);
+    if (!confirmed) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await productsApi.delete(product.id);
+      showToast('Produkt został usunięty.');
+      navigate('/products');
+    } catch (err) {
+      showToast(err.message ?? 'Nie udało się usunąć produktu.', { severity: 'error' });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div className="page-content">
       <header className="section-header">
         <h1>{product.name}</h1>
         <p className="muted">Szczegóły produktu pielęgnacyjnego.</p>
-        <Link className="ghost" to="/products">
-          Wróć do listy
-        </Link>
+        <div className="section-actions">
+          <Link className="ghost" to="/products">
+            Wróć do listy
+          </Link>
+          <button type="button" className="secondary danger" onClick={handleDelete} disabled={isDeleting}>
+            {isDeleting ? 'Usuwanie...' : 'Usuń produkt'}
+          </button>
+        </div>
       </header>
 
       <section className="grid">

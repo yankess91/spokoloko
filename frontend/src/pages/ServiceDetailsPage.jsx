@@ -1,13 +1,16 @@
-import { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import useServiceDetails from '../hooks/useServiceDetails';
 import { useToast } from '../components/ToastProvider';
 import { formatCurrency } from '../utils/formatters';
+import { servicesApi } from '../api';
 
 export default function ServiceDetailsPage() {
   const { id } = useParams();
   const { service, isLoading, error } = useServiceDetails(id);
   const { showToast } = useToast();
+  const navigate = useNavigate();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (error) {
@@ -27,14 +30,41 @@ export default function ServiceDetailsPage() {
     return <div className="page-content" />;
   }
 
+  const handleDelete = async () => {
+    if (!service || isDeleting) {
+      return;
+    }
+
+    const confirmed = window.confirm(`Czy na pewno chcesz usunąć usługę: ${service.name}?`);
+    if (!confirmed) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await servicesApi.delete(service.id);
+      showToast('Usługa została usunięta.');
+      navigate('/services');
+    } catch (err) {
+      showToast(err.message ?? 'Nie udało się usunąć usługi.', { severity: 'error' });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div className="page-content">
       <header className="section-header">
         <h1>{service.name}</h1>
         <p className="muted">Szczegóły usługi.</p>
-        <Link className="ghost" to="/services">
-          Wróć do listy
-        </Link>
+        <div className="section-actions">
+          <Link className="ghost" to="/services">
+            Wróć do listy
+          </Link>
+          <button type="button" className="secondary danger" onClick={handleDelete} disabled={isDeleting}>
+            {isDeleting ? 'Usuwanie...' : 'Usuń usługę'}
+          </button>
+        </div>
       </header>
 
       <section className="grid">
