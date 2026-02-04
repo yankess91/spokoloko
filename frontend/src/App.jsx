@@ -61,7 +61,7 @@ const navLinkStyles = {
 export default function App() {
   const { isAuthenticated, user, logout } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const logoSrc = '/spokoloko-logo.png';
+  const logoSrc = 'src/assets/spokoloko-logo.png';
   const navItems = useMemo(
     () => [
       {
@@ -122,14 +122,6 @@ export default function App() {
                 alt="Spoko Loko logo"
                 className="topbar-logo-image"
               />
-              <Box>
-                <Typography variant="subtitle1" className="topbar-title">
-                  Braiderski Panel
-                </Typography>
-                <Typography variant="caption" sx={{ color: 'var(--color-muted)' }}>
-                  Studio rezerwacji i obsługi klientów
-                </Typography>
-              </Box>
             </Stack>
 
             <Box sx={{ flexGrow: 1 }} />

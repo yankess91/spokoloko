@@ -47,7 +47,7 @@ const AuthPage = ({ mode }) => {
     }
   };
 
-  const logoSrc = '/spokoloko-logo.png';
+  const logoSrc = '/src/assets/spokoloko-logo.png';
 
   return (
     <div className="auth-shell">

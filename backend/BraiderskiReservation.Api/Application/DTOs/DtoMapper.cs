@@ -1,4 +1,3 @@
-using System.Linq;
 using BraiderskiReservation.Domain.Entities;
 
 namespace BraiderskiReservation.Api.Application.DTOs;
