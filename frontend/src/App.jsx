@@ -38,12 +38,9 @@ const navLinkStyles = {
   color: 'var(--color-text)',
   fontWeight: 600,
   borderRadius: '10px',
-  paddingX: 1.8,
-  paddingY: 0.9,
   textTransform: 'none',
   backgroundColor: 'transparent',
   border: '1px solid transparent',
-  minHeight: 40,
   gap: 1,
   '&:hover': {
     backgroundColor: 'var(--color-bg-accent)',
@@ -229,7 +226,7 @@ export default function App() {
                   borderRadius: 2,
                   marginBottom: 0.5,
                   paddingY: 1.4,
-                  paddingX: 2.5,
+                  paddingX: 30,
                   minHeight: 52,
                   '&.active': {
                     backgroundColor: 'var(--color-bg-accent)',

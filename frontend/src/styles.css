@@ -73,10 +73,10 @@ a {
 }
 
 a:not(.primary):not(.secondary):not(.ghost):not(.list-title) {
-  padding: 2px 4px;
+  padding: 8px 8px;
   border-radius: 6px;
   display: inline-flex;
-  gap: 6px;
+  gap: 3px;
   align-items: center;
 }
 
