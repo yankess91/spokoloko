@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { NavLink, Route, Routes } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
@@ -62,6 +61,7 @@ const navLinkStyles = {
 export default function App() {
   const { isAuthenticated, user, logout } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const logoSrc = '/spokoloko-logo.png';
   const navItems = useMemo(
     () => [
       {
@@ -116,7 +116,12 @@ export default function App() {
               to="/"
               className="topbar-logo"
             >
-              <Avatar sx={{ bgcolor: 'var(--color-accent)', width: 38, height: 38 }}>B</Avatar>
+              <Box
+                component="img"
+                src={logoSrc}
+                alt="Spoko Loko logo"
+                className="topbar-logo-image"
+              />
               <Box>
                 <Typography variant="subtitle1" className="topbar-title">
                   Braiderski Panel

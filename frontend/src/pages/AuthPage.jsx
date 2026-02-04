@@ -47,11 +47,13 @@ const AuthPage = ({ mode }) => {
     }
   };
 
+  const logoSrc = '/spokoloko-logo.png';
+
   return (
     <div className="auth-shell">
       <section className="auth-brand">
         <div className="auth-brand-card">
-          <div className="auth-logo">Braiderski</div>
+          <img className="auth-logo-image" src={logoSrc} alt="Spoko Loko logo" />
           <p className="auth-tagline">
             Nowoczesny panel do zarządzania klientkami, wizytami i produktami w salonie.
           </p>
