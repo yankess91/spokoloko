@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 
 export default function ClientForm({ onSubmit, isSubmitting, showTitle = true, variant = 'card' }) {
   const [formState, setFormState] = useState({
@@ -15,8 +17,8 @@ export default function ClientForm({ onSubmit, isSubmitting, showTitle = true, v
   };
 
   const handleStatusChange = (event) => {
-    const { value } = event.target;
-    setFormState((prev) => ({ ...prev, isActive: value === 'active' }));
+    const { checked } = event.target;
+    setFormState((prev) => ({ ...prev, isActive: checked }));
   };
 
   const handleSubmit = async (event) => {
@@ -68,13 +70,13 @@ export default function ClientForm({ onSubmit, isSubmitting, showTitle = true, v
             onChange={handleChange}
           />
         </label>
-        <label>
-          Status klientki
-          <select name="isActive" value={formState.isActive ? 'active' : 'inactive'} onChange={handleStatusChange}>
-            <option value="active">Aktywna klientka</option>
-            <option value="inactive">Nieaktywna klientka</option>
-          </select>
-        </label>
+        <div className="form-field">
+          <span className="form-label">Status klientki</span>
+          <FormControlLabel
+            control={<Switch checked={formState.isActive} onChange={handleStatusChange} />}
+            label={formState.isActive ? 'Aktywna klientka' : 'Nieaktywna klientka'}
+          />
+        </div>
         <button type="submit" className="primary" disabled={isSubmitting}>
           {isSubmitting ? 'Zapisywanie...' : 'Zapisz profil'}
         </button>

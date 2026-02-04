@@ -25,7 +25,7 @@ export default function ClientGrid({
           Status
         </span>
         <span className="data-grid-cell" role="columnheader">
-          Produkty
+          Usługi
         </span>
         <span className="data-grid-cell" role="columnheader">
           Akcje
@@ -47,7 +47,7 @@ export default function ClientGrid({
               </span>
             </div>
             <div className="data-grid-cell" role="cell">
-              {client.usedProducts?.length ?? 0}
+              {client.serviceHistory?.length ?? 0}
             </div>
             <div className="data-grid-cell data-grid-actions" role="cell">
               {linkBase ? (

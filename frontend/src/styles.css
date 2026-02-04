@@ -421,7 +421,7 @@ p {
   align-items: center;
   justify-content: center;
   padding: var(--space-5);
-  z-index: 50;
+  z-index: 100;
 }
 
 .modal {
@@ -763,6 +763,11 @@ button:focus-visible {
 .list-controls {
   display: flex;
   justify-content: flex-end;
+}
+
+.grid-actions {
+  display: flex;
+  justify-content: flex-start;
 }
 
 .grid-controls {
