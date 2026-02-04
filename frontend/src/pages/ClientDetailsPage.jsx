@@ -1,18 +1,42 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import useClientDetails from '../hooks/useClientDetails';
+import { appointmentsApi } from '../api';
+import AppointmentForm from '../components/AppointmentForm';
+import Modal from '../components/Modal';
 import { useToast } from '../components/ToastProvider';
 
 export default function ClientDetailsPage() {
   const { id } = useParams();
-  const { client, isLoading, error } = useClientDetails(id);
+  const { client, isLoading, error, reload } = useClientDetails(id);
   const { showToast } = useToast();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const defaultClient = useMemo(
+    () => (client ? { id: client.id, label: client.fullName } : null),
+    [client]
+  );
 
   useEffect(() => {
     if (error) {
       showToast(error, { severity: 'error' });
     }
   }, [error, showToast]);
+
+  const handleAddAppointment = async (payload) => {
+    try {
+      setIsSubmitting(true);
+      await appointmentsApi.create(payload);
+      showToast('Wizyta została dodana.', { severity: 'success' });
+      setIsModalOpen(false);
+      await reload();
+    } catch (err) {
+      showToast(err.message ?? 'Nie udało się dodać wizyty.', { severity: 'error' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (isLoading) {
     return <p className="card muted">Ładowanie profilu klientki...</p>;
@@ -31,9 +55,14 @@ export default function ClientDetailsPage() {
       <header className="section-header">
         <h1>{client.fullName}</h1>
         <p className="muted">Szczegóły profilu klientki.</p>
-        <Link className="ghost" to="/clients">
-          Wróć do listy
-        </Link>
+        <div className="section-actions">
+          <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
+            Dodaj wizytę
+          </button>
+          <Link className="ghost" to="/clients">
+            Wróć do listy
+          </Link>
+        </div>
       </header>
 
       <section className="grid">
@@ -90,6 +119,16 @@ export default function ClientDetailsPage() {
           )}
         </article>
       </section>
+      {isModalOpen ? (
+        <Modal title="Dodaj wizytę" onClose={() => setIsModalOpen(false)}>
+          <AppointmentForm
+            onSubmit={handleAddAppointment}
+            isSubmitting={isSubmitting}
+            defaultClient={defaultClient}
+            clientLocked
+          />
+        </Modal>
+      ) : null}
     </div>
   );
 }
