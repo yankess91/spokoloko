@@ -11,7 +11,10 @@ IProductRepository productRepository) : IMagfactoryImportService
     public async Task ImportCategoryAsync(string categoryUrl, CancellationToken ct = default)
     {
         var products = await listingScraper.ScrapeProductsAsync(categoryUrl, ct: ct);
-        var today = DateTime.Now.Date.ToString();
+
+        var today = DateTime.UtcNow.Date.ToString("yyyy-MM-dd");
+        var toInsert = new List<Product>(products.Count);
+
         foreach (var p in products)
         {
             ct.ThrowIfCancellationRequested();
@@ -25,7 +28,7 @@ IProductRepository productRepository) : IMagfactoryImportService
             {
             }
 
-            await productRepository.AddAsync(new Product
+            toInsert.Add(new Product
             {
                 Name = p.name,
                 Brand = "magfactory.eu",
@@ -33,9 +36,13 @@ IProductRepository productRepository) : IMagfactoryImportService
                 Price = p.price,
                 ImageUrl = imgUrl,
                 ShopUrl = p.productUrl
-            }, ct);
+            });
         }
 
+        if (toInsert.Count == 0)
+            return;
+
+        await productRepository.AddRangeAsync(toInsert, ct);
         await productRepository.SaveChangesAsync(ct);
     }
 }
