@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { authApi } from '../api';
 import { clearSession, getStoredSession, storeSession } from '../utils/auth';
+import { t } from '../utils/i18n';
 
 const AuthContext = createContext(null);
 
@@ -18,7 +19,7 @@ export const AuthProvider = ({ children }) => {
       setSession({ token: result.token, user: result.user, expiresAt: result.expiresAt });
       return { ok: true };
     } catch (err) {
-      setError('Nie udało się zalogować. Sprawdź dane.');
+      setError(t('errors.login'));
       return { ok: false, error: err };
     } finally {
       setLoading(false);
@@ -34,7 +35,7 @@ export const AuthProvider = ({ children }) => {
       setSession({ token: result.token, user: result.user, expiresAt: result.expiresAt });
       return { ok: true };
     } catch (err) {
-      setError('Nie udało się utworzyć konta. Sprawdź dane.');
+      setError(t('errors.register'));
       return { ok: false, error: err };
     } finally {
       setLoading(false);

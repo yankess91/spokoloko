@@ -7,6 +7,7 @@ import useClients from '../hooks/useClients';
 import useServices from '../hooks/useServices';
 import { useToast } from '../components/ToastProvider';
 import AddIcon from '@mui/icons-material/Add';
+import { t } from '../utils/i18n';
 
 export default function AppointmentsPage() {
   const { appointments, isLoading, error, addAppointment, removeAppointment } = useAppointments();
@@ -41,42 +42,42 @@ export default function AppointmentsPage() {
     setIsSubmitting(true);
     try {
       await addAppointment(payload);
-      showToast('Wizyta została zapisana.');
+      showToast(t('appointmentsPage.toastSaved'));
       setIsModalOpen(false);
     } catch (err) {
-      showError(err.message ?? 'Nie udało się zapisać wizyty.');
+      showError(err.message ?? t('appointmentsPage.toastSaveError'));
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = (appointment) => {
-    if (!window.confirm('Czy na pewno chcesz usunąć tę wizytę?')) {
+    if (!window.confirm(t('appointmentsPage.deleteConfirm'))) {
       return;
     }
     removeAppointment(appointment.id);
-    showToast('Wizyta została usunięta z listy.');
+    showToast(t('appointmentsPage.toastDeleted'));
   };
 
   return (
     <div className="page-content">
       <header className="section-header">
-        <h1>Wizyty</h1>
-        <p className="muted">Planowanie i podgląd zaplanowanych spotkań.</p>
+        <h1>{t('appointmentsPage.title')}</h1>
+        <p className="muted">{t('appointmentsPage.subtitle')}</p>
       </header>
 
       <section className="stack">
         <article className="card">
           <header className="card-header">
             <div>
-              <h2>Lista wizyt</h2>
-              <p className="muted">Planowanie i kontrola nad zaplanowanymi spotkaniami.</p>
+              <h2>{t('appointmentsPage.listTitle')}</h2>
+              <p className="muted">{t('appointmentsPage.listSubtitle')}</p>
             </div>
           </header>
           <div className="grid-actions">
             <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
               <AddIcon fontSize="small" />
-              Nowa wizyta
+              {t('appointmentsPage.newAppointment')}
             </button>
           </div>
           <AppointmentList
@@ -90,7 +91,7 @@ export default function AppointmentsPage() {
       </section>
 
       {isModalOpen ? (
-        <Modal title="Nowa wizyta" onClose={() => setIsModalOpen(false)}>
+        <Modal title={t('appointmentsPage.modalTitle')} onClose={() => setIsModalOpen(false)}>
           <AppointmentForm
             onSubmit={handleSubmit}
             isSubmitting={isSubmitting || clientsLoading || servicesLoading}

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { appointmentsApi } from '../api';
+import { t } from '../utils/i18n';
 
 export default function useAppointments() {
   const [appointments, setAppointments] = useState([]);
@@ -13,7 +14,7 @@ export default function useAppointments() {
       setAppointments(data);
       setError('');
     } catch (err) {
-      setError(err.message ?? 'Nie udało się pobrać wizyt.');
+      setError(err.message ?? t('errors.appointments'));
     } finally {
       setIsLoading(false);
     }

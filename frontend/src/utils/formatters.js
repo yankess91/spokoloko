@@ -1,6 +1,8 @@
+import { t } from './i18n';
+
 export const formatDuration = (value) => {
   if (!value) {
-    return 'Brak danych';
+    return t('formatters.noData');
   }
 
   if (value.startsWith('PT')) {
@@ -13,7 +15,7 @@ export const formatDuration = (value) => {
     if (minutes) {
       parts.push(`${minutes}min`);
     }
-    return parts.length ? parts.join(' ') : '0min';
+    return parts.length ? parts.join(' ') : t('formatters.zeroMinutes');
   }
 
   if (value.includes(':')) {
@@ -48,7 +50,7 @@ export const formatTime = (value) =>
 
 export const formatCurrency = (value) => {
   if (value === null || value === undefined || Number.isNaN(Number(value))) {
-    return 'Brak ceny';
+    return t('formatters.noPrice');
   }
 
   return new Intl.NumberFormat('pl-PL', {

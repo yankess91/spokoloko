@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { productsApi } from '../api';
+import { t } from '../utils/i18n';
 
 export default function useProducts() {
   const [products, setProducts] = useState([]);
@@ -13,7 +14,7 @@ export default function useProducts() {
       setProducts(data);
       setError('');
     } catch (err) {
-      setError(err.message ?? 'Nie udało się pobrać produktów.');
+      setError(err.message ?? t('errors.products'));
     } finally {
       setIsLoading(false);
     }

@@ -5,6 +5,7 @@ import Modal from '../components/Modal';
 import useServices from '../hooks/useServices';
 import { useToast } from '../components/ToastProvider';
 import AddIcon from '@mui/icons-material/Add';
+import { t } from '../utils/i18n';
 
 export default function ServicesPage() {
   const { services, isLoading, error, addService, removeService } = useServices();
@@ -32,46 +33,46 @@ export default function ServicesPage() {
     setIsSubmitting(true);
     try {
       await addService(payload);
-      showToast('Usługa została zapisana.');
+      showToast(t('servicesPage.toastSaved'));
       setIsModalOpen(false);
     } catch (err) {
-      showError(err.message ?? 'Nie udało się zapisać usługi.');
+      showError(err.message ?? t('servicesPage.toastSaveError'));
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async (service) => {
-    if (!window.confirm(`Czy na pewno chcesz usunąć usługę "${service.name}"?`)) {
+    if (!window.confirm(t('servicesPage.deleteConfirm', { name: service.name }))) {
       return;
     }
     try {
       await removeService(service.id);
-      showToast('Usługa została usunięta.');
+      showToast(t('servicesPage.toastDeleted'));
     } catch (err) {
-      showError(err.message ?? 'Nie udało się usunąć usługi.');
+      showError(err.message ?? t('servicesPage.toastDeleteError'));
     }
   };
 
   return (
     <div className="page-content">
       <header className="section-header">
-        <h1>Usługi</h1>
-        <p className="muted">Lista usług oferowanych w salonie.</p>
+        <h1>{t('servicesPage.title')}</h1>
+        <p className="muted">{t('servicesPage.subtitle')}</p>
       </header>
 
       <section className="stack">
         <article className="card">
           <header className="card-header">
             <div>
-              <h2>Lista usług</h2>
-              <p className="muted">Zarządzaj ofertą i aktualizuj szczegóły zabiegów.</p>
+              <h2>{t('servicesPage.listTitle')}</h2>
+              <p className="muted">{t('servicesPage.listSubtitle')}</p>
             </div>
           </header>
           <div className="grid-actions">
             <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
               <AddIcon fontSize="small" />
-              Nowa usługa
+              {t('servicesPage.newService')}
             </button>
           </div>
           <ServiceList
@@ -84,7 +85,7 @@ export default function ServicesPage() {
       </section>
 
       {isModalOpen ? (
-        <Modal title="Nowa usługa" onClose={() => setIsModalOpen(false)}>
+        <Modal title={t('servicesPage.modalTitle')} onClose={() => setIsModalOpen(false)}>
           <ServiceForm onSubmit={handleSubmit} isSubmitting={isSubmitting} showTitle={false} variant="plain" />
         </Modal>
       ) : null}

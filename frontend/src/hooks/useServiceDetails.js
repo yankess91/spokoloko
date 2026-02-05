@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { servicesApi } from '../api';
 import { formatDuration } from '../utils/formatters';
+import { t } from '../utils/i18n';
 
 export default function useServiceDetails(serviceId) {
   const [service, setService] = useState(null);
@@ -29,7 +30,7 @@ export default function useServiceDetails(serviceId) {
         }
       } catch (err) {
         if (isMounted) {
-          setError(err.message ?? 'Nie udało się pobrać usługi.');
+          setError(err.message ?? t('errors.serviceDetails'));
         }
       } finally {
         if (isMounted) {

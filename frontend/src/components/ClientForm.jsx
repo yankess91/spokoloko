@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import { t } from '../utils/i18n';
 
 export default function ClientForm({ onSubmit, isSubmitting, showTitle = true, variant = 'card' }) {
   const [formState, setFormState] = useState({
@@ -29,56 +30,58 @@ export default function ClientForm({ onSubmit, isSubmitting, showTitle = true, v
 
   const formContent = (
     <>
-      {showTitle ? <h2>Dodaj użytkowniczkę</h2> : null}
+      {showTitle ? <h2>{t('clientForm.title')}</h2> : null}
       <form className="form" onSubmit={handleSubmit}>
         <label>
-          Imię i nazwisko
+          {t('clientForm.fullName')}
           <input
             name="fullName"
-            placeholder="np. Anna Nowak"
+            placeholder={t('clientForm.fullNamePlaceholder')}
             value={formState.fullName}
             onChange={handleChange}
             required
           />
         </label>
         <label>
-          Email
+          {t('clientForm.email')}
           <input
             name="email"
             type="email"
-            placeholder="anna@example.com"
+            placeholder={t('clientForm.emailPlaceholder')}
             value={formState.email}
             onChange={handleChange}
           />
         </label>
         <label>
-          Telefon
+          {t('clientForm.phone')}
           <input
             name="phoneNumber"
-            placeholder="+48 600 000 000"
+            placeholder={t('clientForm.phonePlaceholder')}
             value={formState.phoneNumber}
             onChange={handleChange}
           />
         </label>
         <label>
-          Uwagi
+          {t('clientForm.notes')}
           <textarea
             name="notes"
-            placeholder="Preferencje, alergie, ważne informacje"
+            placeholder={t('clientForm.notesPlaceholder')}
             rows="3"
             value={formState.notes}
             onChange={handleChange}
           />
         </label>
         <div className="form-field">
-          <span className="form-label">Status klientki</span>
+          <span className="form-label">{t('clientForm.status')}</span>
           <FormControlLabel
             control={<Switch checked={formState.isActive} onChange={handleStatusChange} />}
-            label={formState.isActive ? 'Aktywna klientka' : 'Nieaktywna klientka'}
+            label={
+              formState.isActive ? t('clientForm.activeLabel') : t('clientForm.inactiveLabel')
+            }
           />
         </div>
         <button type="submit" className="primary" disabled={isSubmitting}>
-          {isSubmitting ? 'Zapisywanie...' : 'Zapisz profil'}
+          {isSubmitting ? t('common.saving') : t('clientForm.save')}
         </button>
       </form>
     </>

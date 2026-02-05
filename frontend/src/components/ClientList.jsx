@@ -1,15 +1,16 @@
 import { Link } from 'react-router-dom';
+import { t } from '../utils/i18n';
 
 export default function ClientList({ clients, isLoading, linkBase }) {
   return (
     <article className="card">
       <header className="card-header">
-        <h2>Klientki (podgląd)</h2>
+        <h2>{t('clientList.previewTitle')}</h2>
       </header>
       {isLoading ? (
-        <p className="muted">Ładowanie klientek...</p>
+        <p className="muted">{t('clientList.loading')}</p>
       ) : clients.length === 0 ? (
-        <p className="muted">Brak klientek do wyświetlenia.</p>
+        <p className="muted">{t('clientList.empty')}</p>
       ) : (
         <ul className="list stacked">
           {clients.map((client) => (
@@ -23,14 +24,17 @@ export default function ClientList({ clients, isLoading, linkBase }) {
                   <span className="list-title">{client.fullName}</span>
                 )}
                 <span className="list-meta">
-                  {client.email || 'Brak emaila'} · {client.phoneNumber || 'Brak telefonu'}
+                  {client.email || t('clientList.noEmail')} ·{' '}
+                  {client.phoneNumber || t('clientList.noPhone')}
                 </span>
               </div>
               <div className="list-item-info">
                 <span className={`status-pill ${client.isActive ? 'active' : 'inactive'}`}>
-                  {client.isActive ? 'Aktywna' : 'Nieaktywna'}
+                  {client.isActive ? t('clientList.active') : t('clientList.inactive')}
                 </span>
-                <span className="muted">Produkty użyte: {client.usedProducts?.length ?? 0}</span>
+                <span className="muted">
+                  {t('clientList.usedProducts', { count: client.usedProducts?.length ?? 0 })}
+                </span>
               </div>
             </li>
           ))}

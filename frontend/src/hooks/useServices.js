@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { servicesApi } from '../api';
 import { formatDuration } from '../utils/formatters';
+import { t } from '../utils/i18n';
 
 export default function useServices() {
   const [services, setServices] = useState([]);
@@ -19,7 +20,7 @@ export default function useServices() {
       );
       setError('');
     } catch (err) {
-      setError(err.message ?? 'Nie udało się pobrać usług.');
+      setError(err.message ?? t('errors.services'));
     } finally {
       setIsLoading(false);
     }

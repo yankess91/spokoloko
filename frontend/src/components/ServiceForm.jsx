@@ -3,6 +3,7 @@ import { productsApi } from '../api';
 import useAutocompleteSearch from '../hooks/useAutocompleteSearch';
 import AutocompleteField from './AutocompleteField';
 import { useToast } from './ToastProvider';
+import { t } from '../utils/i18n';
 
 const buildProductLabel = (product) =>
   product.brand ? `${product.name} (${product.brand})` : product.name;
@@ -49,11 +50,11 @@ export default function ServiceForm({ onSubmit, isSubmitting, showTitle = true, 
 
   const handleAddProduct = () => {
     if (!selectedProduct) {
-      showError('Wybierz produkt z listy podpowiedzi.');
+      showError(t('serviceForm.selectProductError'));
       return;
     }
     if (formState.selectedProducts.some((item) => item.id === selectedProduct.id)) {
-      showError('Ten produkt został już dodany.');
+      showError(t('serviceForm.duplicateProductError'));
       return;
     }
     setFormState((prev) => ({
@@ -93,30 +94,30 @@ export default function ServiceForm({ onSubmit, isSubmitting, showTitle = true, 
 
   const formContent = (
     <>
-      {showTitle ? <h2>Dodaj usługę</h2> : null}
+      {showTitle ? <h2>{t('serviceForm.title')}</h2> : null}
       <form className="form" onSubmit={handleSubmit}>
         <label>
-          Nazwa usługi
+          {t('serviceForm.name')}
           <input
             name="name"
-            placeholder="np. Warkocze klasyczne"
+            placeholder={t('serviceForm.namePlaceholder')}
             value={formState.name}
             onChange={handleChange}
             required
           />
         </label>
         <label>
-          Opis
+          {t('serviceForm.description')}
           <textarea
             name="description"
-            placeholder="Krótki opis zabiegu"
+            placeholder={t('serviceForm.descriptionPlaceholder')}
             rows="3"
             value={formState.description}
             onChange={handleChange}
           />
         </label>
         <label>
-          Czas trwania (min)
+          {t('serviceForm.duration')}
           <input
             name="durationMinutes"
             type="number"
@@ -128,24 +129,24 @@ export default function ServiceForm({ onSubmit, isSubmitting, showTitle = true, 
           />
         </label>
         <label>
-          Cena (PLN)
+          {t('serviceForm.price')}
           <input
             name="price"
             type="number"
             min="0"
             step="0.01"
-            placeholder="np. 250"
+            placeholder={t('serviceForm.pricePlaceholder')}
             value={formState.price}
             onChange={handleChange}
             required
           />
         </label>
         <label>
-          Produkty wymagane
+          {t('serviceForm.requiredProducts')}
           <div className="inline-field">
             <AutocompleteField
-              label="Produkty wymagane"
-              placeholder="Wybierz produkt"
+              label={t('serviceForm.requiredProducts')}
+              placeholder={t('serviceForm.selectProductPlaceholder')}
               options={productOptions}
               value={selectedProduct}
               inputValue={productSearch.inputValue}
@@ -158,7 +159,7 @@ export default function ServiceForm({ onSubmit, isSubmitting, showTitle = true, 
               containerClassName="autocomplete-inline"
             />
             <button type="button" className="secondary" onClick={handleAddProduct}>
-              Dodaj
+              {t('common.add')}
             </button>
           </div>
         </label>
@@ -171,15 +172,15 @@ export default function ServiceForm({ onSubmit, isSubmitting, showTitle = true, 
                 className="chip chip-button"
                 onClick={() => handleRemoveProduct(product.id)}
               >
-                {product.label} ✕
+                {t('serviceForm.removeProduct', { label: product.label })}
               </button>
             ))}
           </div>
         ) : (
-          <p className="muted">Brak przypiętych produktów.</p>
+          <p className="muted">{t('serviceForm.noProducts')}</p>
         )}
         <button type="submit" className="primary" disabled={isSubmitting}>
-          {isSubmitting ? 'Zapisywanie...' : 'Zapisz usługę'}
+          {isSubmitting ? t('common.saving') : t('serviceForm.save')}
         </button>
       </form>
     </>

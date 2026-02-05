@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { productsApi } from '../api';
+import { t } from '../utils/i18n';
 
 export default function useProductDetails(productId) {
   const [product, setProduct] = useState(null);
@@ -25,7 +26,7 @@ export default function useProductDetails(productId) {
         }
       } catch (err) {
         if (isMounted) {
-          setError(err.message ?? 'Nie udało się pobrać produktu.');
+          setError(err.message ?? t('errors.productDetails'));
         }
       } finally {
         if (isMounted) {

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { clientsApi } from '../api';
+import { t } from '../utils/i18n';
 
 export default function useClients() {
   const [clients, setClients] = useState([]);
@@ -13,7 +14,7 @@ export default function useClients() {
       setClients(data);
       setError('');
     } catch (err) {
-      setError(err.message ?? 'Nie udało się pobrać klientek.');
+      setError(err.message ?? t('errors.clients'));
     } finally {
       setIsLoading(false);
     }

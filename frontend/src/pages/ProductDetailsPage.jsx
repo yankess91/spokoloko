@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import useProductDetails from '../hooks/useProductDetails';
 import { useToast } from '../components/ToastProvider';
 import { productsApi } from '../api';
+import { t } from '../utils/i18n';
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
@@ -18,11 +19,11 @@ export default function ProductDetailsPage() {
   }, [error, showToast]);
 
   if (isLoading) {
-    return <p className="card muted">Ładowanie produktu...</p>;
+    return <p className="card muted">{t('productDetails.loading')}</p>;
   }
 
   if (!product && !error) {
-    return <p className="card muted">Nie znaleziono produktu.</p>;
+    return <p className="card muted">{t('productDetails.notFound')}</p>;
   }
 
   if (error) {
@@ -34,7 +35,9 @@ export default function ProductDetailsPage() {
       return;
     }
 
-    const confirmed = window.confirm(`Czy na pewno chcesz usunąć produkt: ${product.name}?`);
+    const confirmed = window.confirm(
+      t('productDetails.deleteConfirm', { name: product.name })
+    );
     if (!confirmed) {
       return;
     }
@@ -42,10 +45,10 @@ export default function ProductDetailsPage() {
     setIsDeleting(true);
     try {
       await productsApi.delete(product.id);
-      showToast('Produkt został usunięty.');
+      showToast(t('productDetails.toastDeleted'));
       navigate('/products');
     } catch (err) {
-      showToast(err.message ?? 'Nie udało się usunąć produktu.', { severity: 'error' });
+      showToast(err.message ?? t('productDetails.toastDeleteError'), { severity: 'error' });
     } finally {
       setIsDeleting(false);
     }
@@ -55,29 +58,37 @@ export default function ProductDetailsPage() {
     <div className="page-content">
       <header className="section-header">
         <h1>{product.name}</h1>
-        <p className="muted">Szczegóły produktu pielęgnacyjnego.</p>
+        <p className="muted">{t('productDetails.subtitle')}</p>
         <div className="section-actions">
           <Link className="ghost" to="/products">
-            Wróć do listy
+            {t('productDetails.backToList')}
           </Link>
           <button type="button" className="secondary danger" onClick={handleDelete} disabled={isDeleting}>
-            {isDeleting ? 'Usuwanie...' : 'Usuń produkt'}
+            {isDeleting ? t('common.deleting') : t('productDetails.delete')}
           </button>
         </div>
       </header>
 
       <section className="grid">
         <article className="card">
-          <h2>Informacje</h2>
-          <p>Marka: {product.brand || 'Brak danych'}</p>
-          <p>Notatki: {product.notes || 'Brak notatek'}</p>
+          <h2>{t('productDetails.infoTitle')}</h2>
+          <p>
+            {t('productDetails.brandLabel', {
+              value: product.brand || t('productDetails.noData'),
+            })}
+          </p>
+          <p>
+            {t('productDetails.notesLabel', {
+              value: product.notes || t('productDetails.noNotes'),
+            })}
+          </p>
         </article>
         <article className="card">
-          <h2>Zdjęcie produktu</h2>
+          <h2>{t('productDetails.imageTitle')}</h2>
           {product.imageUrl ? (
             <img className="product-image" src={product.imageUrl} alt={product.name} />
           ) : (
-            <p className="muted">Brak zdjęcia.</p>
+            <p className="muted">{t('productDetails.noImage')}</p>
           )}
         </article>
       </section>

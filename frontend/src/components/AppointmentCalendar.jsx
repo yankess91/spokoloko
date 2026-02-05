@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { formatDate, formatTime } from '../utils/formatters';
+import { t } from '../utils/i18n';
 
 export default function AppointmentCalendar({
   appointments,
@@ -25,13 +26,13 @@ export default function AppointmentCalendar({
   return (
     <section className="section calendar">
       <header className="section-header">
-        <h2>Kalendarz wizyt</h2>
-        <p className="muted">Szybki podgląd terminów z podziałem na dni.</p>
+        <h2>{t('appointmentCalendar.title')}</h2>
+        <p className="muted">{t('appointmentCalendar.subtitle')}</p>
       </header>
       {isLoading ? (
-        <p className="muted">Ładowanie wizyt...</p>
+        <p className="muted">{t('appointmentCalendar.loading')}</p>
       ) : days.length === 0 ? (
-        <p className="muted">Brak zaplanowanych wizyt.</p>
+        <p className="muted">{t('appointmentCalendar.empty')}</p>
       ) : (
         <div className="calendar-grid">
           {days.map((day) => (
@@ -46,12 +47,14 @@ export default function AppointmentCalendar({
                       <span className="slot-time">{formatTime(appointment.startAt)}</span>
                       {linkBase ? (
                         <Link to={`${linkBase}/${appointment.id}`}>
-                          {service?.name ?? 'Nieznana usługa'}
+                          {service?.name ?? t('appointmentCalendar.unknownService')}
                         </Link>
                       ) : (
-                        <span>{service?.name ?? 'Nieznana usługa'}</span>
+                        <span>{service?.name ?? t('appointmentCalendar.unknownService')}</span>
                       )}
-                      <span className="muted">{client?.fullName ?? 'Nieznana klientka'}</span>
+                      <span className="muted">
+                        {client?.fullName ?? t('appointmentCalendar.unknownClient')}
+                      </span>
                     </div>
                   );
                 })}

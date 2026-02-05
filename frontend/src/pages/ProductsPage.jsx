@@ -5,6 +5,7 @@ import Modal from '../components/Modal';
 import useProducts from '../hooks/useProducts';
 import { useToast } from '../components/ToastProvider';
 import AddIcon from '@mui/icons-material/Add';
+import { t } from '../utils/i18n';
 
 export default function ProductsPage() {
   const { products, isLoading, error, addProduct, removeProduct } = useProducts();
@@ -32,46 +33,46 @@ export default function ProductsPage() {
     setIsSubmitting(true);
     try {
       await addProduct(payload);
-      showToast('Produkt został zapisany.');
+      showToast(t('productsPage.toastSaved'));
       setIsModalOpen(false);
     } catch (err) {
-      showError(err.message ?? 'Nie udało się zapisać produktu.');
+      showError(err.message ?? t('productsPage.toastSaveError'));
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async (product) => {
-    if (!window.confirm(`Czy na pewno chcesz usunąć produkt "${product.name}"?`)) {
+    if (!window.confirm(t('productsPage.deleteConfirm', { name: product.name }))) {
       return;
     }
     try {
       await removeProduct(product.id);
-      showToast('Produkt został usunięty.');
+      showToast(t('productsPage.toastDeleted'));
     } catch (err) {
-      showError(err.message ?? 'Nie udało się usunąć produktu.');
+      showError(err.message ?? t('productsPage.toastDeleteError'));
     }
   };
 
   return (
     <div className="page-content">
       <header className="section-header">
-        <h1>Produkty</h1>
-        <p className="muted">Dodawaj produkty pielęgnacyjne i śledź ich zastosowanie.</p>
+        <h1>{t('productsPage.title')}</h1>
+        <p className="muted">{t('productsPage.subtitle')}</p>
       </header>
 
       <section className="stack">
         <article className="card">
           <header className="card-header">
             <div>
-              <h2>Lista produktów</h2>
-              <p className="muted">Przeglądaj i edytuj produkty dostępne w salonie.</p>
+              <h2>{t('productsPage.listTitle')}</h2>
+              <p className="muted">{t('productsPage.listSubtitle')}</p>
             </div>
           </header>
           <div className="grid-actions">
             <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
               <AddIcon fontSize="small" />
-              Nowy produkt
+              {t('productsPage.newProduct')}
             </button>
           </div>
           <ProductList
@@ -84,7 +85,7 @@ export default function ProductsPage() {
       </section>
 
       {isModalOpen ? (
-        <Modal title="Nowy produkt" onClose={() => setIsModalOpen(false)}>
+        <Modal title={t('productsPage.modalTitle')} onClose={() => setIsModalOpen(false)}>
           <ProductForm onSubmit={handleSubmit} isSubmitting={isSubmitting} showTitle={false} variant="plain" />
         </Modal>
       ) : null}
