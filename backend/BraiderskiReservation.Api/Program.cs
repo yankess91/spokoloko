@@ -1,4 +1,5 @@
 using BraiderskiReservation.Api.Application.Interfaces;
+using BraiderskiReservation.Api.Application.Scrapers.Magfactory;
 using BraiderskiReservation.Api.Application.Services;
 using BraiderskiReservation.Api.Application.Settings;
 using BraiderskiReservation.Domain.Interfaces;
@@ -50,17 +51,37 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString);
 });
 
-builder.Services.AddScoped<IClientRepository, ClientRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
-builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IClientRepository, ClientRepository>();
+builder.Services.AddTransient<IProductRepository, ProductRepository>();
+builder.Services.AddTransient<IServiceRepository, ServiceRepository>();
+builder.Services.AddTransient<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
 
-builder.Services.AddScoped<IClientService, ClientService>();
-builder.Services.AddScoped<IProductCatalogService, ProductCatalogService>();
-builder.Services.AddScoped<IServiceCatalogService, ServiceCatalogService>();
-builder.Services.AddScoped<IAppointmentService, AppointmentService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddTransient<IClientService, ClientService>();
+builder.Services.AddTransient<IProductCatalogService, ProductCatalogService>();
+builder.Services.AddTransient<IServiceCatalogService, ServiceCatalogService>();
+builder.Services.AddTransient<IAppointmentService, AppointmentService>();
+builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IMagfactoryListingScraper, MagfactoryListingScraper>();
+builder.Services.AddTransient<IMagfactoryImageUrlProvider, MagfactoryImageUrlProvider>();
+builder.Services.AddTransient<IMagfactoryImportService, MagfactoryImportService>();
+
+
+builder.Services.AddHttpClient<IMagfactoryListingScraper, MagfactoryListingScraper>(c =>
+{
+    c.Timeout = TimeSpan.FromSeconds(25);
+    c.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 ...");
+    c.DefaultRequestHeaders.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+    c.DefaultRequestHeaders.AcceptLanguage.ParseAdd("pl-PL,pl;q=0.9,en-US;q=0.7,en;q=0.6");
+});
+
+builder.Services.AddHttpClient<IMagfactoryImageUrlProvider, MagfactoryImageUrlProvider>(c =>
+{
+    c.Timeout = TimeSpan.FromSeconds(25);
+    c.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 ...");
+    c.DefaultRequestHeaders.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+    c.DefaultRequestHeaders.AcceptLanguage.ParseAdd("pl-PL,pl;q=0.9,en-US;q=0.7,en;q=0.6");
+});
 
 var app = builder.Build();
 
