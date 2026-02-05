@@ -42,27 +42,25 @@ public sealed class ServiceRepository : IServiceRepository
 
     public async Task<ServiceItem?> AddProductAsync(Guid serviceId, Guid productId, CancellationToken cancellationToken)
     {
-        var service = await _context.Services
-            .Include(item => item.ServiceProducts)
-            .ThenInclude(serviceProduct => serviceProduct.Product)
-            .FirstOrDefaultAsync(item => item.Id == serviceId, cancellationToken);
+        var serviceExists = await _context.Services
+            .AnyAsync(s => s.Id == serviceId, cancellationToken);
 
-        if (service is null)
-        {
+        if (!serviceExists)
             return null;
-        }
 
-        var alreadyAssigned = service.ServiceProducts.Any(serviceProduct => serviceProduct.ProductId == productId);
-        if (!alreadyAssigned)
+        var alreadyAssigned = await _context.Set<ServiceProduct>()
+            .AnyAsync(sp => sp.ServiceId == serviceId && sp.ProductId == productId, cancellationToken);
+
+        if (alreadyAssigned)
+            return null;
+
+        _context.Set<ServiceProduct>().Add(new ServiceProduct
         {
-            service.ServiceProducts.Add(new ServiceProduct
-            {
-                ServiceId = serviceId,
-                ProductId = productId
-            });
-        }
+            ServiceId = serviceId,
+            ProductId = productId
+        });
 
-        return service;
+        return await GetByIdAsync(serviceId, cancellationToken);
     }
 
     public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
