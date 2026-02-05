@@ -12,11 +12,18 @@ export default function ProductsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { showToast } = useToast();
+  const [currentPage, setCurrentPage] = useState(1);
 
   const sortedProducts = useMemo(
     () => [...products].sort((a, b) => a.name.localeCompare(b.name)),
     [products]
   );
+  const pageSize = 8;
+  const totalPages = Math.max(1, Math.ceil(sortedProducts.length / pageSize));
+  const paginatedProducts = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return sortedProducts.slice(start, start + pageSize);
+  }, [currentPage, sortedProducts]);
 
   const showError = useCallback(
     (message) => showToast(message, { severity: 'error' }),
@@ -28,6 +35,16 @@ export default function ProductsPage() {
       showError(error);
     }
   }, [error, showError]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sortedProducts.length]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   const handleSubmit = async (payload) => {
     setIsSubmitting(true);
@@ -76,11 +93,34 @@ export default function ProductsPage() {
             </button>
           </div>
           <ProductList
-            products={sortedProducts}
+            products={paginatedProducts}
             isLoading={isLoading}
             linkBase="/products"
             onDelete={handleDelete}
           />
+          {!isLoading && sortedProducts.length > 0 ? (
+            <div className="pagination-controls" aria-label={t('pagination.ariaLabel')}>
+              <button
+                type="button"
+                className="ghost"
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+              >
+                {t('pagination.previous')}
+              </button>
+              <span className="pagination-status">
+                {t('pagination.status', { current: currentPage, total: totalPages })}
+              </span>
+              <button
+                type="button"
+                className="ghost"
+                onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+              >
+                {t('pagination.next')}
+              </button>
+            </div>
+          ) : null}
         </article>
       </section>
 

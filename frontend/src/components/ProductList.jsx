@@ -1,9 +1,15 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import ZoomInIcon from '@mui/icons-material/ZoomIn';
+import CloseIcon from '@mui/icons-material/Close';
+import { formatCurrency } from '../utils/formatters';
 import { t } from '../utils/i18n';
 
 export default function ProductList({ products, isLoading, linkBase, onDelete }) {
+  const [zoomedImage, setZoomedImage] = useState(null);
+
   if (isLoading) {
     return <p className="muted">{t('productList.loading')}</p>;
   }
@@ -21,7 +27,10 @@ export default function ProductList({ products, isLoading, linkBase, onDelete })
           {t('productList.columns.product')}
         </span>
         <span className="data-grid-cell" role="columnheader">
-          {t('productList.columns.brand')}
+          {t('productList.columns.manufacturer')}
+        </span>
+        <span className="data-grid-cell" role="columnheader">
+          {t('productList.columns.price')}
         </span>
         <span className="data-grid-cell" role="columnheader">
           {t('productList.columns.image')}
@@ -40,8 +49,21 @@ export default function ProductList({ products, isLoading, linkBase, onDelete })
             {product.brand || t('productList.noBrand')}
           </div>
           <div className="data-grid-cell" role="cell">
+            {formatCurrency(product.price)}
+          </div>
+          <div className="data-grid-cell" role="cell">
             {product.imageUrl ? (
-              <img className="thumb" src={product.imageUrl} alt={product.name} />
+              <button
+                type="button"
+                className="thumb-button"
+                onClick={() => setZoomedImage({ src: product.imageUrl, name: product.name })}
+                title={t('productList.zoomImage')}
+              >
+                <img className="thumb" src={product.imageUrl} alt={product.name} />
+                <span className="thumb-overlay">
+                  <ZoomInIcon fontSize="small" />
+                </span>
+              </button>
             ) : (
               <span className="data-grid-meta">{t('productList.noImage')}</span>
             )}
@@ -70,6 +92,22 @@ export default function ProductList({ products, isLoading, linkBase, onDelete })
           </div>
         </div>
       ))}
+
+      {zoomedImage ? (
+        <div className="image-zoom-backdrop" onClick={() => setZoomedImage(null)}>
+          <div className="image-zoom-modal" onClick={(event) => event.stopPropagation()}>
+            <button
+              type="button"
+              className="ghost icon-button image-zoom-close"
+              onClick={() => setZoomedImage(null)}
+            >
+              <CloseIcon fontSize="small" />
+              {t('modal.close')}
+            </button>
+            <img className="image-zoom-preview" src={zoomedImage.src} alt={zoomedImage.name} />
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
