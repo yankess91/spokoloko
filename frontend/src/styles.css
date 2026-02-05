@@ -160,6 +160,7 @@ a:focus-visible {
 }
 
 .auth-shell {
+  margin:auto;
   min-height: calc(100vh - 64px);
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
