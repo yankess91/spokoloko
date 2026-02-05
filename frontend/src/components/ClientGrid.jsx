@@ -4,11 +4,11 @@ import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { Box, Button, Chip, Stack, Typography } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { t } from '../utils/i18n';
 
 export default function ClientGrid({
-  clients,
+  clients = [],
   isLoading,
   linkBase,
   onToggleStatus,
@@ -19,27 +19,21 @@ export default function ClientGrid({
     return <p className="muted">{t('clientGrid.loading')}</p>;
   }
 
-  if (clients.length === 0) {
-    return <p className="muted">{t('clientGrid.empty')}</p>;
-  }
-
   const isDeleteDisabled = !onDelete;
 
   const columns = [
     {
-      field: 'client',
+      field: 'fullName',
       headerName: t('clientGrid.columns.client'),
       flex: 1.6,
       minWidth: 280,
-      sortable: false,
       renderCell: (params) => (
         <Box sx={{ py: 1 }}>
           <Typography variant="body2" fontWeight={600}>
             {params.row.fullName}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {params.row.email || t('clientGrid.noEmail')} ·{' '}
-            {params.row.phoneNumber || t('clientGrid.noPhone')}
+            {params.row.email || t('clientGrid.noEmail')} · {params.row.phoneNumber || t('clientGrid.noPhone')}
           </Typography>
         </Box>
       )
@@ -48,7 +42,7 @@ export default function ClientGrid({
       field: 'status',
       headerName: t('clientGrid.columns.status'),
       minWidth: 150,
-      sortable: false,
+      valueGetter: (params) => (params.row.isActive ? t('clientGrid.active') : t('clientGrid.inactive')),
       renderCell: (params) => (
         <Chip
           size="small"
@@ -61,7 +55,8 @@ export default function ClientGrid({
       field: 'servicesCount',
       headerName: t('clientGrid.columns.services'),
       minWidth: 120,
-      valueGetter: (_, row) => row.serviceHistory?.length ?? 0
+      valueGetter: (params) => params.row.serviceHistory?.length ?? 0,
+      type: 'number'
     },
     {
       field: 'actions',
@@ -93,18 +88,14 @@ export default function ClientGrid({
               onClick={() => onToggleStatus?.(client)}
               disabled={isUpdating}
               startIcon={
-                client.isActive ? (
-                  <ToggleOffIcon fontSize="small" />
-                ) : (
-                  <ToggleOnIcon fontSize="small" />
-                )
+                client.isActive ? <ToggleOffIcon fontSize="small" /> : <ToggleOnIcon fontSize="small" />
               }
             >
               {isUpdating
                 ? t('clientGrid.saving')
                 : client.isActive
-                ? t('clientGrid.deactivate')
-                : t('clientGrid.activate')}
+                  ? t('clientGrid.deactivate')
+                  : t('clientGrid.activate')}
             </Button>
             <Button
               type="button"
@@ -130,6 +121,7 @@ export default function ClientGrid({
       autoHeight
       rows={clients}
       columns={columns}
+      getRowId={(row) => row.id}
       disableRowSelectionOnClick
       pageSizeOptions={[10, 25, 50]}
       initialState={{
@@ -137,7 +129,17 @@ export default function ClientGrid({
           paginationModel: { pageSize: 10, page: 0 }
         }
       }}
+      slots={{ toolbar: GridToolbar }}
+      slotProps={{
+        toolbar: {
+          showQuickFilter: true,
+          quickFilterProps: { debounceMs: 300 }
+        }
+      }}
       sx={{ backgroundColor: 'background.paper' }}
+      localeText={{
+        toolbarQuickFilterPlaceholder: t('clientsPage.searchPlaceholder')
+      }}
     />
   );
 }

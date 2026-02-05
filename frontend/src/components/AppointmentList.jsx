@@ -49,7 +49,7 @@ export default function AppointmentList({
       headerName: t('appointmentList.columns.date'),
       minWidth: 170,
       sortable: true,
-      valueGetter: (_, row) => row.startAt,
+      valueGetter: (params) => params.row.startAt,
       renderCell: (params) => (
         <Box sx={{ py: 1 }}>
           <Typography variant="body2" fontWeight={600}>
@@ -121,6 +121,7 @@ export default function AppointmentList({
       autoHeight
       rows={appointments}
       columns={columns}
+      getRowId={(row) => row.id}
       disableRowSelectionOnClick
       pageSizeOptions={[10, 25, 50]}
       initialState={{
