@@ -332,7 +332,18 @@
     "listTitle": "Lista produktów",
     "listSubtitle": "Przeglądaj i edytuj produkty dostępne w salonie.",
     "newProduct": "Nowy produkt",
-    "modalTitle": "Nowy produkt"
+    "modalTitle": "Nowy produkt",
+    "filterLabel": "Szukaj",
+    "searchPlaceholder": "Wpisz nazwę, markę lub notatkę",
+    "brandLabel": "Marka",
+    "brandAll": "Wszystkie marki",
+    "sortLabel": "Sortowanie",
+    "sortNameAsc": "Nazwa (A-Z)",
+    "sortNameDesc": "Nazwa (Z-A)",
+    "sortBrandAsc": "Marka (A-Z)",
+    "sortBrandDesc": "Marka (Z-A)",
+    "sortPriceAsc": "Cena (rosnąco)",
+    "sortPriceDesc": "Cena (malejąco)"
   },
   "appointmentsPage": {
     "toastSaved": "Wizyta została zapisana.",
@@ -344,7 +355,14 @@
     "listTitle": "Lista wizyt",
     "listSubtitle": "Pełna kontrola nad zaplanowanymi wizytami.",
     "newAppointment": "Nowa wizyta",
-    "modalTitle": "Nowa wizyta"
+    "modalTitle": "Nowa wizyta",
+    "sortLabel": "Sortowanie",
+    "sortDateDesc": "Termin (od najnowszych)",
+    "sortDateAsc": "Termin (od najstarszych)",
+    "sortServiceAsc": "Usługa (A-Z)",
+    "sortServiceDesc": "Usługa (Z-A)",
+    "sortClientAsc": "Klient (A-Z)",
+    "sortClientDesc": "Klient (Z-A)"
   },
   "productDetails": {
     "loading": "Ładowanie produktu...",
@@ -420,7 +438,14 @@
     "listTitle": "Lista usług",
     "listSubtitle": "Zarządzaj ofertą i aktualizuj szczegóły usług.",
     "newService": "Nowa usługa",
-    "modalTitle": "Nowa usługa"
+    "modalTitle": "Nowa usługa",
+    "sortLabel": "Sortowanie",
+    "sortNameAsc": "Nazwa (A-Z)",
+    "sortNameDesc": "Nazwa (Z-A)",
+    "sortDurationAsc": "Czas trwania (rosnąco)",
+    "sortDurationDesc": "Czas trwania (malejąco)",
+    "sortPriceAsc": "Cena (rosnąco)",
+    "sortPriceDesc": "Cena (malejąco)"
   },
   "pagination": {
     "ariaLabel": "Paginacja listy",
