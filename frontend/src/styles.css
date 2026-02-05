@@ -1042,6 +1042,17 @@ button:focus-visible {
   gap: 4px;
 }
 
+.appointment-product-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.appointment-product-item .list-item-main {
+  min-width: 0;
+}
+
 .thumb {
   width: 48px;
   height: 48px;
