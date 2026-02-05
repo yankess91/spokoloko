@@ -37,6 +37,16 @@ public sealed class ServicesController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = service.Id }, service);
     }
 
+    [HttpPost("{id:guid}/products")]
+    public async Task<ActionResult<ServiceItemResponse>> AddProduct(
+        Guid id,
+        AddServiceProductRequest request,
+        CancellationToken cancellationToken)
+    {
+        var service = await _serviceCatalog.AddProductAsync(id, request.ProductId, cancellationToken);
+        return service is null ? NotFound() : Ok(service);
+    }
+
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {

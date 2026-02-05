@@ -60,6 +60,8 @@ public sealed class AppDbContext : DbContext
             entity.Property(product => product.Brand).HasColumnName("brand");
             entity.Property(product => product.Notes).HasColumnName("notes");
             entity.Property(product => product.ImageUrl).HasColumnName("image_url");
+            entity.Property(product => product.Price).HasColumnName("price");
+            entity.Property(product => product.ShopUrl).HasColumnName("shop_url");
         });
 
         modelBuilder.Entity<ServiceItem>(entity =>
