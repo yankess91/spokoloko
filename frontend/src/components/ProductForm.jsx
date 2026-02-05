@@ -8,21 +8,38 @@ export default function ProductForm({ onSubmit, isSubmitting, showTitle = true, 
     notes: '',
     imageUrl: '',
     price: '',
-    shopUrl: ''
+    shopUrl: '',
+    isAvailable: false,
+    availabilityCheckedAt: ''
   });
 
   const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormState((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = event.target;
+    setFormState((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     await onSubmit?.({
       ...formState,
-      price: Number(formState.price) || 0
+      price: Number(formState.price) || 0,
+      availabilityCheckedAt: formState.availabilityCheckedAt
+        ? new Date(formState.availabilityCheckedAt).toISOString()
+        : null
     });
-    setFormState({ name: '', brand: '', notes: '', imageUrl: '', price: '', shopUrl: '' });
+    setFormState({
+      name: '',
+      brand: '',
+      notes: '',
+      imageUrl: '',
+      price: '',
+      shopUrl: '',
+      isAvailable: false,
+      availabilityCheckedAt: ''
+    });
   };
 
   const formContent = (
@@ -88,6 +105,24 @@ export default function ProductForm({ onSubmit, isSubmitting, showTitle = true, 
             type="url"
             placeholder={t('productForm.shopUrlPlaceholder')}
             value={formState.shopUrl}
+            onChange={handleChange}
+          />
+        </label>
+        <label className="checkbox-field">
+          <input
+            name="isAvailable"
+            type="checkbox"
+            checked={formState.isAvailable}
+            onChange={handleChange}
+          />
+          {t('productForm.isAvailable')}
+        </label>
+        <label>
+          {t('productForm.availabilityCheckedAt')}
+          <input
+            name="availabilityCheckedAt"
+            type="datetime-local"
+            value={formState.availabilityCheckedAt}
             onChange={handleChange}
           />
         </label>

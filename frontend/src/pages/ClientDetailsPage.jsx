@@ -119,7 +119,9 @@ export default function ClientDetailsPage() {
                       {history.usedProducts.map((product) => (
                         <li key={product.id} className="appointment-product-item">
                           <div className="list-item-main">
-                            <span className="list-title">{product.name}</span>
+                            <Link className="list-title" to={`/products/${product.id}`}>
+                              {product.name}
+                            </Link>
                             <span className="muted">{product.brand || t('clientDetails.noBrand')}</span>
                           </div>
                           {product.imageUrl ? (

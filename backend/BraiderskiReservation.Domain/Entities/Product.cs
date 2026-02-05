@@ -9,6 +9,8 @@ public sealed class Product
     public string ImageUrl { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public string ShopUrl { get; set; } = string.Empty;
+    public bool IsAvailable { get; set; }
+    public DateTimeOffset? AvailabilityCheckedAt { get; set; }
     public List<ServiceProduct> ServiceProducts { get; set; } = new();
     public List<AppointmentProduct> AppointmentProducts { get; set; } = new();
 }

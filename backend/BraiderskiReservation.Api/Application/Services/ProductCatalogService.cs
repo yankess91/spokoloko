@@ -41,7 +41,9 @@ public sealed class ProductCatalogService : IProductCatalogService
             Notes = request.Notes,
             ImageUrl = request.ImageUrl ?? string.Empty,
             Price = request.Price,
-            ShopUrl = request.ShopUrl ?? string.Empty
+            ShopUrl = request.ShopUrl ?? string.Empty,
+            IsAvailable = request.IsAvailable,
+            AvailabilityCheckedAt = request.AvailabilityCheckedAt
         };
 
         await _productRepository.AddAsync(product, cancellationToken);
