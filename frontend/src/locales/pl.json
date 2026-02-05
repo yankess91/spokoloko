@@ -135,18 +135,20 @@
     "loading": "Ładowanie produktów...",
     "empty": "Brak produktów do wyświetlenia.",
     "ariaLabel": "Lista produktów",
-    "columns": {
-      "product": "Produkt",
-      "brand": "Marka",
-      "image": "Zdjęcie",
-      "actions": "Akcje"
-    },
     "noNotes": "Brak notatek",
     "noBrand": "Brak marki",
     "noImage": "Brak zdjęcia",
     "details": "Szczegóły",
     "deleteDisabled": "Usuwanie dostępne tylko w widoku szczegółów",
-    "delete": "Usuń"
+    "delete": "Usuń",
+    "columns": {
+      "product": "Produkt",
+      "manufacturer": "Producent",
+      "price": "Cena",
+      "image": "Zdjęcie",
+      "actions": "Akcje"
+    },
+    "zoomImage": "Powiększ zdjęcie"
   },
   "serviceList": {
     "loading": "Ładowanie usług...",
@@ -414,5 +416,11 @@
     "listSubtitle": "Zarządzaj ofertą i aktualizuj szczegóły usług.",
     "newService": "Nowa usługa",
     "modalTitle": "Nowa usługa"
+  },
+  "pagination": {
+    "ariaLabel": "Paginacja listy",
+    "previous": "Poprzednia",
+    "next": "Następna",
+    "status": "Strona {current} z {total}"
   }
 }
