@@ -9,10 +9,12 @@ namespace BraiderskiReservation.Api.Application.Services;
 public sealed class ServiceCatalogService : IServiceCatalogService
 {
     private readonly IServiceRepository _serviceRepository;
+    private readonly IProductRepository _productRepository;
 
-    public ServiceCatalogService(IServiceRepository serviceRepository)
+    public ServiceCatalogService(IServiceRepository serviceRepository, IProductRepository productRepository)
     {
         _serviceRepository = serviceRepository;
+        _productRepository = productRepository;
     }
 
     public async Task<List<ServiceItemResponse>> GetAllAsync(CancellationToken cancellationToken)
@@ -52,6 +54,26 @@ public sealed class ServiceCatalogService : IServiceCatalogService
         await _serviceRepository.AddAsync(service, cancellationToken);
         await _serviceRepository.SaveChangesAsync(cancellationToken);
         return service.ToResponse();
+    }
+
+    public async Task<ServiceItemResponse?> AddProductAsync(Guid serviceId, Guid productId, CancellationToken cancellationToken)
+    {
+        var product = await _productRepository.GetByIdAsync(productId, cancellationToken);
+        if (product is null)
+        {
+            return null;
+        }
+
+        var service = await _serviceRepository.AddProductAsync(serviceId, productId, cancellationToken);
+        if (service is null)
+        {
+            return null;
+        }
+
+        await _serviceRepository.SaveChangesAsync(cancellationToken);
+
+        var refreshed = await _serviceRepository.GetByIdAsync(serviceId, cancellationToken);
+        return refreshed?.ToResponse();
     }
 
     public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)

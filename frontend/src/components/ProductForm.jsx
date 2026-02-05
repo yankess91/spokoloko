@@ -6,7 +6,9 @@ export default function ProductForm({ onSubmit, isSubmitting, showTitle = true, 
     name: '',
     brand: '',
     notes: '',
-    imageUrl: ''
+    imageUrl: '',
+    price: '',
+    shopUrl: ''
   });
 
   const handleChange = (event) => {
@@ -16,8 +18,11 @@ export default function ProductForm({ onSubmit, isSubmitting, showTitle = true, 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await onSubmit?.(formState);
-    setFormState({ name: '', brand: '', notes: '', imageUrl: '' });
+    await onSubmit?.({
+      ...formState,
+      price: Number(formState.price) || 0
+    });
+    setFormState({ name: '', brand: '', notes: '', imageUrl: '', price: '', shopUrl: '' });
   };
 
   const formContent = (
@@ -60,6 +65,29 @@ export default function ProductForm({ onSubmit, isSubmitting, showTitle = true, 
             type="url"
             placeholder={t('productForm.imageUrlPlaceholder')}
             value={formState.imageUrl}
+            onChange={handleChange}
+          />
+        </label>
+        <label>
+          {t('productForm.price')}
+          <input
+            name="price"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder={t('productForm.pricePlaceholder')}
+            value={formState.price}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <label>
+          {t('productForm.shopUrl')}
+          <input
+            name="shopUrl"
+            type="url"
+            placeholder={t('productForm.shopUrlPlaceholder')}
+            value={formState.shopUrl}
             onChange={handleChange}
           />
         </label>

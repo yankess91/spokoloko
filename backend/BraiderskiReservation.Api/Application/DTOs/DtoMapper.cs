@@ -80,5 +80,7 @@ public static class DtoMapper
             product.Name,
             product.Brand,
             product.Notes,
-            product.ImageUrl);
+            product.ImageUrl,
+            product.Price,
+            product.ShopUrl);
 }

@@ -4,5 +4,7 @@ public sealed record CreateProductRequest(
     string Name,
     string Brand,
     string Notes,
-    string ImageUrl
+    string ImageUrl,
+    decimal Price,
+    string ShopUrl
 );

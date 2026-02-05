@@ -240,7 +240,11 @@
     "notesPlaceholder": "Dodatkowe informacje",
     "imageUrl": "Zdjęcie (link)",
     "imageUrlPlaceholder": "https://...",
-    "save": "Zapisz produkt"
+    "save": "Zapisz produkt",
+    "price": "Cena (zł)",
+    "pricePlaceholder": "np. 49.99",
+    "shopUrl": "Link do sklepu",
+    "shopUrlPlaceholder": "https://sklep.pl/produkt"
   },
   "clientDetails": {
     "toastAppointmentAdded": "Wizyta została dodana.",
@@ -305,7 +309,12 @@
     "priceLabel": "Cena: {value}",
     "requiredProductsTitle": "Wymagane produkty",
     "noBrand": "Brak marki",
-    "noProducts": "Nie przypisano produktów."
+    "noProducts": "Nie przypisano produktów.",
+    "toastProductAdded": "Produkt został dodany do usługi.",
+    "toastProductAddError": "Nie udało się dodać produktu do usługi.",
+    "addProductLabel": "Dodaj produkt do usługi",
+    "addProductPlaceholder": "Wybierz produkt",
+    "addProductButton": "Dodaj produkt"
   },
   "productsPage": {
     "toastSaved": "Produkt został zapisany.",
@@ -347,7 +356,11 @@
     "notesLabel": "Notatki: {value}",
     "noNotes": "Brak notatek",
     "imageTitle": "Zdjęcie produktu",
-    "noImage": "Brak zdjęcia."
+    "noImage": "Brak zdjęcia.",
+    "priceLabel": "Cena: {value}",
+    "shopLabel": "Link do sklepu: {value}",
+    "noShopUrl": "Brak linku",
+    "openShop": "Otwórz w sklepie"
   },
   "appointmentDetails": {
     "loading": "Ładowanie wizyty...",

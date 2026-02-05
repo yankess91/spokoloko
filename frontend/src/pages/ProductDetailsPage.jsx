@@ -4,6 +4,7 @@ import useProductDetails from '../hooks/useProductDetails';
 import { useToast } from '../components/ToastProvider';
 import { productsApi } from '../api';
 import { t } from '../utils/i18n';
+import { formatCurrency } from '../utils/formatters';
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
@@ -82,9 +83,26 @@ export default function ProductDetailsPage() {
               value: product.notes || t('productDetails.noNotes'),
             })}
           </p>
+          <p>
+            {t('productDetails.priceLabel', {
+              value: formatCurrency(product.price),
+            })}
+          </p>
+          <p>
+            {t('productDetails.shopLabel', {
+              value: product.shopUrl || t('productDetails.noShopUrl'),
+            })}
+          </p>
         </article>
         <article className="card">
           <h2>{t('productDetails.imageTitle')}</h2>
+          {product.shopUrl ? (
+            <p>
+              <a href={product.shopUrl} target="_blank" rel="noreferrer">
+                {t('productDetails.openShop')}
+              </a>
+            </p>
+          ) : null}
           {product.imageUrl ? (
             <img className="product-image" src={product.imageUrl} alt={product.name} />
           ) : (

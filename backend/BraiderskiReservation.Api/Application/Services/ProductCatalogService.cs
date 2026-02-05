@@ -39,7 +39,9 @@ public sealed class ProductCatalogService : IProductCatalogService
             Name = request.Name,
             Brand = request.Brand,
             Notes = request.Notes,
-            ImageUrl = request.ImageUrl ?? string.Empty
+            ImageUrl = request.ImageUrl ?? string.Empty,
+            Price = request.Price,
+            ShopUrl = request.ShopUrl ?? string.Empty
         };
 
         await _productRepository.AddAsync(product, cancellationToken);
