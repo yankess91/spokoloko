@@ -4,6 +4,8 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import CloseIcon from '@mui/icons-material/Close';
+import { Box, Button, IconButton, Stack, Typography } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
 import { formatCurrency, formatDate } from '../utils/formatters';
 import { t } from '../utils/i18n';
 
@@ -20,92 +22,120 @@ export default function ProductList({ products, isLoading, linkBase, onDelete })
 
   const isDeleteDisabled = !onDelete;
 
-  return (
-    <div className="data-grid data-grid-products" role="table" aria-label={t('productList.ariaLabel')}>
-      <div className="data-grid-row data-grid-header" role="row">
-        <span className="data-grid-cell" role="columnheader">
-          {t('productList.columns.product')}
-        </span>
-        <span className="data-grid-cell" role="columnheader">
-          {t('productList.columns.manufacturer')}
-        </span>
-        <span className="data-grid-cell" role="columnheader">
-          {t('productList.columns.price')}
-        </span>
-        <span className="data-grid-cell" role="columnheader">
-          {t('productList.columns.availability')}
-        </span>
-        <span className="data-grid-cell" role="columnheader">
-          {t('productList.columns.availabilityCheckedAt')}
-        </span>
-        <span className="data-grid-cell" role="columnheader">
-          {t('productList.columns.image')}
-        </span>
-        <span className="data-grid-cell" role="columnheader">
-          {t('productList.columns.actions')}
-        </span>
-      </div>
-      {products.map((product) => (
-        <div key={product.id} className="data-grid-row" role="row">
-          <div className="data-grid-cell" role="cell">
-            <div className="data-grid-title">{product.name}</div>
-            <div className="data-grid-meta">{product.notes || t('productList.noNotes')}</div>
-          </div>
-          <div className="data-grid-cell" role="cell">
-            {product.brand || t('productList.noBrand')}
-          </div>
-          <div className="data-grid-cell" role="cell">
-            {formatCurrency(product.price)}
-          </div>
-          <div className="data-grid-cell" role="cell">
-            {product.isAvailable ? t('productList.available') : t('productList.unavailable')}
-          </div>
-          <div className="data-grid-cell" role="cell">
-            {product.availabilityCheckedAt
-              ? formatDate(product.availabilityCheckedAt)
-              : t('productList.noAvailabilityDate')}
-          </div>
-          <div className="data-grid-cell" role="cell">
-            {product.imageUrl ? (
-              <button
-                type="button"
-                className="thumb-button"
-                onClick={() => setZoomedImage({ src: product.imageUrl, name: product.name })}
-                title={t('productList.zoomImage')}
-              >
-                <img className="thumb" src={product.imageUrl} alt={product.name} />
-                <span className="thumb-overlay">
-                  <ZoomInIcon fontSize="small" />
-                </span>
-              </button>
-            ) : (
-              <span className="data-grid-meta">{t('productList.noImage')}</span>
-            )}
-          </div>
-          <div className="data-grid-cell data-grid-actions" role="cell">
-            {linkBase ? (
-              <Link className="ghost" to={`${linkBase}/${product.id}`}>
-                <VisibilityOutlinedIcon fontSize="small" />
-                {t('productList.details')}
-              </Link>
-            ) : null}
-            <button
-              type="button"
-              className="ghost danger icon-button"
-              onClick={() => onDelete?.(product)}
-              disabled={isDeleteDisabled}
-              title={
-                isDeleteDisabled
-                  ? t('productList.deleteDisabled')
-                  : t('productList.delete')
-              }
+  const columns = [
+    {
+      field: 'product',
+      headerName: t('productList.columns.product'),
+      flex: 1.3,
+      minWidth: 260,
+      sortable: false,
+      renderCell: (params) => (
+        <Box sx={{ py: 1 }}>
+          <Typography variant="body2" fontWeight={600}>
+            {params.row.name}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {params.row.notes || t('productList.noNotes')}
+          </Typography>
+        </Box>
+      )
+    },
+    {
+      field: 'brand',
+      headerName: t('productList.columns.manufacturer'),
+      minWidth: 170,
+      valueGetter: (_, row) => row.brand || t('productList.noBrand')
+    },
+    {
+      field: 'price',
+      headerName: t('productList.columns.price'),
+      minWidth: 120,
+      valueFormatter: (value) => formatCurrency(value)
+    },
+    {
+      field: 'availability',
+      headerName: t('productList.columns.availability'),
+      minWidth: 150,
+      valueGetter: (_, row) =>
+        row.isAvailable ? t('productList.available') : t('productList.unavailable')
+    },
+    {
+      field: 'availabilityCheckedAt',
+      headerName: t('productList.columns.availabilityCheckedAt'),
+      minWidth: 180,
+      valueGetter: (_, row) =>
+        row.availabilityCheckedAt
+          ? formatDate(row.availabilityCheckedAt)
+          : t('productList.noAvailabilityDate')
+    },
+    {
+      field: 'image',
+      headerName: t('productList.columns.image'),
+      minWidth: 120,
+      sortable: false,
+      renderCell: (params) =>
+        params.row.imageUrl ? (
+          <IconButton
+            size="small"
+            onClick={() => setZoomedImage({ src: params.row.imageUrl, name: params.row.name })}
+            title={t('productList.zoomImage')}
+          >
+            <ZoomInIcon fontSize="small" />
+          </IconButton>
+        ) : (
+          <Typography variant="caption" color="text.secondary">
+            {t('productList.noImage')}
+          </Typography>
+        )
+    },
+    {
+      field: 'actions',
+      headerName: t('productList.columns.actions'),
+      minWidth: 220,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => (
+        <Stack direction="row" spacing={1} sx={{ py: 0.5 }}>
+          {linkBase ? (
+            <Button
+              component={Link}
+              to={`${linkBase}/${params.row.id}`}
+              size="small"
+              variant="text"
+              startIcon={<VisibilityOutlinedIcon fontSize="small" />}
             >
-              <DeleteOutlineIcon fontSize="small" />
-              {t('productList.delete')}
-            </button>
-          </div>
-        </div>
-      ))}
+              {t('productList.details')}
+            </Button>
+          ) : null}
+          <Button
+            type="button"
+            size="small"
+            color="error"
+            variant="text"
+            onClick={() => onDelete?.(params.row)}
+            disabled={isDeleteDisabled}
+            title={isDeleteDisabled ? t('productList.deleteDisabled') : t('productList.delete')}
+            startIcon={<DeleteOutlineIcon fontSize="small" />}
+          >
+            {t('productList.delete')}
+          </Button>
+        </Stack>
+      )
+    }
+  ];
+
+  return (
+    <>
+      <DataGrid
+        aria-label={t('productList.ariaLabel')}
+        autoHeight
+        rows={products}
+        columns={columns}
+        disableRowSelectionOnClick
+        pageSizeOptions={[10, 25, 50]}
+        initialState={{ pagination: { paginationModel: { pageSize: 10, page: 0 } } }}
+        sx={{ backgroundColor: 'background.paper' }}
+      />
 
       {zoomedImage ? (
         <div className="image-zoom-backdrop" onClick={() => setZoomedImage(null)}>
@@ -122,6 +152,6 @@ export default function ProductList({ products, isLoading, linkBase, onDelete })
           </div>
         </div>
       ) : null}
-    </div>
+    </>
   );
 }
