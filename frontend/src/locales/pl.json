@@ -274,7 +274,10 @@
     "noDate": "Brak daty",
     "historyNotesLabel": "Uwagi: {value}",
     "noServiceHistory": "Brak historii usług.",
-    "modalTitle": "Dodaj wizytę"
+    "modalTitle": "Dodaj wizytę",
+    "noBrand": "Brak marki",
+    "noImage": "Brak zdjęcia",
+    "zoomImage": "Powiększ zdjęcie"
   },
   "dashboard": {
     "unknownClient": "Nieznany klient",
