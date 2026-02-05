@@ -13,11 +13,30 @@ export default function ServicesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { showToast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortBy, setSortBy] = useState('name-asc');
 
-  const sortedServices = useMemo(
-    () => [...services].sort((a, b) => a.name.localeCompare(b.name)),
-    [services]
-  );
+  const sortedServices = useMemo(() => {
+    const collator = new Intl.Collator('pl', { sensitivity: 'base' });
+
+    return [...services].sort((a, b) => {
+      switch (sortBy) {
+        case 'name-desc':
+          return collator.compare(b.name ?? '', a.name ?? '');
+        case 'duration-asc':
+          return Number(a.durationMinutes ?? 0) - Number(b.durationMinutes ?? 0);
+        case 'duration-desc':
+          return Number(b.durationMinutes ?? 0) - Number(a.durationMinutes ?? 0);
+        case 'price-asc':
+          return Number(a.price ?? 0) - Number(b.price ?? 0);
+        case 'price-desc':
+          return Number(b.price ?? 0) - Number(a.price ?? 0);
+        case 'name-asc':
+        default:
+          return collator.compare(a.name ?? '', b.name ?? '');
+      }
+    });
+  }, [services, sortBy]);
+
   const pageSize = 8;
   const totalPages = Math.max(1, Math.ceil(sortedServices.length / pageSize));
   const paginatedServices = useMemo(() => {
@@ -91,6 +110,19 @@ export default function ServicesPage() {
               <AddIcon fontSize="small" />
               {t('servicesPage.newService')}
             </button>
+          </div>
+          <div className="list-controls grid-controls">
+            <label className="filter-field">
+              {t('servicesPage.sortLabel')}
+              <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+                <option value="name-asc">{t('servicesPage.sortNameAsc')}</option>
+                <option value="name-desc">{t('servicesPage.sortNameDesc')}</option>
+                <option value="duration-asc">{t('servicesPage.sortDurationAsc')}</option>
+                <option value="duration-desc">{t('servicesPage.sortDurationDesc')}</option>
+                <option value="price-asc">{t('servicesPage.sortPriceAsc')}</option>
+                <option value="price-desc">{t('servicesPage.sortPriceDesc')}</option>
+              </select>
+            </label>
           </div>
           <ServiceList
             services={paginatedServices}

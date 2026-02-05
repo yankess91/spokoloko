@@ -15,6 +15,7 @@ export default function AppointmentsPage() {
   const { services, isLoading: servicesLoading } = useServices();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [sortBy, setSortBy] = useState('date-desc');
   const { showToast } = useToast();
 
   const clientsById = useMemo(
@@ -26,6 +27,40 @@ export default function AppointmentsPage() {
     () => new Map(services.map((service) => [service.id, service])),
     [services]
   );
+
+  const sortedAppointments = useMemo(() => {
+    const collator = new Intl.Collator('pl', { sensitivity: 'base' });
+
+    return [...appointments].sort((a, b) => {
+      switch (sortBy) {
+        case 'date-asc':
+          return new Date(a.startAt).getTime() - new Date(b.startAt).getTime();
+        case 'service-asc': {
+          const aName = servicesById.get(a.serviceId)?.name ?? '';
+          const bName = servicesById.get(b.serviceId)?.name ?? '';
+          return collator.compare(aName, bName);
+        }
+        case 'service-desc': {
+          const aName = servicesById.get(a.serviceId)?.name ?? '';
+          const bName = servicesById.get(b.serviceId)?.name ?? '';
+          return collator.compare(bName, aName);
+        }
+        case 'client-asc': {
+          const aName = clientsById.get(a.clientId)?.fullName ?? '';
+          const bName = clientsById.get(b.clientId)?.fullName ?? '';
+          return collator.compare(aName, bName);
+        }
+        case 'client-desc': {
+          const aName = clientsById.get(a.clientId)?.fullName ?? '';
+          const bName = clientsById.get(b.clientId)?.fullName ?? '';
+          return collator.compare(bName, aName);
+        }
+        case 'date-desc':
+        default:
+          return new Date(b.startAt).getTime() - new Date(a.startAt).getTime();
+      }
+    });
+  }, [appointments, sortBy, clientsById, servicesById]);
 
   const showError = useCallback(
     (message) => showToast(message, { severity: 'error' }),
@@ -80,8 +115,21 @@ export default function AppointmentsPage() {
               {t('appointmentsPage.newAppointment')}
             </button>
           </div>
+          <div className="list-controls grid-controls">
+            <label className="filter-field">
+              {t('appointmentsPage.sortLabel')}
+              <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+                <option value="date-desc">{t('appointmentsPage.sortDateDesc')}</option>
+                <option value="date-asc">{t('appointmentsPage.sortDateAsc')}</option>
+                <option value="service-asc">{t('appointmentsPage.sortServiceAsc')}</option>
+                <option value="service-desc">{t('appointmentsPage.sortServiceDesc')}</option>
+                <option value="client-asc">{t('appointmentsPage.sortClientAsc')}</option>
+                <option value="client-desc">{t('appointmentsPage.sortClientDesc')}</option>
+              </select>
+            </label>
+          </div>
           <AppointmentList
-            appointments={appointments}
+            appointments={sortedAppointments}
             clientsById={clientsById}
             servicesById={servicesById}
             isLoading={isLoading}
