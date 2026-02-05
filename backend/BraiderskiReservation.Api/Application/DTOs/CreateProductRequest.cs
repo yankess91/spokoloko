@@ -6,5 +6,7 @@ public sealed record CreateProductRequest(
     string Notes,
     string ImageUrl,
     decimal Price,
-    string ShopUrl
+    string ShopUrl,
+    bool IsAvailable,
+    DateTimeOffset? AvailabilityCheckedAt
 );

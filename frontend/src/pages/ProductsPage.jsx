@@ -15,6 +15,7 @@ export default function ProductsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [brandFilter, setBrandFilter] = useState('all');
+  const [availabilityFilter, setAvailabilityFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name-asc');
 
   const brandOptions = useMemo(() => {
@@ -39,9 +40,14 @@ export default function ProductsPage() {
         brandFilter === 'all' ||
         (product.brand?.trim().toLowerCase() ?? '') === brandFilter;
 
-      return matchesSearch && matchesBrand;
+      const matchesAvailability =
+        availabilityFilter === 'all' ||
+        (availabilityFilter === 'available' && product.isAvailable) ||
+        (availabilityFilter === 'unavailable' && !product.isAvailable);
+
+      return matchesSearch && matchesBrand && matchesAvailability;
     });
-  }, [products, searchTerm, brandFilter]);
+  }, [products, searchTerm, brandFilter, availabilityFilter]);
 
   const sortedProducts = useMemo(() => {
     const collator = new Intl.Collator('pl', { sensitivity: 'base' });
@@ -59,6 +65,10 @@ export default function ProductsPage() {
           return getPrice(a) - getPrice(b);
         case 'price-desc':
           return getPrice(b) - getPrice(a);
+        case 'availability-checked-desc':
+          return new Date(b.availabilityCheckedAt ?? 0) - new Date(a.availabilityCheckedAt ?? 0);
+        case 'availability-checked-asc':
+          return new Date(a.availabilityCheckedAt ?? 0) - new Date(b.availabilityCheckedAt ?? 0);
         case 'name-asc':
         default:
           return collator.compare(a.name ?? '', b.name ?? '');
@@ -161,6 +171,17 @@ export default function ProductsPage() {
               </select>
             </label>
             <label className="filter-field">
+              {t('productsPage.availabilityLabel')}
+              <select
+                value={availabilityFilter}
+                onChange={(event) => setAvailabilityFilter(event.target.value)}
+              >
+                <option value="all">{t('productsPage.availabilityAll')}</option>
+                <option value="available">{t('productsPage.availabilityAvailable')}</option>
+                <option value="unavailable">{t('productsPage.availabilityUnavailable')}</option>
+              </select>
+            </label>
+            <label className="filter-field">
               {t('productsPage.sortLabel')}
               <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
                 <option value="name-asc">{t('productsPage.sortNameAsc')}</option>
@@ -169,6 +190,8 @@ export default function ProductsPage() {
                 <option value="brand-desc">{t('productsPage.sortBrandDesc')}</option>
                 <option value="price-asc">{t('productsPage.sortPriceAsc')}</option>
                 <option value="price-desc">{t('productsPage.sortPriceDesc')}</option>
+                <option value="availability-checked-desc">{t('productsPage.sortCheckedDesc')}</option>
+                <option value="availability-checked-asc">{t('productsPage.sortCheckedAsc')}</option>
               </select>
             </label>
           </div>

@@ -28,7 +28,7 @@ Dla istniejących baz danych, po wdrożeniu zmian schematu uruchom skrypty z kat
 
 Przykład (PostgreSQL):
 ```bash
-psql "$DATABASE_URL" -f backend/BraiderskiReservation.Api/database/migrations/20260205_add_product_price_and_shop_url.sql
+psql "$DATABASE_URL" -f backend/BraiderskiReservation.Api/database/migrations/20260206_add_product_availability_fields.sql
 ```
 
 ## Frontend (React)

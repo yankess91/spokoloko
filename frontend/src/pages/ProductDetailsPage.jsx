@@ -4,7 +4,7 @@ import useProductDetails from '../hooks/useProductDetails';
 import { useToast } from '../components/ToastProvider';
 import { productsApi } from '../api';
 import { t } from '../utils/i18n';
-import { formatCurrency } from '../utils/formatters';
+import { formatCurrency, formatDate } from '../utils/formatters';
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
@@ -91,6 +91,20 @@ export default function ProductDetailsPage() {
           <p>
             {t('productDetails.shopLabel', {
               value: product.shopUrl || t('productDetails.noShopUrl'),
+            })}
+          </p>
+          <p>
+            {t('productDetails.availabilityLabel', {
+              value: product.isAvailable
+                ? t('productDetails.available')
+                : t('productDetails.unavailable'),
+            })}
+          </p>
+          <p>
+            {t('productDetails.availabilityCheckedAtLabel', {
+              value: product.availabilityCheckedAt
+                ? formatDate(product.availabilityCheckedAt)
+                : t('productDetails.noAvailabilityDate'),
             })}
           </p>
         </article>
