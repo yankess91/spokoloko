@@ -1,5 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import ZoomInIcon from '@mui/icons-material/ZoomIn';
+import CloseIcon from '@mui/icons-material/Close';
 import useAppointmentDetails from '../hooks/useAppointmentDetails';
 import useClients from '../hooks/useClients';
 import useServices from '../hooks/useServices';
@@ -9,6 +11,7 @@ import { t } from '../utils/i18n';
 
 export default function AppointmentDetailsPage() {
   const { id } = useParams();
+  const [zoomedImage, setZoomedImage] = useState(null);
   const { appointment, isLoading, error } = useAppointmentDetails(id);
   const { clients } = useClients();
   const { services } = useServices();
@@ -81,9 +84,26 @@ export default function AppointmentDetailsPage() {
           {appointment.usedProducts?.length ? (
             <ul className="list stacked">
               {appointment.usedProducts.map((product) => (
-                <li key={product.id}>
-                  <span className="list-title">{product.name}</span>
-                  <span className="muted">{product.brand || t('appointmentDetails.noBrand')}</span>
+                <li key={product.id} className="appointment-product-item">
+                  <div className="list-item-main">
+                    <span className="list-title">{product.name}</span>
+                    <span className="muted">{product.brand || t('appointmentDetails.noBrand')}</span>
+                  </div>
+                  {product.imageUrl ? (
+                    <button
+                      type="button"
+                      className="thumb-button"
+                      onClick={() => setZoomedImage({ src: product.imageUrl, name: product.name })}
+                      title={t('appointmentDetails.zoomImage')}
+                    >
+                      <img className="thumb" src={product.imageUrl} alt={product.name} />
+                      <span className="thumb-overlay">
+                        <ZoomInIcon fontSize="small" />
+                      </span>
+                    </button>
+                  ) : (
+                    <span className="muted">{t('appointmentDetails.noImage')}</span>
+                  )}
                 </li>
               ))}
             </ul>
@@ -92,6 +112,22 @@ export default function AppointmentDetailsPage() {
           )}
         </article>
       </section>
+
+      {zoomedImage ? (
+        <div className="image-zoom-backdrop" onClick={() => setZoomedImage(null)}>
+          <div className="image-zoom-modal" onClick={(event) => event.stopPropagation()}>
+            <button
+              type="button"
+              className="ghost icon-button image-zoom-close"
+              onClick={() => setZoomedImage(null)}
+            >
+              <CloseIcon fontSize="small" />
+              {t('modal.close')}
+            </button>
+            <img className="image-zoom-preview" src={zoomedImage.src} alt={zoomedImage.name} />
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

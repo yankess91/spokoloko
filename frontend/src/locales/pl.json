@@ -381,6 +381,8 @@
     "noNotes": "Brak notatek",
     "productsTitle": "Użyte produkty",
     "noBrand": "Brak marki",
+    "noImage": "Brak zdjęcia",
+    "zoomImage": "Powiększ zdjęcie",
     "noProducts": "Brak zapisanych produktów."
   },
   "clientsPage": {
