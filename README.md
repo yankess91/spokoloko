@@ -22,6 +22,15 @@ dotnet run
 
 Po uruchomieniu dostępne jest Swagger UI pod `https://localhost:5001/swagger` lub `http://localhost:5000/swagger`.
 
+### Migracje SQL
+Dla istniejących baz danych, po wdrożeniu zmian schematu uruchom skrypty z katalogu:
+`backend/BraiderskiReservation.Api/database/migrations`
+
+Przykład (PostgreSQL):
+```bash
+psql "$DATABASE_URL" -f backend/BraiderskiReservation.Api/database/migrations/20260205_add_product_price_and_shop_url.sql
+```
+
 ## Frontend (React)
 
 **Uruchomienie:**

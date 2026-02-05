@@ -11,7 +11,9 @@ CREATE TABLE IF NOT EXISTS products (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name text NOT NULL,
     brand text NOT NULL,
-    notes text NOT NULL
+    notes text NOT NULL,
+    price numeric(10,2) NOT NULL DEFAULT 0,
+    shop_url text NOT NULL DEFAULT ''
 );
 
 CREATE TABLE IF NOT EXISTS services (
@@ -44,10 +46,10 @@ VALUES
     ('8a22b9d5-b894-4f01-a566-8a0f8b7bde8a', 'Maja Nowak', 'maja.nowak@example.com', '+48 600 333 444')
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO products (id, name, brand, notes)
+INSERT INTO products (id, name, brand, notes, price, shop_url)
 VALUES
-    ('c7f0bd3f-48ab-45c0-9a02-2c1d1d07d8c5', 'Szampon regenerujący', 'LumiCare', 'Do włosów suchych'),
-    ('2b4b2d2f-1a42-4b84-9f20-2bb2b8e4e2c1', 'Olejek ochronny', 'GlowRoots', 'Nakładany przed stylizacją')
+    ('c7f0bd3f-48ab-45c0-9a02-2c1d1d07d8c5', 'Szampon regenerujący', 'LumiCare', 'Do włosów suchych', 39.99, 'https://sklep.przyklad.pl/szampon-regenerujacy'),
+    ('2b4b2d2f-1a42-4b84-9f20-2bb2b8e4e2c1', 'Olejek ochronny', 'GlowRoots', 'Nakładany przed stylizacją', 54.50, 'https://sklep.przyklad.pl/olejek-ochronny')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO services (id, name, description, duration)
