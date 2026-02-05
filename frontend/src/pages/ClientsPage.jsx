@@ -5,6 +5,7 @@ import Modal from '../components/Modal';
 import useClients from '../hooks/useClients';
 import { useToast } from '../components/ToastProvider';
 import AddIcon from '@mui/icons-material/Add';
+import { t } from '../utils/i18n';
 
 export default function ClientsPage() {
   const { clients, isLoading, error, addClient, updateStatus, removeClient } = useClients();
@@ -67,10 +68,10 @@ export default function ClientsPage() {
     setIsSubmitting(true);
     try {
       await addClient(payload);
-      showToast('Profil klientki został zapisany.');
+      showToast(t('clientsPage.toastSaved'));
       setIsModalOpen(false);
     } catch (err) {
-      showError(err.message ?? 'Nie udało się zapisać profilu.');
+      showError(err.message ?? t('clientsPage.toastSaveError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -81,62 +82,60 @@ export default function ClientsPage() {
     try {
       await updateStatus(client.id, !client.isActive);
       showToast(
-        client.isActive ? 'Klientka została dezaktywowana.' : 'Klientka została aktywowana.'
+        client.isActive ? t('clientsPage.toastDeactivated') : t('clientsPage.toastActivated')
       );
     } catch (err) {
-      showError(err.message ?? 'Nie udało się zmienić statusu.');
+      showError(err.message ?? t('clientsPage.toastStatusError'));
     } finally {
       setUpdatingClientId(null);
     }
   };
 
   const handleDelete = (client) => {
-    if (!window.confirm(`Czy na pewno chcesz usunąć klientkę "${client.fullName}"?`)) {
+    if (!window.confirm(t('clientsPage.deleteConfirm', { name: client.fullName }))) {
       return;
     }
     removeClient(client.id);
-    showToast('Klientka została usunięta z listy.');
+    showToast(t('clientsPage.toastDeleted'));
   };
 
   return (
     <div className="page-content">
       <header className="section-header">
-        <h1>Użytkowniczki</h1>
-        <p className="muted">
-          Dodawaj nowe profile klientek i sprawdzaj historię ich usług.
-        </p>
+        <h1>{t('clientsPage.title')}</h1>
+        <p className="muted">{t('clientsPage.subtitle')}</p>
       </header>
 
       <section className="stack">
         <article className="card">
           <header className="card-header">
             <div>
-              <h2>Lista klientek</h2>
-              <p className="muted">Przeglądaj dane oraz zarządzaj statusem profilu.</p>
+              <h2>{t('clientsPage.listTitle')}</h2>
+              <p className="muted">{t('clientsPage.listSubtitle')}</p>
             </div>
           </header>
           <div className="grid-actions">
             <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
               <AddIcon fontSize="small" />
-              Nowa klientka
+              {t('clientsPage.newClient')}
             </button>
           </div>
           <div className="list-controls grid-controls">
             <label className="filter-field">
-              Filtruj
+              {t('clientsPage.filterLabel')}
               <input
                 type="search"
-                placeholder="Wpisz imię, email lub telefon"
+                placeholder={t('clientsPage.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
               />
             </label>
             <label className="filter-field">
-              Status
+              {t('clientsPage.statusLabel')}
               <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
-                <option value="all">Wszystkie klientki</option>
-                <option value="active">Aktywne klientki</option>
-                <option value="inactive">Nieaktywne klientki</option>
+                <option value="all">{t('clientsPage.statusAll')}</option>
+                <option value="active">{t('clientsPage.statusActive')}</option>
+                <option value="inactive">{t('clientsPage.statusInactive')}</option>
               </select>
             </label>
           </div>
@@ -152,7 +151,7 @@ export default function ClientsPage() {
       </section>
 
       {isModalOpen ? (
-        <Modal title="Nowa klientka" onClose={() => setIsModalOpen(false)}>
+        <Modal title={t('clientsPage.modalTitle')} onClose={() => setIsModalOpen(false)}>
           <ClientForm onSubmit={handleSubmit} isSubmitting={isSubmitting} showTitle={false} variant="plain" />
         </Modal>
       ) : null}

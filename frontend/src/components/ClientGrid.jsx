@@ -3,6 +3,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import { t } from '../utils/i18n';
 
 export default function ClientGrid({
   clients,
@@ -13,29 +14,29 @@ export default function ClientGrid({
   onDelete
 }) {
   if (isLoading) {
-    return <p className="muted">Ładowanie klientek...</p>;
+    return <p className="muted">{t('clientGrid.loading')}</p>;
   }
 
   if (clients.length === 0) {
-    return <p className="muted">Brak klientek do wyświetlenia.</p>;
+    return <p className="muted">{t('clientGrid.empty')}</p>;
   }
 
   const isDeleteDisabled = !onDelete;
 
   return (
-    <div className="data-grid" role="table" aria-label="Lista klientek">
+    <div className="data-grid" role="table" aria-label={t('clientGrid.ariaLabel')}>
       <div className="data-grid-row data-grid-header" role="row">
         <span className="data-grid-cell" role="columnheader">
-          Klientka
+          {t('clientGrid.columns.client')}
         </span>
         <span className="data-grid-cell" role="columnheader">
-          Status
+          {t('clientGrid.columns.status')}
         </span>
         <span className="data-grid-cell" role="columnheader">
-          Usługi
+          {t('clientGrid.columns.services')}
         </span>
         <span className="data-grid-cell" role="columnheader">
-          Akcje
+          {t('clientGrid.columns.actions')}
         </span>
       </div>
       {clients.map((client) => {
@@ -45,12 +46,13 @@ export default function ClientGrid({
             <div className="data-grid-cell" role="cell">
               <div className="data-grid-title">{client.fullName}</div>
               <div className="data-grid-meta">
-                {client.email || 'Brak emaila'} · {client.phoneNumber || 'Brak telefonu'}
+                {client.email || t('clientGrid.noEmail')} ·{' '}
+                {client.phoneNumber || t('clientGrid.noPhone')}
               </div>
             </div>
             <div className="data-grid-cell" role="cell">
               <span className={`status-pill ${client.isActive ? 'active' : 'inactive'}`}>
-                {client.isActive ? 'Aktywna' : 'Nieaktywna'}
+                {client.isActive ? t('clientGrid.active') : t('clientGrid.inactive')}
               </span>
             </div>
             <div className="data-grid-cell" role="cell">
@@ -60,7 +62,7 @@ export default function ClientGrid({
               {linkBase ? (
                 <Link className="ghost" to={`${linkBase}/${client.id}`}>
                   <VisibilityOutlinedIcon fontSize="small" />
-                  Szczegóły
+                  {t('clientGrid.details')}
                 </Link>
               ) : null}
               <button
@@ -75,20 +77,20 @@ export default function ClientGrid({
                   <ToggleOnIcon fontSize="small" />
                 )}
                 {isUpdating
-                  ? 'Zapisywanie...'
+                  ? t('clientGrid.saving')
                   : client.isActive
-                  ? 'Dezaktywuj'
-                  : 'Aktywuj'}
+                  ? t('clientGrid.deactivate')
+                  : t('clientGrid.activate')}
               </button>
               <button
                 type="button"
                 className="ghost danger icon-button"
                 onClick={() => onDelete?.(client)}
                 disabled={isDeleteDisabled}
-                title={isDeleteDisabled ? 'Usuwanie niedostępne' : 'Usuń'}
+                title={isDeleteDisabled ? t('clientGrid.deleteDisabled') : t('clientGrid.delete')}
               >
                 <DeleteOutlineIcon fontSize="small" />
-                Usuń
+                {t('clientGrid.delete')}
               </button>
             </div>
           </div>

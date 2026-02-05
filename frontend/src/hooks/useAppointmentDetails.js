@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { appointmentsApi } from '../api';
+import { t } from '../utils/i18n';
 
 export default function useAppointmentDetails(appointmentId) {
   const [appointment, setAppointment] = useState(null);
@@ -25,7 +26,7 @@ export default function useAppointmentDetails(appointmentId) {
         }
       } catch (err) {
         if (isMounted) {
-          setError(err.message ?? 'Nie udało się pobrać wizyty.');
+          setError(err.message ?? t('errors.appointmentDetails'));
         }
       } finally {
         if (isMounted) {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { t } from '../utils/i18n';
 
 export default function ProductForm({ onSubmit, isSubmitting, showTitle = true, variant = 'card' }) {
   const [formState, setFormState] = useState({
@@ -21,49 +22,49 @@ export default function ProductForm({ onSubmit, isSubmitting, showTitle = true, 
 
   const formContent = (
     <>
-      {showTitle ? <h2>Dodaj produkt</h2> : null}
+      {showTitle ? <h2>{t('productForm.title')}</h2> : null}
       <form className="form" onSubmit={handleSubmit}>
         <label>
-          Nazwa produktu
+          {t('productForm.name')}
           <input
             name="name"
-            placeholder="np. Olej arganowy"
+            placeholder={t('productForm.namePlaceholder')}
             value={formState.name}
             onChange={handleChange}
             required
           />
         </label>
         <label>
-          Marka
+          {t('productForm.brand')}
           <input
             name="brand"
-            placeholder="np. Moroccanoil"
+            placeholder={t('productForm.brandPlaceholder')}
             value={formState.brand}
             onChange={handleChange}
           />
         </label>
         <label>
-          Notatki
+          {t('productForm.notes')}
           <textarea
             name="notes"
-            placeholder="Dodatkowe informacje"
+            placeholder={t('productForm.notesPlaceholder')}
             rows="3"
             value={formState.notes}
             onChange={handleChange}
           />
         </label>
         <label>
-          Zdjęcie (link)
+          {t('productForm.imageUrl')}
           <input
             name="imageUrl"
             type="url"
-            placeholder="https://..."
+            placeholder={t('productForm.imageUrlPlaceholder')}
             value={formState.imageUrl}
             onChange={handleChange}
           />
         </label>
         <button type="submit" className="primary" disabled={isSubmitting}>
-          {isSubmitting ? 'Zapisywanie...' : 'Zapisz produkt'}
+          {isSubmitting ? t('common.saving') : t('productForm.save')}
         </button>
       </form>
     </>

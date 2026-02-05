@@ -1,3 +1,5 @@
+import { t } from '../utils/i18n';
+
 export default function Modal({ title, onClose, children }) {
   const handleBackdropClick = (event) => {
     if (event.target === event.currentTarget) {
@@ -10,8 +12,13 @@ export default function Modal({ title, onClose, children }) {
       <div className="modal" role="dialog" aria-modal="true" aria-label={title}>
         <header className="modal-header">
           <h2>{title}</h2>
-          <button type="button" className="ghost" onClick={onClose} aria-label="Zamknij modal">
-            Zamknij
+          <button
+            type="button"
+            className="ghost"
+            onClick={onClose}
+            aria-label={t('modal.closeAria')}
+          >
+            {t('modal.close')}
           </button>
         </header>
         <div className="modal-body">{children}</div>

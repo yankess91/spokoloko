@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink, Route, Routes } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -34,6 +34,7 @@ import DesignServicesRoundedIcon from '@mui/icons-material/DesignServicesRounded
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookRoundedIcon from '@mui/icons-material/FacebookRounded';
+import { t } from './utils/i18n';
 
 const navLinkStyles = {
   color: 'var(--color-text)',
@@ -62,31 +63,32 @@ export default function App() {
   const { isAuthenticated, user, logout } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const logoSrc = 'src/assets/spokoloko-logo.png';
-  const navItems = useMemo(
-    () => [
-      {
-        label: 'Użytkowniczki',
-        to: '/clients',
-        icon: <PeopleAltRoundedIcon fontSize="small" />,
-      },
-      {
-        label: 'Wizyty',
-        to: '/appointments',
-        icon: <EventAvailableRoundedIcon fontSize="small" />,
-      },
-      {
-        label: 'Produkty',
-        to: '/products',
-        icon: <Inventory2RoundedIcon fontSize="small" />,
-      },
-      {
-        label: 'Usługi',
-        to: '/services',
-        icon: <DesignServicesRoundedIcon fontSize="small" />,
-      },
-    ],
-    [],
-  );
+  const navItems = [
+    {
+      label: t('nav.clients'),
+      to: '/clients',
+      icon: <PeopleAltRoundedIcon fontSize="small" />,
+    },
+    {
+      label: t('nav.appointments'),
+      to: '/appointments',
+      icon: <EventAvailableRoundedIcon fontSize="small" />,
+    },
+    {
+      label: t('nav.products'),
+      to: '/products',
+      icon: <Inventory2RoundedIcon fontSize="small" />,
+    },
+    {
+      label: t('nav.services'),
+      to: '/services',
+      icon: <DesignServicesRoundedIcon fontSize="small" />,
+    },
+  ];
+
+  useEffect(() => {
+    document.title = t('app.documentTitle');
+  }, []);
 
   const handleDrawerToggle = (open) => () => {
     setDrawerOpen(open);
@@ -120,7 +122,7 @@ export default function App() {
               <Box
                 component="img"
                 src={logoSrc}
-                alt="Spoko Loko logo"
+                alt={t('app.logoAlt')}
                 className="topbar-logo-image"
               />
             </Stack>
@@ -137,7 +139,7 @@ export default function App() {
                 padding: 1,
               }}
               size="medium"
-              aria-label="Otwórz menu nawigacji"
+              aria-label={t('app.openNavigationMenu')}
             >
               <MenuRoundedIcon fontSize="large" />
             </IconButton>
@@ -164,11 +166,11 @@ export default function App() {
               sx={{ display: { xs: 'none', md: 'flex' } }}
             >
               <Typography variant="body2" sx={{ color: 'var(--color-muted)', fontWeight: 600 }}>
-                Witaj, {user?.fullName}
+                {t('app.greeting', { name: user?.fullName ?? '' })}
               </Typography>
               <IconButton
                 onClick={logout}
-                aria-label="Wyloguj"
+                aria-label={t('app.logout')}
                 sx={{
                   border: '1px solid var(--color-border)',
                   borderRadius: '10px',
@@ -209,10 +211,10 @@ export default function App() {
         <Stack spacing={2} sx={{ padding: 3 }}>
           <Box>
             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-              Nawigacja
+              {t('app.navigationTitle')}
             </Typography>
             <Typography variant="body2" sx={{ color: 'var(--color-muted)' }}>
-              Szybki dostęp do kluczowych sekcji.
+              {t('app.navigationSubtitle')}
             </Typography>
           </Box>
           <List disablePadding>
@@ -245,7 +247,7 @@ export default function App() {
           <Divider />
           <Box>
             <Typography variant="body2" sx={{ color: 'var(--color-muted)' }}>
-              Zalogowano jako
+              {t('app.loggedInAs')}
             </Typography>
             <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
               {user?.fullName}
@@ -256,7 +258,7 @@ export default function App() {
               handleDrawerToggle(false)();
               logout();
             }}
-            aria-label="Wyloguj"
+            aria-label={t('app.logout')}
             sx={{
               border: '1px solid var(--color-border)',
               borderRadius: '10px',
@@ -292,28 +294,28 @@ export default function App() {
       <footer className="site-footer">
         <div className="footer-content">
           <div>
-            <h3>Kontakt</h3>
-            <p className="muted">Braiderski Studio · ul. Słoneczna 12, 00-001 Warszawa</p>
-            <p className="muted">Telefon: +48 555 123 456 · Email: kontakt@braiderski.pl</p>
+            <h3>{t('footer.contactTitle')}</h3>
+            <p className="muted">{t('footer.address')}</p>
+            <p className="muted">{t('footer.contactLine')}</p>
           </div>
           <div className="footer-social">
-            <span className="muted">Obserwuj nas</span>
+            <span className="muted">{t('footer.followUs')}</span>
             <div className="footer-links">
               <a
                 href="https://www.instagram.com/"
                 target="_blank"
                 rel="noreferrer"
-                aria-label="Instagram"
+                aria-label={t('footer.instagramLabel')}
               >
-                <InstagramIcon fontSize="small" /> Instagram
+                <InstagramIcon fontSize="small" /> {t('footer.instagram')}
               </a>
               <a
                 href="https://www.facebook.com/"
                 target="_blank"
                 rel="noreferrer"
-                aria-label="Facebook"
+                aria-label={t('footer.facebookLabel')}
               >
-                <FacebookRoundedIcon fontSize="small" /> Facebook
+                <FacebookRoundedIcon fontSize="small" /> {t('footer.facebook')}
               </a>
             </div>
           </div>

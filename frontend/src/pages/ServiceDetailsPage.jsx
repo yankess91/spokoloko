@@ -4,6 +4,7 @@ import useServiceDetails from '../hooks/useServiceDetails';
 import { useToast } from '../components/ToastProvider';
 import { formatCurrency } from '../utils/formatters';
 import { servicesApi } from '../api';
+import { t } from '../utils/i18n';
 
 export default function ServiceDetailsPage() {
   const { id } = useParams();
@@ -19,11 +20,11 @@ export default function ServiceDetailsPage() {
   }, [error, showToast]);
 
   if (isLoading) {
-    return <p className="card muted">Ładowanie usługi...</p>;
+    return <p className="card muted">{t('serviceDetails.loading')}</p>;
   }
 
   if (!service && !error) {
-    return <p className="card muted">Nie znaleziono usługi.</p>;
+    return <p className="card muted">{t('serviceDetails.notFound')}</p>;
   }
 
   if (error) {
@@ -35,7 +36,9 @@ export default function ServiceDetailsPage() {
       return;
     }
 
-    const confirmed = window.confirm(`Czy na pewno chcesz usunąć usługę: ${service.name}?`);
+    const confirmed = window.confirm(
+      t('serviceDetails.deleteConfirm', { name: service.name })
+    );
     if (!confirmed) {
       return;
     }
@@ -43,10 +46,10 @@ export default function ServiceDetailsPage() {
     setIsDeleting(true);
     try {
       await servicesApi.delete(service.id);
-      showToast('Usługa została usunięta.');
+      showToast(t('serviceDetails.toastDeleted'));
       navigate('/services');
     } catch (err) {
-      showToast(err.message ?? 'Nie udało się usunąć usługi.', { severity: 'error' });
+      showToast(err.message ?? t('serviceDetails.toastDeleteError'), { severity: 'error' });
     } finally {
       setIsDeleting(false);
     }
@@ -56,37 +59,37 @@ export default function ServiceDetailsPage() {
     <div className="page-content">
       <header className="section-header">
         <h1>{service.name}</h1>
-        <p className="muted">Szczegóły usługi.</p>
+        <p className="muted">{t('serviceDetails.subtitle')}</p>
         <div className="section-actions">
           <Link className="ghost" to="/services">
-            Wróć do listy
+            {t('serviceDetails.backToList')}
           </Link>
           <button type="button" className="secondary danger" onClick={handleDelete} disabled={isDeleting}>
-            {isDeleting ? 'Usuwanie...' : 'Usuń usługę'}
+            {isDeleting ? t('common.deleting') : t('serviceDetails.delete')}
           </button>
         </div>
       </header>
 
       <section className="grid">
         <article className="card">
-          <h2>Opis</h2>
-          <p>{service.description || 'Brak opisu'}</p>
-          <p>Czas trwania: {service.duration}</p>
-          <p>Cena: {formatCurrency(service.price)}</p>
+          <h2>{t('serviceDetails.descriptionTitle')}</h2>
+          <p>{service.description || t('serviceDetails.noDescription')}</p>
+          <p>{t('serviceDetails.durationLabel', { value: service.duration })}</p>
+          <p>{t('serviceDetails.priceLabel', { value: formatCurrency(service.price) })}</p>
         </article>
         <article className="card">
-          <h2>Wymagane produkty</h2>
+          <h2>{t('serviceDetails.requiredProductsTitle')}</h2>
           {service.requiredProducts?.length ? (
             <ul className="list stacked">
               {service.requiredProducts.map((product) => (
                 <li key={product.id}>
                   <span className="list-title">{product.name}</span>
-                  <span className="muted">{product.brand || 'Brak marki'}</span>
+                  <span className="muted">{product.brand || t('serviceDetails.noBrand')}</span>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="muted">Brak przypiętych produktów.</p>
+            <p className="muted">{t('serviceDetails.noProducts')}</p>
           )}
         </article>
       </section>

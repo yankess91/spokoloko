@@ -2,32 +2,33 @@ import { Link } from 'react-router-dom';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { formatCurrency } from '../utils/formatters';
+import { t } from '../utils/i18n';
 
 export default function ServiceList({ services, isLoading, linkBase, onDelete }) {
   if (isLoading) {
-    return <p className="muted">Ładowanie usług...</p>;
+    return <p className="muted">{t('serviceList.loading')}</p>;
   }
 
   if (services.length === 0) {
-    return <p className="muted">Brak usług do wyświetlenia.</p>;
+    return <p className="muted">{t('serviceList.empty')}</p>;
   }
 
   const isDeleteDisabled = !onDelete;
 
   return (
-    <div className="data-grid data-grid-services" role="table" aria-label="Lista usług">
+    <div className="data-grid data-grid-services" role="table" aria-label={t('serviceList.ariaLabel')}>
       <div className="data-grid-row data-grid-header" role="row">
         <span className="data-grid-cell" role="columnheader">
-          Usługa
+          {t('serviceList.columns.service')}
         </span>
         <span className="data-grid-cell" role="columnheader">
-          Czas i cena
+          {t('serviceList.columns.timePrice')}
         </span>
         <span className="data-grid-cell" role="columnheader">
-          Produkty
+          {t('serviceList.columns.products')}
         </span>
         <span className="data-grid-cell" role="columnheader">
-          Akcje
+          {t('serviceList.columns.actions')}
         </span>
       </div>
       {services.map((service) => {
@@ -37,7 +38,9 @@ export default function ServiceList({ services, isLoading, linkBase, onDelete })
           <div key={service.id} className="data-grid-row" role="row">
             <div className="data-grid-cell" role="cell">
               <div className="data-grid-title">{service.name}</div>
-              <div className="data-grid-meta">{service.description || 'Brak opisu'}</div>
+              <div className="data-grid-meta">
+                {service.description || t('serviceList.noDescription')}
+              </div>
             </div>
             <div className="data-grid-cell" role="cell">
               <span className="data-grid-title">{service.duration}</span>
@@ -50,7 +53,7 @@ export default function ServiceList({ services, isLoading, linkBase, onDelete })
               {linkBase ? (
                 <Link className="ghost" to={`${linkBase}/${service.id}`}>
                   <VisibilityOutlinedIcon fontSize="small" />
-                  Szczegóły
+                  {t('serviceList.details')}
                 </Link>
               ) : null}
               <button
@@ -58,10 +61,14 @@ export default function ServiceList({ services, isLoading, linkBase, onDelete })
                 className="ghost danger icon-button"
                 onClick={() => onDelete?.(service)}
                 disabled={isDeleteDisabled}
-                title={isDeleteDisabled ? 'Usuwanie dostępne tylko w widoku szczegółowym' : 'Usuń'}
+                title={
+                  isDeleteDisabled
+                    ? t('serviceList.deleteDisabled')
+                    : t('serviceList.delete')
+                }
               >
                 <DeleteOutlineIcon fontSize="small" />
-                Usuń
+                {t('serviceList.delete')}
               </button>
             </div>
           </div>

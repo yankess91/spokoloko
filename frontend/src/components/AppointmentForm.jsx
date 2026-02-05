@@ -8,6 +8,7 @@ import { clientsApi, productsApi, servicesApi } from '../api';
 import useAutocompleteSearch from '../hooks/useAutocompleteSearch';
 import AutocompleteField from './AutocompleteField';
 import { useToast } from './ToastProvider';
+import { t } from '../utils/i18n';
 
 const buildClientLabel = (client) => client.fullName;
 const buildServiceLabel = (service) => service.name;
@@ -94,11 +95,11 @@ export default function AppointmentForm({
 
   const handleAddProduct = () => {
     if (!selectedProduct) {
-      showError('Wybierz produkt z listy podpowiedzi.');
+      showError(t('appointmentForm.selectProductError'));
       return;
     }
     if (formState.selectedProducts.some((item) => item.id === selectedProduct.id)) {
-      showError('Ten produkt został już dodany.');
+      showError(t('appointmentForm.duplicateProductError'));
       return;
     }
     setFormState((prev) => ({
@@ -119,11 +120,11 @@ export default function AppointmentForm({
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!selectedClient || !selectedService) {
-      showError('Wybierz klientkę i usługę z listy podpowiedzi.');
+      showError(t('appointmentForm.selectClientServiceError'));
       return;
     }
     if (!formState.startAt || !formState.endAt) {
-      showError('Uzupełnij daty rozpoczęcia i zakończenia wizyty.');
+      showError(t('appointmentForm.missingDatesError'));
       return;
     }
     await onSubmit?.({
@@ -172,11 +173,11 @@ export default function AppointmentForm({
 
   const formContent = (
     <>
-      {showTitle ? <h2>Zaplanuj wizytę</h2> : null}
+      {showTitle ? <h2>{t('appointmentForm.title')}</h2> : null}
       <form className="form" onSubmit={handleSubmit}>
         {clientLocked ? (
           <label>
-            Klientka
+            {t('appointmentForm.client')}
             <input
               type="text"
               value={selectedClient?.label ?? ''}
@@ -186,8 +187,8 @@ export default function AppointmentForm({
           </label>
         ) : (
           <AutocompleteField
-            label="Klientka"
-            placeholder="Wybierz klientkę"
+            label={t('appointmentForm.client')}
+            placeholder={t('appointmentForm.selectClientPlaceholder')}
             options={clientOptions}
             value={selectedClient}
             inputValue={clientSearch.inputValue}
@@ -199,8 +200,8 @@ export default function AppointmentForm({
           />
         )}
         <AutocompleteField
-          label="Usługa"
-          placeholder="Wybierz usługę"
+          label={t('appointmentForm.service')}
+          placeholder={t('appointmentForm.selectServicePlaceholder')}
           options={serviceOptions}
           value={selectedService}
           inputValue={serviceSearch.inputValue}
@@ -213,7 +214,7 @@ export default function AppointmentForm({
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <div className="datetime-row">
             <DateTimePicker
-              label="Start wizyty"
+              label={t('appointmentForm.start')}
               value={formState.startAt}
               onChange={handleDateChange('startAt')}
               slotProps={{
@@ -226,7 +227,7 @@ export default function AppointmentForm({
               }}
             />
             <DateTimePicker
-              label="Koniec wizyty"
+              label={t('appointmentForm.end')}
               value={formState.endAt}
               onChange={handleDateChange('endAt')}
               slotProps={{
@@ -241,21 +242,21 @@ export default function AppointmentForm({
           </div>
         </LocalizationProvider>
         <label>
-          Notatki
+          {t('appointmentForm.notes')}
           <textarea
             name="notes"
-            placeholder="Uwagi do wizyty"
+            placeholder={t('appointmentForm.notesPlaceholder')}
             rows="3"
             value={formState.notes}
             onChange={handleChange}
           />
         </label>
         <div className="form-field">
-          <span className="form-label">Produkty użyte</span>
+          <span className="form-label">{t('appointmentForm.usedProducts')}</span>
           <div className="inline-field">
             <AutocompleteField
-              label="Produkty użyte"
-              placeholder="Dodaj produkt"
+              label={t('appointmentForm.usedProducts')}
+              placeholder={t('appointmentForm.addProductPlaceholder')}
               options={productOptions}
               value={selectedProduct}
               inputValue={productSearch.inputValue}
@@ -269,7 +270,7 @@ export default function AppointmentForm({
             />
             <button type="button" className="secondary" onClick={handleAddProduct}>
               <AddIcon fontSize="small" />
-              Dodaj
+              {t('common.add')}
             </button>
           </div>
         </div>
@@ -282,16 +283,16 @@ export default function AppointmentForm({
                 className="chip chip-button"
                 onClick={() => handleRemoveProduct(product.id)}
               >
-                {product.label} ✕
+                {t('appointmentForm.removeProduct', { label: product.label })}
               </button>
             ))}
           </div>
         ) : (
-          <p className="muted">Brak zapisanych produktów.</p>
+          <p className="muted">{t('appointmentForm.noProducts')}</p>
         )}
         <button type="submit" className="primary" disabled={isSubmitting}>
           <SaveIcon fontSize="small" />
-          {isSubmitting ? 'Zapisywanie...' : 'Zapisz wizytę'}
+          {isSubmitting ? t('common.saving') : t('appointmentForm.save')}
         </button>
       </form>
     </>

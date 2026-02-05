@@ -10,6 +10,7 @@ import useProducts from '../hooks/useProducts';
 import useServices from '../hooks/useServices';
 import { formatDate, formatTime } from '../utils/formatters';
 import { useToast } from '../components/ToastProvider';
+import { t } from '../utils/i18n';
 
 export default function DashboardPage() {
   const { clients, isLoading: clientsLoading, error: clientsError } = useClients();
@@ -67,8 +68,8 @@ export default function DashboardPage() {
 
     return {
       id: appointment.id,
-      clientName: client?.fullName ?? 'Nieznana klientka',
-      serviceName: service?.name ?? 'Nieznana usługa',
+      clientName: client?.fullName ?? t('dashboard.unknownClient'),
+      serviceName: service?.name ?? t('dashboard.unknownService'),
       date: formatDate(appointment.startAt),
       time: formatTime(appointment.startAt)
     };
@@ -88,36 +89,37 @@ export default function DashboardPage() {
 
       <section className="section">
         <div className="section-header">
-          <h2>Podsumowanie panelu</h2>
-          <p className="muted">
-            Najważniejsze wskaźniki dla szybkiego przeglądu pracy salonu.
-          </p>
+          <h2>{t('dashboard.summaryTitle')}</h2>
+          <p className="muted">{t('dashboard.summarySubtitle')}</p>
         </div>
         <div className="grid metrics-grid">
           <article className="card metric-card">
-            <span className="metric-label">Aktywne klientki</span>
+            <span className="metric-label">{t('dashboard.activeClients')}</span>
             <span className="metric-value">{activeClientCount}</span>
-            <p className="muted">Zaktualizuj dane, aby planować kolejne wizyty.</p>
+            <p className="muted">{t('dashboard.activeClientsHint')}</p>
           </article>
           <article className="card metric-card">
-            <span className="metric-label">Usługi w ofercie</span>
+            <span className="metric-label">{t('dashboard.servicesCount')}</span>
             <span className="metric-value">{services.length}</span>
-            <p className="muted">Sprawdzaj popularność pakietów i stylizacji.</p>
+            <p className="muted">{t('dashboard.servicesHint')}</p>
           </article>
           <article className="card metric-card">
-            <span className="metric-label">Produkty na stanie</span>
+            <span className="metric-label">{t('dashboard.productsCount')}</span>
             <span className="metric-value">{products.length}</span>
-            <p className="muted">Uzupełniaj magazyn przed intensywnym tygodniem.</p>
+            <p className="muted">{t('dashboard.productsHint')}</p>
           </article>
           <article className="card metric-card">
-            <span className="metric-label">Najbliższa wizyta</span>
+            <span className="metric-label">{t('dashboard.nextAppointment')}</span>
             <span className="metric-value">
-              {upcomingAppointment ? `${upcomingAppointment.date}` : 'Brak'}
+              {upcomingAppointment ? `${upcomingAppointment.date}` : t('dashboard.none')}
             </span>
             <p className="muted">
               {upcomingAppointment
-                ? `${upcomingAppointment.clientName} · ${upcomingAppointment.time}`
-                : 'Wypełnij kalendarz, aby rozpocząć planowanie.'}
+                ? t('dashboard.nextAppointmentDetails', {
+                    name: upcomingAppointment.clientName,
+                    time: upcomingAppointment.time,
+                  })
+                : t('dashboard.nextAppointmentHint')}
             </p>
           </article>
         </div>
@@ -125,20 +127,20 @@ export default function DashboardPage() {
 
       <section className="section">
         <div className="section-header">
-          <h2>Operacje codzienne</h2>
-          <p className="muted">Zarządzaj klientkami, usługami i produktami w jednym miejscu.</p>
+          <h2>{t('dashboard.operationsTitle')}</h2>
+          <p className="muted">{t('dashboard.operationsSubtitle')}</p>
         </div>
         <div className="grid">
           <ClientList clients={previewClients} isLoading={isLoading} linkBase="/clients" />
           <article className="card">
             <header className="card-header">
-              <h3>Usługi (podgląd)</h3>
+              <h3>{t('dashboard.servicesPreview')}</h3>
             </header>
             <ServiceList services={previewServices} isLoading={isLoading} linkBase="/services" />
           </article>
           <article className="card">
             <header className="card-header">
-              <h3>Produkty (podgląd)</h3>
+              <h3>{t('dashboard.productsPreview')}</h3>
             </header>
             <ProductList products={previewProducts} isLoading={isLoading} linkBase="/products" />
           </article>

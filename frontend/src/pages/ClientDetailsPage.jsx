@@ -5,6 +5,7 @@ import { appointmentsApi } from '../api';
 import AppointmentForm from '../components/AppointmentForm';
 import Modal from '../components/Modal';
 import { useToast } from '../components/ToastProvider';
+import { t } from '../utils/i18n';
 
 export default function ClientDetailsPage() {
   const { id } = useParams();
@@ -28,22 +29,22 @@ export default function ClientDetailsPage() {
     try {
       setIsSubmitting(true);
       await appointmentsApi.create(payload);
-      showToast('Wizyta została dodana.', { severity: 'success' });
+      showToast(t('clientDetails.toastAppointmentAdded'), { severity: 'success' });
       setIsModalOpen(false);
       await reload();
     } catch (err) {
-      showToast(err.message ?? 'Nie udało się dodać wizyty.', { severity: 'error' });
+      showToast(err.message ?? t('clientDetails.toastAppointmentError'), { severity: 'error' });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   if (isLoading) {
-    return <p className="card muted">Ładowanie profilu klientki...</p>;
+    return <p className="card muted">{t('clientDetails.loading')}</p>;
   }
 
   if (!client && !error) {
-    return <p className="card muted">Nie znaleziono profilu klientki.</p>;
+    return <p className="card muted">{t('clientDetails.notFound')}</p>;
   }
 
   if (error) {
@@ -54,53 +55,77 @@ export default function ClientDetailsPage() {
     <div className="page-content">
       <header className="section-header">
         <h1>{client.fullName}</h1>
-        <p className="muted">Szczegóły profilu klientki.</p>
+        <p className="muted">{t('clientDetails.subtitle')}</p>
         <div className="section-actions">
           <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
-            Dodaj wizytę
+            {t('clientDetails.addAppointment')}
           </button>
           <Link className="ghost" to="/clients">
-            Wróć do listy
+            {t('clientDetails.backToList')}
           </Link>
         </div>
       </header>
 
       <section className="grid">
         <article className="card">
-          <h2>Dane kontaktowe</h2>
-          <p>Email: {client.email || 'Brak emaila'}</p>
-          <p>Telefon: {client.phoneNumber || 'Brak telefonu'}</p>
-          <p>Uwagi: {client.notes || 'Brak uwag'}</p>
-          <p>Status: {client.isActive ? 'Aktywna klientka' : 'Nieaktywna klientka'}</p>
+          <h2>{t('clientDetails.contactTitle')}</h2>
+          <p>
+            {t('clientDetails.emailLabel', {
+              value: client.email || t('clientDetails.noEmail'),
+            })}
+          </p>
+          <p>
+            {t('clientDetails.phoneLabel', {
+              value: client.phoneNumber || t('clientDetails.noPhone'),
+            })}
+          </p>
+          <p>
+            {t('clientDetails.notesLabel', {
+              value: client.notes || t('clientDetails.noNotes'),
+            })}
+          </p>
+          <p>
+            {t('clientDetails.statusLabel', {
+              value: client.isActive
+                ? t('clientDetails.activeStatus')
+                : t('clientDetails.inactiveStatus'),
+            })}
+          </p>
         </article>
         <article className="card">
-          <h2>Ostatnio użyte produkty</h2>
+          <h2>{t('clientDetails.recentProducts')}</h2>
           {client.usedProducts?.length ? (
             <ul className="list stacked">
               {client.usedProducts.map((product) => (
                 <li key={product.id}>
                   <span className="list-title">{product.name}</span>
-                  <span className="muted">{product.notes || 'Brak notatek'}</span>
+                  <span className="muted">{product.notes || t('clientDetails.noProductNotes')}</span>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="muted">Brak zapisanych produktów.</p>
+            <p className="muted">{t('clientDetails.noProducts')}</p>
           )}
         </article>
         <article className="card">
-          <h2>Historia usług</h2>
+          <h2>{t('clientDetails.serviceHistory')}</h2>
           {client.serviceHistory?.length ? (
             <ul className="list stacked">
               {client.serviceHistory.map((history) => (
                 <li key={history.appointmentId}>
-                  <span className="list-title">{history.service?.name || 'Nieznana usługa'}</span>
+                  <span className="list-title">
+                    {history.service?.name || t('clientDetails.unknownService')}
+                  </span>
                   <span className="muted">
                     {history.startAt
                       ? new Date(history.startAt).toLocaleDateString('pl-PL')
-                      : 'Brak daty'}
+                      : t('clientDetails.noDate')}
                   </span>
-                  <span className="muted">Uwagi: {history.notes || 'Brak notatek'}</span>
+                  <span className="muted">
+                    {t('clientDetails.historyNotesLabel', {
+                      value: history.notes || t('clientDetails.noNotes'),
+                    })}
+                  </span>
                   {history.usedProducts?.length ? (
                     <div className="chips">
                       {history.usedProducts.map((product) => (
@@ -110,18 +135,18 @@ export default function ClientDetailsPage() {
                       ))}
                     </div>
                   ) : (
-                    <span className="muted">Brak zapisanych produktów.</span>
+                    <span className="muted">{t('clientDetails.noProducts')}</span>
                   )}
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="muted">Brak historii usług.</p>
+            <p className="muted">{t('clientDetails.noServiceHistory')}</p>
           )}
         </article>
       </section>
       {isModalOpen ? (
-        <Modal title="Dodaj wizytę" onClose={() => setIsModalOpen(false)}>
+        <Modal title={t('clientDetails.modalTitle')} onClose={() => setIsModalOpen(false)}>
           <AppointmentForm
             onSubmit={handleAddAppointment}
             isSubmitting={isSubmitting}

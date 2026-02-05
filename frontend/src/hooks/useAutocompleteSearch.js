@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { t } from '../utils/i18n';
 
 const DEFAULT_DEBOUNCE_MS = 250;
 
@@ -33,7 +34,7 @@ export default function useAutocompleteSearch({
         if (latestRequestRef.current !== requestId) {
           return;
         }
-        setError(err.message ?? 'Nie udało się pobrać podpowiedzi.');
+        setError(err.message ?? t('errors.autocomplete'));
         setOptions([]);
       } finally {
         if (latestRequestRef.current === requestId) {

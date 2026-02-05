@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { clientsApi } from '../api';
+import { t } from '../utils/i18n';
 
 export default function useClientDetails(clientId) {
   const [client, setClient] = useState(null);
@@ -27,7 +28,7 @@ export default function useClientDetails(clientId) {
       }
     } catch (err) {
       if (isMountedRef.current) {
-        setError(err.message ?? 'Nie udało się pobrać klientki.');
+        setError(err.message ?? t('errors.clientDetails'));
       }
     } finally {
       if (isMountedRef.current) {

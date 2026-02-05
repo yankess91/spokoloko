@@ -1,55 +1,56 @@
 import { Link } from 'react-router-dom';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import { t } from '../utils/i18n';
 
 export default function ProductList({ products, isLoading, linkBase, onDelete }) {
   if (isLoading) {
-    return <p className="muted">Ładowanie produktów...</p>;
+    return <p className="muted">{t('productList.loading')}</p>;
   }
 
   if (products.length === 0) {
-    return <p className="muted">Brak produktów do wyświetlenia.</p>;
+    return <p className="muted">{t('productList.empty')}</p>;
   }
 
   const isDeleteDisabled = !onDelete;
 
   return (
-    <div className="data-grid data-grid-products" role="table" aria-label="Lista produktów">
+    <div className="data-grid data-grid-products" role="table" aria-label={t('productList.ariaLabel')}>
       <div className="data-grid-row data-grid-header" role="row">
         <span className="data-grid-cell" role="columnheader">
-          Produkt
+          {t('productList.columns.product')}
         </span>
         <span className="data-grid-cell" role="columnheader">
-          Marka
+          {t('productList.columns.brand')}
         </span>
         <span className="data-grid-cell" role="columnheader">
-          Zdjęcie
+          {t('productList.columns.image')}
         </span>
         <span className="data-grid-cell" role="columnheader">
-          Akcje
+          {t('productList.columns.actions')}
         </span>
       </div>
       {products.map((product) => (
         <div key={product.id} className="data-grid-row" role="row">
           <div className="data-grid-cell" role="cell">
             <div className="data-grid-title">{product.name}</div>
-            <div className="data-grid-meta">{product.notes || 'Brak notatek'}</div>
+            <div className="data-grid-meta">{product.notes || t('productList.noNotes')}</div>
           </div>
           <div className="data-grid-cell" role="cell">
-            {product.brand || 'Brak marki'}
+            {product.brand || t('productList.noBrand')}
           </div>
           <div className="data-grid-cell" role="cell">
             {product.imageUrl ? (
               <img className="thumb" src={product.imageUrl} alt={product.name} />
             ) : (
-              <span className="data-grid-meta">Brak zdjęcia</span>
+              <span className="data-grid-meta">{t('productList.noImage')}</span>
             )}
           </div>
           <div className="data-grid-cell data-grid-actions" role="cell">
             {linkBase ? (
               <Link className="ghost" to={`${linkBase}/${product.id}`}>
                 <VisibilityOutlinedIcon fontSize="small" />
-                Szczegóły
+                {t('productList.details')}
               </Link>
             ) : null}
             <button
@@ -57,10 +58,14 @@ export default function ProductList({ products, isLoading, linkBase, onDelete })
               className="ghost danger icon-button"
               onClick={() => onDelete?.(product)}
               disabled={isDeleteDisabled}
-              title={isDeleteDisabled ? 'Usuwanie dostępne tylko w widoku szczegółowym' : 'Usuń'}
+              title={
+                isDeleteDisabled
+                  ? t('productList.deleteDisabled')
+                  : t('productList.delete')
+              }
             >
               <DeleteOutlineIcon fontSize="small" />
-              Usuń
+              {t('productList.delete')}
             </button>
           </div>
         </div>
