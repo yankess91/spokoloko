@@ -4,7 +4,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import CloseIcon from '@mui/icons-material/Close';
-import { formatCurrency } from '../utils/formatters';
+import { formatCurrency, formatDate } from '../utils/formatters';
 import { t } from '../utils/i18n';
 
 export default function ProductList({ products, isLoading, linkBase, onDelete }) {
@@ -33,6 +33,12 @@ export default function ProductList({ products, isLoading, linkBase, onDelete })
           {t('productList.columns.price')}
         </span>
         <span className="data-grid-cell" role="columnheader">
+          {t('productList.columns.availability')}
+        </span>
+        <span className="data-grid-cell" role="columnheader">
+          {t('productList.columns.availabilityCheckedAt')}
+        </span>
+        <span className="data-grid-cell" role="columnheader">
           {t('productList.columns.image')}
         </span>
         <span className="data-grid-cell" role="columnheader">
@@ -50,6 +56,14 @@ export default function ProductList({ products, isLoading, linkBase, onDelete })
           </div>
           <div className="data-grid-cell" role="cell">
             {formatCurrency(product.price)}
+          </div>
+          <div className="data-grid-cell" role="cell">
+            {product.isAvailable ? t('productList.available') : t('productList.unavailable')}
+          </div>
+          <div className="data-grid-cell" role="cell">
+            {product.availabilityCheckedAt
+              ? formatDate(product.availabilityCheckedAt)
+              : t('productList.noAvailabilityDate')}
           </div>
           <div className="data-grid-cell" role="cell">
             {product.imageUrl ? (

@@ -146,9 +146,14 @@
       "manufacturer": "Producent",
       "price": "Cena",
       "image": "Zdjęcie",
-      "actions": "Akcje"
+      "actions": "Akcje",
+      "availability": "Dostępność",
+      "availabilityCheckedAt": "Data sprawdzenia"
     },
-    "zoomImage": "Powiększ zdjęcie"
+    "zoomImage": "Powiększ zdjęcie",
+    "available": "Dostępny",
+    "unavailable": "Niedostępny",
+    "noAvailabilityDate": "Brak daty sprawdzenia"
   },
   "serviceList": {
     "loading": "Ładowanie usług...",
@@ -246,7 +251,9 @@
     "price": "Cena (zł)",
     "pricePlaceholder": "np. 49.99",
     "shopUrl": "Link do sklepu",
-    "shopUrlPlaceholder": "https://sklep.pl/produkt"
+    "shopUrlPlaceholder": "https://sklep.pl/produkt",
+    "isAvailable": "Produkt dostępny",
+    "availabilityCheckedAt": "Data sprawdzenia dostępności"
   },
   "clientDetails": {
     "toastAppointmentAdded": "Wizyta została dodana.",
@@ -343,7 +350,13 @@
     "sortBrandAsc": "Marka (A-Z)",
     "sortBrandDesc": "Marka (Z-A)",
     "sortPriceAsc": "Cena (rosnąco)",
-    "sortPriceDesc": "Cena (malejąco)"
+    "sortPriceDesc": "Cena (malejąco)",
+    "availabilityLabel": "Dostępność",
+    "availabilityAll": "Wszystkie",
+    "availabilityAvailable": "Dostępne",
+    "availabilityUnavailable": "Niedostępne",
+    "sortCheckedDesc": "Data sprawdzenia (od najnowszych)",
+    "sortCheckedAsc": "Data sprawdzenia (od najstarszych)"
   },
   "appointmentsPage": {
     "toastSaved": "Wizyta została zapisana.",
@@ -383,7 +396,12 @@
     "priceLabel": "Cena: {value}",
     "shopLabel": "Link do sklepu: {value}",
     "noShopUrl": "Brak linku",
-    "openShop": "Otwórz w sklepie"
+    "openShop": "Otwórz w sklepie",
+    "availabilityLabel": "Dostępność: {value}",
+    "availabilityCheckedAtLabel": "Sprawdzono: {value}",
+    "available": "Dostępny",
+    "unavailable": "Niedostępny",
+    "noAvailabilityDate": "Brak daty sprawdzenia"
   },
   "appointmentDetails": {
     "loading": "Ładowanie wizyty...",

@@ -62,6 +62,8 @@ public sealed class AppDbContext : DbContext
             entity.Property(product => product.ImageUrl).HasColumnName("image_url");
             entity.Property(product => product.Price).HasColumnName("price");
             entity.Property(product => product.ShopUrl).HasColumnName("shop_url");
+            entity.Property(product => product.IsAvailable).HasColumnName("is_available");
+            entity.Property(product => product.AvailabilityCheckedAt).HasColumnName("availability_checked_at");
         });
 
         modelBuilder.Entity<ServiceItem>(entity =>

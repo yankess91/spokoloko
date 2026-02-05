@@ -7,4 +7,6 @@ public sealed record ProductResponse(
     string Notes,
     string ImageUrl,
     decimal Price,
-    string ShopUrl);
+    string ShopUrl,
+    bool IsAvailable,
+    DateTimeOffset? AvailabilityCheckedAt);
