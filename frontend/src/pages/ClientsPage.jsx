@@ -11,8 +11,6 @@ export default function ClientsPage() {
   const { clients, isLoading, error, addClient, updateStatus, removeClient } = useClients();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
   const [updatingClientId, setUpdatingClientId] = useState(null);
   const { showToast } = useToast();
 
@@ -20,38 +18,6 @@ export default function ClientsPage() {
     () => [...clients].sort((a, b) => a.fullName.localeCompare(b.fullName)),
     [clients]
   );
-
-  const filteredClients = useMemo(() => {
-    const normalizedSearch = searchTerm.trim().toLowerCase();
-    if (statusFilter === 'active') {
-      return sortedClients.filter(
-        (client) =>
-          client.isActive &&
-          (!normalizedSearch ||
-            [client.fullName, client.email, client.phoneNumber]
-              .filter(Boolean)
-              .some((value) => value.toLowerCase().includes(normalizedSearch)))
-      );
-    }
-    if (statusFilter === 'inactive') {
-      return sortedClients.filter(
-        (client) =>
-          !client.isActive &&
-          (!normalizedSearch ||
-            [client.fullName, client.email, client.phoneNumber]
-              .filter(Boolean)
-              .some((value) => value.toLowerCase().includes(normalizedSearch)))
-      );
-    }
-    if (!normalizedSearch) {
-      return sortedClients;
-    }
-    return sortedClients.filter((client) =>
-      [client.fullName, client.email, client.phoneNumber]
-        .filter(Boolean)
-        .some((value) => value.toLowerCase().includes(normalizedSearch))
-    );
-  }, [sortedClients, statusFilter, searchTerm]);
 
   const showError = useCallback(
     (message) => showToast(message, { severity: 'error' }),
@@ -120,27 +86,8 @@ export default function ClientsPage() {
               {t('clientsPage.newClient')}
             </button>
           </div>
-          <div className="list-controls grid-controls">
-            <label className="filter-field">
-              {t('clientsPage.filterLabel')}
-              <input
-                type="search"
-                placeholder={t('clientsPage.searchPlaceholder')}
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-              />
-            </label>
-            <label className="filter-field">
-              {t('clientsPage.statusLabel')}
-              <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
-                <option value="all">{t('clientsPage.statusAll')}</option>
-                <option value="active">{t('clientsPage.statusActive')}</option>
-                <option value="inactive">{t('clientsPage.statusInactive')}</option>
-              </select>
-            </label>
-          </div>
           <ClientGrid
-            clients={filteredClients}
+            clients={sortedClients}
             isLoading={isLoading}
             linkBase="/clients"
             onToggleStatus={handleStatusToggle}
