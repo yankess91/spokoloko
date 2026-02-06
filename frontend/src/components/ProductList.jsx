@@ -44,28 +44,28 @@ export default function ProductList({ products, isLoading, linkBase, onDelete })
       field: 'brand',
       headerName: t('productList.columns.manufacturer'),
       minWidth: 170,
-      valueGetter: (params) => params.row.brand || t('productList.noBrand')
+      valueGetter: (_, row) => row.brand || t('productList.noBrand')
     },
     {
       field: 'price',
       headerName: t('productList.columns.price'),
       minWidth: 120,
-      valueFormatter: (params) => formatCurrency(params.value)
+      valueFormatter: (value) => formatCurrency(value)
     },
     {
       field: 'availability',
       headerName: t('productList.columns.availability'),
       minWidth: 150,
-      valueGetter: (params) =>
-        params.row.isAvailable ? t('productList.available') : t('productList.unavailable')
+      valueGetter: (_, row) =>
+        row.isAvailable ? t('productList.available') : t('productList.unavailable')
     },
     {
       field: 'availabilityCheckedAt',
       headerName: t('productList.columns.availabilityCheckedAt'),
       minWidth: 180,
-      valueGetter: (params) =>
-        params.row.availabilityCheckedAt
-          ? formatDate(params.row.availabilityCheckedAt)
+      valueGetter: (_, row) =>
+        row.availabilityCheckedAt
+          ? formatDate(row.availabilityCheckedAt)
           : t('productList.noAvailabilityDate')
     },
     {
@@ -131,7 +131,6 @@ export default function ProductList({ products, isLoading, linkBase, onDelete })
         autoHeight
         rows={products}
         columns={columns}
-        getRowId={(row) => row.id}
         disableRowSelectionOnClick
         pageSizeOptions={[10, 25, 50]}
         initialState={{ pagination: { paginationModel: { pageSize: 10, page: 0 } } }}

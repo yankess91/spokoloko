@@ -55,7 +55,7 @@ export default function ServiceList({ services, isLoading, linkBase, onDelete })
       field: 'requiredProducts',
       headerName: t('serviceList.columns.products'),
       minWidth: 120,
-      valueGetter: (params) => params.row.requiredProductIds?.length ?? params.row.requiredProducts?.length ?? 0
+      valueGetter: (_, row) => row.requiredProductIds?.length ?? row.requiredProducts?.length ?? 0
     },
     {
       field: 'actions',
@@ -99,7 +99,6 @@ export default function ServiceList({ services, isLoading, linkBase, onDelete })
       autoHeight
       rows={services}
       columns={columns}
-      getRowId={(row) => row.id}
       disableRowSelectionOnClick
       pageSizeOptions={[10, 25, 50]}
       initialState={{ pagination: { paginationModel: { pageSize: 10, page: 0 } } }}
