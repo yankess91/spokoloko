@@ -37,7 +37,7 @@ public class MagfactoryListingScraper(HttpClient http) : IMagfactoryListingScrap
 
             foreach (var p in productsOnPage)
             {
-                if (seen.Add(p.productUrl))
+                if (seen.Add(p.ProductUrl))
                     results.Add(p);
             }
         }
@@ -92,10 +92,10 @@ public class MagfactoryListingScraper(HttpClient http) : IMagfactoryListingScrap
                 var price = NormalizeToDecimal(Clean(priceRaw)) ?? 0m;
 
                 yield return new ProductDto(
-                    name: name,
-                    price: price,
-                    imgUrl: null,
-                    productUrl: productUrl
+                    Name: name,
+                    Price: price,
+                    ImgUrl: null,
+                    ProductUrl: productUrl
                 );
             }
         }
