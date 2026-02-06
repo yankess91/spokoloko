@@ -3,8 +3,6 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import { Box, Button, Chip, Stack, Typography } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
 import { t } from '../utils/i18n';
 
 export default function ClientGrid({
@@ -25,119 +23,79 @@ export default function ClientGrid({
 
   const isDeleteDisabled = !onDelete;
 
-  const columns = [
-    {
-      field: 'client',
-      headerName: t('clientGrid.columns.client'),
-      flex: 1.6,
-      minWidth: 280,
-      sortable: false,
-      renderCell: (params) => (
-        <Box sx={{ py: 1 }}>
-          <Typography variant="body2" fontWeight={600}>
-            {params.row.fullName}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {params.row.email || t('clientGrid.noEmail')} ·{' '}
-            {params.row.phoneNumber || t('clientGrid.noPhone')}
-          </Typography>
-        </Box>
-      )
-    },
-    {
-      field: 'status',
-      headerName: t('clientGrid.columns.status'),
-      minWidth: 150,
-      sortable: false,
-      renderCell: (params) => (
-        <Chip
-          size="small"
-          color={params.row.isActive ? 'success' : 'default'}
-          label={params.row.isActive ? t('clientGrid.active') : t('clientGrid.inactive')}
-        />
-      )
-    },
-    {
-      field: 'servicesCount',
-      headerName: t('clientGrid.columns.services'),
-      minWidth: 120,
-      valueGetter: (_, row) => row.serviceHistory?.length ?? 0
-    },
-    {
-      field: 'actions',
-      headerName: t('clientGrid.columns.actions'),
-      minWidth: 300,
-      sortable: false,
-      filterable: false,
-      renderCell: (params) => {
-        const client = params.row;
+  return (
+    <div className="data-grid" role="table" aria-label={t('clientGrid.ariaLabel')}>
+      <div className="data-grid-row data-grid-header" role="row">
+        <span className="data-grid-cell" role="columnheader">
+          {t('clientGrid.columns.client')}
+        </span>
+        <span className="data-grid-cell" role="columnheader">
+          {t('clientGrid.columns.status')}
+        </span>
+        <span className="data-grid-cell" role="columnheader">
+          {t('clientGrid.columns.services')}
+        </span>
+        <span className="data-grid-cell" role="columnheader">
+          {t('clientGrid.columns.actions')}
+        </span>
+      </div>
+      {clients.map((client) => {
         const isUpdating = updatingClientId === client.id;
-
         return (
-          <Stack direction="row" spacing={1} sx={{ py: 0.5 }}>
-            {linkBase ? (
-              <Button
-                component={Link}
-                to={`${linkBase}/${client.id}`}
-                size="small"
-                variant="text"
-                startIcon={<VisibilityOutlinedIcon fontSize="small" />}
+          <div key={client.id} className="data-grid-row" role="row">
+            <div className="data-grid-cell" role="cell">
+              <div className="data-grid-title">{client.fullName}</div>
+              <div className="data-grid-meta">
+                {client.email || t('clientGrid.noEmail')} ·{' '}
+                {client.phoneNumber || t('clientGrid.noPhone')}
+              </div>
+            </div>
+            <div className="data-grid-cell" role="cell">
+              <span className={`status-pill ${client.isActive ? 'active' : 'inactive'}`}>
+                {client.isActive ? t('clientGrid.active') : t('clientGrid.inactive')}
+              </span>
+            </div>
+            <div className="data-grid-cell" role="cell">
+              {client.serviceHistory?.length ?? 0}
+            </div>
+            <div className="data-grid-cell data-grid-actions" role="cell">
+              {linkBase ? (
+                <Link className="ghost" to={`${linkBase}/${client.id}`}>
+                  <VisibilityOutlinedIcon fontSize="small" />
+                  {t('clientGrid.details')}
+                </Link>
+              ) : null}
+              <button
+                type="button"
+                className="secondary"
+                onClick={() => onToggleStatus?.(client)}
+                disabled={isUpdating}
               >
-                {t('clientGrid.details')}
-              </Button>
-            ) : null}
-            <Button
-              type="button"
-              size="small"
-              variant="outlined"
-              onClick={() => onToggleStatus?.(client)}
-              disabled={isUpdating}
-              startIcon={
-                client.isActive ? (
+                {client.isActive ? (
                   <ToggleOffIcon fontSize="small" />
                 ) : (
                   <ToggleOnIcon fontSize="small" />
-                )
-              }
-            >
-              {isUpdating
-                ? t('clientGrid.saving')
-                : client.isActive
-                ? t('clientGrid.deactivate')
-                : t('clientGrid.activate')}
-            </Button>
-            <Button
-              type="button"
-              size="small"
-              color="error"
-              variant="text"
-              onClick={() => onDelete?.(client)}
-              disabled={isDeleteDisabled}
-              title={isDeleteDisabled ? t('clientGrid.deleteDisabled') : t('clientGrid.delete')}
-              startIcon={<DeleteOutlineIcon fontSize="small" />}
-            >
-              {t('clientGrid.delete')}
-            </Button>
-          </Stack>
+                )}
+                {isUpdating
+                  ? t('clientGrid.saving')
+                  : client.isActive
+                  ? t('clientGrid.deactivate')
+                  : t('clientGrid.activate')}
+              </button>
+              <button
+                type="button"
+                className="ghost danger icon-button"
+                onClick={() => onDelete?.(client)}
+                disabled={isDeleteDisabled}
+                title={isDeleteDisabled ? t('clientGrid.deleteDisabled') : t('clientGrid.delete')}
+              >
+                <DeleteOutlineIcon fontSize="small" />
+                {t('clientGrid.delete')}
+              </button>
+            </div>
+          </div>
         );
-      }
-    }
-  ];
-
-  return (
-    <DataGrid
-      aria-label={t('clientGrid.ariaLabel')}
-      autoHeight
-      rows={clients}
-      columns={columns}
-      disableRowSelectionOnClick
-      pageSizeOptions={[10, 25, 50]}
-      initialState={{
-        pagination: {
-          paginationModel: { pageSize: 10, page: 0 }
-        }
-      }}
-      sx={{ backgroundColor: 'background.paper' }}
-    />
+      })}
+    </div>
   );
 }
