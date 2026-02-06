@@ -1,12 +1,14 @@
 ﻿using BraiderskiReservation.Domain.Entities;
 using BraiderskiReservation.Domain.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace BraiderskiReservation.Api.Application.Scrapers.Magfactory;
 
 public sealed class MagfactoryImportService(
-IMagfactoryListingScraper listingScraper,
-IMagfactoryImageUrlProvider imageUrlProvider,
-IProductRepository productRepository) : IMagfactoryImportService
+    IMagfactoryListingScraper listingScraper,
+    IMagfactoryImageUrlProvider imageUrlProvider,
+    IProductRepository productRepository,
+    ILogger<MagfactoryImportService> logger) : IMagfactoryImportService
 {
     public async Task ImportCategoryAsync(string categoryUrl, CancellationToken ct = default)
     {
@@ -22,20 +24,21 @@ IProductRepository productRepository) : IMagfactoryImportService
             string? imgUrl = null;
             try
             {
-                imgUrl = await imageUrlProvider.GetMainImageUrlAsync(p.productUrl, ct);
+                imgUrl = await imageUrlProvider.GetMainImageUrlAsync(p.ProductUrl, ct);
             }
-            catch
+            catch (Exception ex)
             {
+                logger.LogWarning(ex, "Failed to fetch image URL for product {ProductUrl}.", p.ProductUrl);
             }
 
             toInsert.Add(new Product
             {
-                Name = p.name,
+                Name = p.Name,
                 Brand = "magfactory.eu",
                 Notes = $"Pobrane {today}",
-                Price = p.price,
+                Price = p.Price,
                 ImageUrl = imgUrl,
-                ShopUrl = p.productUrl
+                ShopUrl = p.ProductUrl
             });
         }
 

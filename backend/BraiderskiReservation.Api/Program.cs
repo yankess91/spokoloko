@@ -62,8 +62,6 @@ builder.Services.AddTransient<IProductCatalogService, ProductCatalogService>();
 builder.Services.AddTransient<IServiceCatalogService, ServiceCatalogService>();
 builder.Services.AddTransient<IAppointmentService, AppointmentService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
-builder.Services.AddTransient<IMagfactoryListingScraper, MagfactoryListingScraper>();
-builder.Services.AddTransient<IMagfactoryImageUrlProvider, MagfactoryImageUrlProvider>();
 builder.Services.AddTransient<IMagfactoryImportService, MagfactoryImportService>();
 
 
