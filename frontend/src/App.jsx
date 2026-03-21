@@ -35,6 +35,7 @@ import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookRoundedIcon from '@mui/icons-material/FacebookRounded';
 import { t } from './utils/i18n';
+import logoSrc from './assets/spokoloko-logo.png';
 
 const navLinkStyles = {
   color: 'var(--color-text)',
@@ -62,7 +63,6 @@ const navLinkStyles = {
 export default function App() {
   const { isAuthenticated, user, logout } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const logoSrc = 'src/assets/spokoloko-logo.png';
   const navItems = [
     {
       label: t('nav.clients'),
