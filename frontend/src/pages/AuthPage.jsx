@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/ToastProvider';
 import { t } from '../utils/i18n';
+import logoSrc from '../assets/spokoloko-logo2.png';
 
 const INITIAL_VALUES = {
   fullName: '',
@@ -47,8 +48,6 @@ const AuthPage = ({ mode }) => {
       navigate('/', { replace: true });
     }
   };
-
-  const logoSrc = '/src/assets/spokoloko-logo2.png';
 
   return (
     <div className="auth-shell">
