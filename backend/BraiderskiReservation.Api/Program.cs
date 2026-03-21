@@ -1,4 +1,5 @@
 using BraiderskiReservation.Api.Application.Interfaces;
+using BraiderskiReservation.Api.Configuration;
 using BraiderskiReservation.Api.Application.Scrapers.Magfactory;
 using BraiderskiReservation.Api.Application.Services;
 using BraiderskiReservation.Api.Application.Settings;
@@ -11,6 +12,14 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var projectRoot = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", ".."));
+var envConfiguration = EnvFileConfiguration.Load(projectRoot);
+
+if (envConfiguration.Count > 0)
+{
+    builder.Configuration.AddInMemoryCollection(envConfiguration);
+}
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
