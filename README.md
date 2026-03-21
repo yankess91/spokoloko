@@ -25,14 +25,11 @@ Backend podczas startu wczytuje plik `.env` z głównego katalogu repozytorium i
 
 Po uruchomieniu dostępne jest Swagger UI pod `https://localhost:5001/swagger` lub `http://localhost:5000/swagger`.
 
-### Migracje SQL
-Dla istniejących baz danych, po wdrożeniu zmian schematu uruchom skrypty z katalogu:
-`backend/BraiderskiReservation.Api/database/migrations`
+### Schemat bazy i seed
+Aktualny stan schematu startowego jest utrzymywany bezpośrednio w pliku:
+`backend/BraiderskiReservation.Api/database/seed-data.sql`
 
-Przykład (PostgreSQL):
-```bash
-psql "$DATABASE_URL" -f backend/BraiderskiReservation.Api/database/migrations/20260206_add_product_availability_fields.sql
-```
+Repozytorium nie przechowuje już historycznych migracji SQL — od tego momentu stan początkowy bazy jest budowany od zera na podstawie tego pliku.
 
 ## Frontend (React)
 
