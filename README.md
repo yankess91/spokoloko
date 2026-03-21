@@ -13,12 +13,15 @@ Projekt zawiera prosty backend w C# (ASP.NET Core Web API) oraz frontend w React
 
 **Uruchomienie:**
 ```bash
+cp .env.example .env
 cd backend/BraiderskiReservation.Api
 
 dotnet restore
 
 dotnet run
 ```
+
+Backend podczas startu wczytuje plik `.env` z głównego katalogu repozytorium i traktuje go jako dodatkowe źródło konfiguracji. Dla zachowania kompatybilności pola `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DB`, `POSTGRES_USER` oraz `POSTGRES_PASSWORD` są automatycznie składane do `ConnectionStrings:Default`. Możesz też podawać standardowe klucze ASP.NET Core w formacie `NazwaSekcji__Klucz`.
 
 Po uruchomieniu dostępne jest Swagger UI pod `https://localhost:5001/swagger` lub `http://localhost:5000/swagger`.
 
