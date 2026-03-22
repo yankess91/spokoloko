@@ -1,21 +1,19 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/ToastProvider';
 import { t } from '../utils/i18n';
 import logoSrc from '../assets/spokoloko-logo2.png';
 
 const INITIAL_VALUES = {
-  fullName: '',
   email: '',
   password: ''
 };
 
-const AuthPage = ({ mode }) => {
+const AuthPage = () => {
   const [values, setValues] = useState(INITIAL_VALUES);
-  const { login, register, loading, error } = useAuth();
+  const { login, loading, error } = useAuth();
   const navigate = useNavigate();
-  const isRegister = mode === 'register';
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -31,19 +29,10 @@ const AuthPage = ({ mode }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const action = isRegister ? register : login;
-    const payload = isRegister
-      ? {
-          fullName: values.fullName,
-          email: values.email,
-          password: values.password
-        }
-      : {
-          email: values.email,
-          password: values.password
-        };
-
-    const result = await action(payload);
+    const result = await login({
+      email: values.email,
+      password: values.password
+    });
     if (result.ok) {
       navigate('/', { replace: true });
     }
@@ -58,29 +47,10 @@ const AuthPage = ({ mode }) => {
       </section>
       <section className="auth-form">
         <div className="auth-card">
-          <p className="auth-eyebrow">
-            {isRegister ? t('auth.registerEyebrow') : t('auth.loginEyebrow')}
-          </p>
-          <h1>{isRegister ? t('auth.registerTitle') : t('auth.loginTitle')}</h1>
-          <p className="auth-subtitle">
-            {isRegister
-              ? t('auth.registerSubtitle')
-              : t('auth.loginSubtitle')}
-          </p>
+          <p className="auth-eyebrow">{t('auth.loginEyebrow')}</p>
+          <h1>{t('auth.loginTitle')}</h1>
+          <p className="auth-subtitle">{t('auth.loginSubtitle')}</p>
           <form className="auth-fields" onSubmit={handleSubmit}>
-            {isRegister && (
-              <label>
-                {t('auth.fullName')}
-                <input
-                  name="fullName"
-                  type="text"
-                  value={values.fullName}
-                  onChange={handleChange}
-                  placeholder={t('auth.fullNamePlaceholder')}
-                  required
-                />
-              </label>
-            )}
             <label>
               {t('auth.email')}
               <input
@@ -105,24 +75,9 @@ const AuthPage = ({ mode }) => {
               />
             </label>
             <button className="primary" type="submit" disabled={loading}>
-              {loading
-                ? t('auth.processing')
-                : isRegister
-                  ? t('auth.registerAction')
-                  : t('auth.loginAction')}
+              {loading ? t('auth.processing') : t('auth.loginAction')}
             </button>
           </form>
-          <div className="auth-switch">
-            {isRegister ? (
-              <>
-                {t('auth.haveAccount')} <Link to="/login">{t('auth.loginLink')}</Link>
-              </>
-            ) : (
-              <>
-                {t('auth.noAccount')} <Link to="/register">{t('auth.registerLink')}</Link>
-              </>
-            )}
-          </div>
         </div>
       </section>
     </div>

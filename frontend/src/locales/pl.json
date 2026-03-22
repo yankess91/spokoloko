@@ -35,8 +35,7 @@
     "appointments": "Nie udało się pobrać wizyt.",
     "appointmentDetails": "Nie udało się pobrać danych wizyty.",
     "serviceDetails": "Nie udało się pobrać danych usługi.",
-    "login": "Nie udało się zalogować. Sprawdź dane logowania.",
-    "register": "Nie udało się utworzyć konta. Sprawdź poprawność danych."
+    "login": "Nie udało się zalogować. Sprawdź dane logowania."
   },
   "formatters": {
     "noData": "Brak danych",
@@ -54,25 +53,15 @@
   },
   "auth": {
     "logoAlt": "Logo Spoko Loko",
-    "registerEyebrow": "Załóż konto",
     "loginEyebrow": "Witamy ponownie",
-    "registerTitle": "Załóż konto",
     "loginTitle": "Zaloguj się do panelu",
-    "registerSubtitle": "Utwórz konto, aby uzyskać bezpieczny dostęp do panelu i zarządzać usługami.",
     "loginSubtitle": "Zaloguj się, aby zobaczyć aktualne wizyty i klientów.",
-    "fullName": "Imię i nazwisko",
-    "fullNamePlaceholder": "np. Anna Kowalska",
     "email": "E-mail",
     "emailPlaceholder": "np. anna@salon.pl",
     "password": "Hasło",
     "passwordPlaceholder": "Minimum 8 znaków",
     "processing": "Przetwarzanie…",
-    "registerAction": "Załóż konto",
-    "loginAction": "Zaloguj się",
-    "haveAccount": "Masz już konto?",
-    "loginLink": "Zaloguj się",
-    "noAccount": "Nie masz konta?",
-    "registerLink": "Zarejestruj się"
+    "loginAction": "Zaloguj się"
   },
   "clientList": {
     "previewTitle": "Klienci (podgląd)",

@@ -6,8 +6,4 @@ export default class AuthApi {
   login(payload) {
     return this.client.post('/api/auth/login', payload);
   }
-
-  register(payload) {
-    return this.client.post('/api/auth/register', payload);
-  }
 }
