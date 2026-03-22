@@ -91,12 +91,20 @@ export default function ClientsPage() {
     }
   };
 
-  const handleDelete = (client) => {
+  const handleDelete = async (client) => {
     if (!window.confirm(t('clientsPage.deleteConfirm', { name: client.fullName }))) {
       return;
     }
-    removeClient(client.id);
-    showToast(t('clientsPage.toastDeleted'));
+
+    setUpdatingClientId(client.id);
+    try {
+      await removeClient(client.id);
+      showToast(t('clientsPage.toastDeleted'));
+    } catch (err) {
+      showError(err.message ?? t('clientsPage.toastStatusError'));
+    } finally {
+      setUpdatingClientId(null);
+    }
   };
 
   return (

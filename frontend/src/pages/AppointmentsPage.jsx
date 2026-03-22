@@ -28,10 +28,15 @@ export default function AppointmentsPage() {
     [services]
   );
 
+  const visibleAppointments = useMemo(
+    () => appointments.filter((appointment) => clientsById.get(appointment.clientId)?.isActive !== false),
+    [appointments, clientsById]
+  );
+
   const sortedAppointments = useMemo(() => {
     const collator = new Intl.Collator('pl', { sensitivity: 'base' });
 
-    return [...appointments].sort((a, b) => {
+    return [...visibleAppointments].sort((a, b) => {
       switch (sortBy) {
         case 'date-asc':
           return new Date(a.startAt).getTime() - new Date(b.startAt).getTime();
@@ -60,7 +65,7 @@ export default function AppointmentsPage() {
           return new Date(b.startAt).getTime() - new Date(a.startAt).getTime();
       }
     });
-  }, [appointments, sortBy, clientsById, servicesById]);
+  }, [visibleAppointments, sortBy, clientsById, servicesById]);
 
   const showError = useCallback(
     (message) => showToast(message, { severity: 'error' }),
@@ -86,12 +91,17 @@ export default function AppointmentsPage() {
     }
   };
 
-  const handleDelete = (appointment) => {
+  const handleDelete = async (appointment) => {
     if (!window.confirm(t('appointmentsPage.deleteConfirm'))) {
       return;
     }
-    removeAppointment(appointment.id);
-    showToast(t('appointmentsPage.toastDeleted'));
+
+    try {
+      await removeAppointment(appointment.id);
+      showToast(t('appointmentsPage.toastDeleted'));
+    } catch (err) {
+      showError(err.message ?? t('appointmentsPage.toastDeleteError'));
+    }
   };
 
   return (

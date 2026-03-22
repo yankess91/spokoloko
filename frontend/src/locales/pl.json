@@ -375,7 +375,8 @@
     "sortServiceAsc": "Usługa (A-Z)",
     "sortServiceDesc": "Usługa (Z-A)",
     "sortClientAsc": "Klient (A-Z)",
-    "sortClientDesc": "Klient (Z-A)"
+    "sortClientDesc": "Klient (Z-A)",
+    "toastDeleteError": "Nie udało się usunąć wizyty."
   },
   "productDetails": {
     "loading": "Ładowanie produktu...",

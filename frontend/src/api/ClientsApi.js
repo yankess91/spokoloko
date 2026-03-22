@@ -23,4 +23,8 @@ export default class ClientsApi {
   updateStatus(id, payload) {
     return this.client.patch(`/api/clients/${id}/status`, payload);
   }
+
+  delete(id) {
+    return this.updateStatus(id, { isActive: false });
+  }
 }

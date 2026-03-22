@@ -42,9 +42,14 @@ export default function useClients() {
     [load]
   );
 
-  const removeClient = useCallback((clientId) => {
-    setClients((prev) => prev.filter((client) => client.id !== clientId));
-  }, []);
+  const removeClient = useCallback(
+    async (clientId) => {
+      const updated = await clientsApi.delete(clientId);
+      await load();
+      return updated;
+    },
+    [load]
+  );
 
   return { clients, isLoading, error, reload: load, addClient, updateStatus, removeClient };
 }

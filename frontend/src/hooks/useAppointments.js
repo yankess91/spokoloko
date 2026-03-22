@@ -33,9 +33,13 @@ export default function useAppointments() {
     [load]
   );
 
-  const removeAppointment = useCallback((appointmentId) => {
-    setAppointments((prev) => prev.filter((appointment) => appointment.id !== appointmentId));
-  }, []);
+  const removeAppointment = useCallback(
+    async (appointmentId) => {
+      await appointmentsApi.delete(appointmentId);
+      await load();
+    },
+    [load]
+  );
 
   return { appointments, isLoading, error, reload: load, addAppointment, removeAppointment };
 }

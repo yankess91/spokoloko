@@ -68,7 +68,7 @@ public sealed class ClientService : IClientService
     public async Task<bool> AddUsedProductAsync(Guid clientId, AddUsedProductRequest request, CancellationToken cancellationToken)
     {
         var client = await _clientRepository.GetByIdAsync(clientId, cancellationToken);
-        if (client is null)
+        if (client is null || !client.IsActive)
         {
             return false;
         }
