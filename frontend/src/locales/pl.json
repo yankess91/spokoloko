@@ -35,7 +35,8 @@
     "appointments": "Nie udało się pobrać wizyt.",
     "appointmentDetails": "Nie udało się pobrać danych wizyty.",
     "serviceDetails": "Nie udało się pobrać danych usługi.",
-    "login": "Nie udało się zalogować. Sprawdź dane logowania."
+    "login": "Nie udało się zalogować. Sprawdź dane logowania.",
+    "sessionExpired": "Sesja wygasła lub token jest nieważny. Zaloguj się ponownie."
   },
   "formatters": {
     "noData": "Brak danych",
