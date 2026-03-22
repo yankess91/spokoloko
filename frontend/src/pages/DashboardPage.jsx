@@ -60,8 +60,11 @@ export default function DashboardPage() {
     const sorted = [...appointments].sort(
       (a, b) => new Date(a.startAt) - new Date(b.startAt)
     );
-    const appointment =
-      sorted.find((item) => new Date(item.startAt) >= now) ?? sorted[0];
+    const appointment = sorted.find((item) => new Date(item.startAt) >= now);
+
+    if (!appointment) {
+      return null;
+    }
 
     const client = clientsById.get(appointment.clientId);
     const service = servicesById.get(appointment.serviceId);

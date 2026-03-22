@@ -1,4 +1,4 @@
-import { getAuthToken } from '../utils/auth';
+import { getAuthToken, notifyUnauthorized } from '../utils/auth';
 
 export default class ApiClient {
   constructor(baseUrl) {
@@ -17,6 +17,9 @@ export default class ApiClient {
     });
 
     if (!response.ok) {
+      if (response.status === 401) {
+        notifyUnauthorized();
+      }
       throw new Error(`Nie udało się wykonać żądania: ${response.status}`);
     }
 
