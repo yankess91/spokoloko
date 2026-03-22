@@ -48,7 +48,10 @@ export default function AppointmentForm({
   });
 
   const clientOptions = useMemo(
-    () => clientSearch.options.map((client) => ({ id: client.id, label: buildClientLabel(client) })),
+    () =>
+      clientSearch.options
+        .filter((client) => client.isActive)
+        .map((client) => ({ id: client.id, label: buildClientLabel(client) })),
     [clientSearch.options]
   );
   const serviceOptions = useMemo(
@@ -119,6 +122,10 @@ export default function AppointmentForm({
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (clientLocked && defaultClient && defaultClient.isActive === false) {
+      showError(t('appointmentForm.selectClientServiceError'));
+      return;
+    }
     if (!selectedClient || !selectedService) {
       showError(t('appointmentForm.selectClientServiceError'));
       return;

@@ -14,4 +14,8 @@ export default class AppointmentsApi {
   create(payload) {
     return this.client.post('/api/appointments', payload);
   }
+
+  delete(id) {
+    return this.client.delete(`/api/appointments/${id}`);
+  }
 }

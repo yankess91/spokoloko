@@ -34,4 +34,11 @@ public sealed class AppointmentsController : ControllerBase
         var appointment = await _appointmentService.CreateAsync(request, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = appointment.Id }, appointment);
     }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    {
+        var deleted = await _appointmentService.DeleteAsync(id, cancellationToken);
+        return deleted ? NoContent() : NotFound();
+    }
 }

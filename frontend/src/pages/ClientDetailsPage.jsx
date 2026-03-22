@@ -18,7 +18,7 @@ export default function ClientDetailsPage() {
   const [zoomedImage, setZoomedImage] = useState(null);
 
   const defaultClient = useMemo(
-    () => (client ? { id: client.id, label: client.fullName } : null),
+    () => (client ? { id: client.id, label: client.fullName, isActive: client.isActive } : null),
     [client]
   );
 
@@ -60,7 +60,12 @@ export default function ClientDetailsPage() {
         <h1>{client.fullName}</h1>
         <p className="muted">{t('clientDetails.subtitle')}</p>
         <div className="section-actions">
-          <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
+          <button
+            type="button"
+            className="primary"
+            onClick={() => setIsModalOpen(true)}
+            disabled={!client.isActive}
+          >
             {t('clientDetails.addAppointment')}
           </button>
           <Link className="ghost" to="/clients">
@@ -97,7 +102,9 @@ export default function ClientDetailsPage() {
         </article>
         <article className="card">
           <h2>{t('clientDetails.serviceHistory')}</h2>
-          {client.serviceHistory?.length ? (
+          {!client.isActive ? (
+            <p className="muted">{t('clientsPage.statusInactive')}</p>
+          ) : client.serviceHistory?.length ? (
             <ul className="list stacked">
               {client.serviceHistory.map((history) => (
                 <li key={history.appointmentId}>
