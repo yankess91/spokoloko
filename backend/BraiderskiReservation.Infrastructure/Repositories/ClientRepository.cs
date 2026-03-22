@@ -23,7 +23,6 @@ public sealed class ClientRepository : IClientRepository
         {
             return BuildClientQuery()
                 .OrderBy(client => client.FullName)
-                .Take(10)
                 .ToListAsync(cancellationToken);
         }
 
