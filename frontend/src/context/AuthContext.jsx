@@ -26,22 +26,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const register = useCallback(async (payload) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await authApi.register(payload);
-      storeSession({ token: result.token, user: result.user, expiresAt: result.expiresAt });
-      setSession({ token: result.token, user: result.user, expiresAt: result.expiresAt });
-      return { ok: true };
-    } catch (err) {
-      setError(t('errors.register'));
-      return { ok: false, error: err };
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   const logout = useCallback(() => {
     clearSession();
     setSession(null);
@@ -55,10 +39,9 @@ export const AuthProvider = ({ children }) => {
       loading,
       error,
       login,
-      register,
       logout
     }),
-    [session, loading, error, login, register, logout]
+    [session, loading, error, login, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

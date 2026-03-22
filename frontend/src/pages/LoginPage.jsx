@@ -1,5 +1,5 @@
 import AuthPage from './AuthPage';
 
-const LoginPage = () => <AuthPage mode="login" />;
+const LoginPage = () => <AuthPage />;
 
 export default LoginPage;
