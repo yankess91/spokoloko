@@ -1,7 +1,13 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { authApi } from '../api';
-import { clearSession, getStoredSession, storeSession } from '../utils/auth';
+import {
+  clearSession,
+  getStoredSession,
+  storeSession,
+  UNAUTHORIZED_EVENT,
+} from '../utils/auth';
 import { t } from '../utils/i18n';
+import { useToast } from '../components/ToastProvider';
 
 const AuthContext = createContext(null);
 
@@ -9,6 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(() => getStoredSession());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { showToast } = useToast();
 
   const login = useCallback(async (payload) => {
     setLoading(true);
@@ -30,6 +37,17 @@ export const AuthProvider = ({ children }) => {
     clearSession();
     setSession(null);
   }, []);
+
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      clearSession();
+      setSession(null);
+      showToast(t('errors.sessionExpired'), { severity: 'warning' });
+    };
+
+    window.addEventListener(UNAUTHORIZED_EVENT, handleUnauthorized);
+    return () => window.removeEventListener(UNAUTHORIZED_EVENT, handleUnauthorized);
+  }, [showToast]);
 
   const value = useMemo(
     () => ({
