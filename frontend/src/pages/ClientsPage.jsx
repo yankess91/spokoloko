@@ -11,7 +11,7 @@ export default function ClientsPage() {
   const { clients, isLoading, error, addClient, updateStatus, removeClient } = useClients();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('active');
   const [searchTerm, setSearchTerm] = useState('');
   const [updatingClientId, setUpdatingClientId] = useState(null);
   const { showToast } = useToast();
