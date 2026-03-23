@@ -1,10 +1,13 @@
 using BraiderskiReservation.Api.Application.Interfaces;
-using BraiderskiReservation.Api.Configuration;
+using BraiderskiReservation.Api.Application.Scrapers;
+using BraiderskiReservation.Api.Application.Scrapers.AltHair;
 using BraiderskiReservation.Api.Application.Scrapers.Magfactory;
 using BraiderskiReservation.Api.Application.Services;
 using BraiderskiReservation.Api.Application.Settings;
+using BraiderskiReservation.Api.Configuration;
 using BraiderskiReservation.Domain.Interfaces;
 using BraiderskiReservation.Infrastructure.Data;
+using BraiderskiReservation.Infrastructure.Options;
 using BraiderskiReservation.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +47,8 @@ builder.Services.AddCors(options =>
         policy.AllowAnyHeader().AllowAnyMethod();
     });
 });
-
+builder.Services.Configure<ScrapingOptions>(
+    builder.Configuration.GetSection("Scraping"));
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
 var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings?.SigningKey ?? string.Empty));
@@ -86,10 +90,10 @@ builder.Services.AddTransient<IProductCatalogService, ProductCatalogService>();
 builder.Services.AddTransient<IServiceCatalogService, ServiceCatalogService>();
 builder.Services.AddTransient<IAppointmentService, AppointmentService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
-builder.Services.AddTransient<IMagfactoryImportService, MagfactoryImportService>();
+builder.Services.AddTransient<IScrapingImportService, ScrapingImportService>();
+builder.Services.AddSingleton<IScraperResolver, ScraperResolver>();
 
-
-builder.Services.AddHttpClient<IMagfactoryListingScraper, MagfactoryListingScraper>(c =>
+builder.Services.AddHttpClient<IListingScraper, MagfactoryListingScraper>(c =>
 {
     c.Timeout = TimeSpan.FromSeconds(25);
     c.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 ...");
@@ -98,6 +102,14 @@ builder.Services.AddHttpClient<IMagfactoryListingScraper, MagfactoryListingScrap
 });
 
 builder.Services.AddHttpClient<IMagfactoryImageUrlProvider, MagfactoryImageUrlProvider>(c =>
+{
+    c.Timeout = TimeSpan.FromSeconds(25);
+    c.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 ...");
+    c.DefaultRequestHeaders.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+    c.DefaultRequestHeaders.AcceptLanguage.ParseAdd("pl-PL,pl;q=0.9,en-US;q=0.7,en;q=0.6");
+});
+
+builder.Services.AddHttpClient<IListingScraper, AlthairListingScraper>(c =>
 {
     c.Timeout = TimeSpan.FromSeconds(25);
     c.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 ...");

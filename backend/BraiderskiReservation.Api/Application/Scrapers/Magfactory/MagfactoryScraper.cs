@@ -7,8 +7,10 @@ using System.Text.RegularExpressions;
 namespace BraiderskiReservation.Api.Application.Scrapers.Magfactory;
 
 
-public class MagfactoryListingScraper(HttpClient http) : IMagfactoryListingScraper
+public class MagfactoryListingScraper(HttpClient http, IMagfactoryImageUrlProvider magfactoryImageUrlProvider) : IListingScraper
 {
+    public string Name => "Magfactory";
+
     public async Task<List<ProductDto>> ScrapeProductsAsync(
         string categoryUrl,
         int maxPagesSafety = 200,
@@ -30,12 +32,7 @@ public class MagfactoryListingScraper(HttpClient http) : IMagfactoryListingScrap
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
 
-            var productsOnPage = ListingParser.ExtractProducts(doc, pageUri).ToList();
-
-            if (productsOnPage.Count == 0)
-                break;
-
-            foreach (var p in productsOnPage)
+            await foreach (var p in ExtractProductsAsync(doc, pageUri, ct))
             {
                 if (seen.Add(p.ProductUrl))
                     results.Add(p);
@@ -53,53 +50,61 @@ public class MagfactoryListingScraper(HttpClient http) : IMagfactoryListingScrap
         return await resp.Content.ReadAsStringAsync(ct);
     }
 
-    private static class ListingParser
+    private async IAsyncEnumerable<ProductDto> ExtractProductsAsync(HtmlDocument doc, Uri baseUri, CancellationToken ct)
     {
-        public static IEnumerable<ProductDto> ExtractProducts(HtmlDocument doc, Uri baseUri)
+        var items =
+            doc.DocumentNode.SelectNodes("//article[contains(@class,'product-miniature')]")
+            ?? doc.DocumentNode.SelectNodes("//*[contains(@class,'product-miniature')]")
+            ?? doc.DocumentNode.SelectNodes("//*[contains(@class,'product-container')]");
+
+        if (items is null) yield break;
+
+        foreach (var item in items)
         {
-            var items =
-                doc.DocumentNode.SelectNodes("//article[contains(@class,'product-miniature')]")
-                ?? doc.DocumentNode.SelectNodes("//*[contains(@class,'product-miniature')]")
-                ?? doc.DocumentNode.SelectNodes("//*[contains(@class,'product-container')]");
+            var a =
+                item.SelectSingleNode(".//h2[contains(@class,'product-title')]//a[@href]")
+                ?? item.SelectSingleNode(".//a[contains(@class,'product-title') and @href]")
+                ?? item.SelectSingleNode(".//a[contains(@class,'product-thumbnail') and @href]")
+                ?? item.SelectSingleNode(".//a[@href]");
 
-            if (items is null) yield break;
+            var href = a?.GetAttributeValue("href", null);
+            if (string.IsNullOrWhiteSpace(href)) continue;
 
-            foreach (var item in items)
+            var productUrl = MakeAbsolute(baseUri, WebUtility.HtmlDecode(href)).ToString();
+
+            var name =
+                Clean(a!.InnerText)
+                ?? Clean(a.GetAttributeValue("title", null))
+                ?? Clean(a.GetAttributeValue("aria-label", null));
+
+            if (string.IsNullOrWhiteSpace(name)) continue;
+
+            var priceRaw =
+                item.SelectSingleNode(".//*[contains(@class,'product-price-and-shipping')]//*[contains(@class,'price')]")?.InnerText
+                ?? item.SelectSingleNode(".//span[contains(@class,'price')]")?.InnerText
+                ?? item.SelectSingleNode(".//*[contains(@class,'price')]")?.InnerText;
+
+            var price = NormalizeToDecimal(Clean(priceRaw)) ?? 0m;
+
+            string? imgUrl = null;
+            try
             {
-                var a =
-                    item.SelectSingleNode(".//h2[contains(@class,'product-title')]//a[@href]")
-                    ?? item.SelectSingleNode(".//a[contains(@class,'product-title') and @href]")
-                    ?? item.SelectSingleNode(".//a[contains(@class,'product-thumbnail') and @href]")
-                    ?? item.SelectSingleNode(".//a[@href]");
-
-                var href = a?.GetAttributeValue("href", null);
-                if (string.IsNullOrWhiteSpace(href)) continue;
-
-                var productUrl = MakeAbsolute(baseUri, WebUtility.HtmlDecode(href)).ToString();
-
-                var name =
-                    Clean(a!.InnerText)
-                    ?? Clean(a.GetAttributeValue("title", null))
-                    ?? Clean(a.GetAttributeValue("aria-label", null));
-
-                if (string.IsNullOrWhiteSpace(name)) continue;
-
-                var priceRaw =
-                    item.SelectSingleNode(".//*[contains(@class,'product-price-and-shipping')]//*[contains(@class,'price')]")?.InnerText
-                    ?? item.SelectSingleNode(".//span[contains(@class,'price')]")?.InnerText
-                    ?? item.SelectSingleNode(".//*[contains(@class,'price')]")?.InnerText;
-
-                var price = NormalizeToDecimal(Clean(priceRaw)) ?? 0m;
-
-                yield return new ProductDto(
-                    Name: name,
-                    Price: price,
-                    ImgUrl: null,
-                    ProductUrl: productUrl
-                );
+                imgUrl = await magfactoryImageUrlProvider.GetMainImageUrlAsync(productUrl, ct);
             }
+            catch (Exception ex)
+            {
+                continue;
+            }
+
+            yield return new ProductDto(
+                Name: name,
+                Price: price,
+                ImgUrl: imgUrl,
+                ProductUrl: productUrl
+            );
         }
     }
+
     private static decimal? NormalizeToDecimal(string? s)
     {
         if (string.IsNullOrWhiteSpace(s)) return null;

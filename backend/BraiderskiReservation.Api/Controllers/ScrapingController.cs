@@ -1,16 +1,18 @@
-﻿using BraiderskiReservation.Api.Application.Scrapers.Magfactory;
+﻿using BraiderskiReservation.Api.Application.Scrapers;
+using BraiderskiReservation.Api.Application.Scrapers.AltHair;
+using BraiderskiReservation.Api.Application.Scrapers.Magfactory;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BraiderskiReservation.Api.Controllers;
 
 [ApiController]
 [Route("api/scraping")]
-public class ScrapingController(IMagfactoryImportService magfactoryImportService) : Controller
+public class ScrapingController(IScrapingImportService scrapingImportService) : Controller
 {
-    [HttpGet]
-    public async Task<IActionResult> IndexAsync([FromQuery] string url)
+    [HttpPost()]
+    public async Task<IActionResult> Run()
     {
-        await magfactoryImportService.ImportCategoryAsync(url);
+        await scrapingImportService.ImportAllAsync();
         return Ok();
     }
 }

@@ -20,6 +20,12 @@ public sealed class ProductRepository : IProductRepository
             .ThenBy(product => product.Brand)
             .ToListAsync(cancellationToken);
 
+    public Task<List<Product>> GetByBrandAsync(string brandName, CancellationToken cancellationToken) =>
+            .Where(product => product.Brand == brandName)
+            .OrderBy(product => product.Name)
+            .ThenBy(product => product.Brand)
+            .ToListAsync(cancellationToken);
+
     public Task<List<Product>> SearchAsync(string? searchTerm, CancellationToken cancellationToken)
     {
         var query = BuildProductQuery();
