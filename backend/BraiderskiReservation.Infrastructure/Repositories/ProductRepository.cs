@@ -21,6 +21,7 @@ public sealed class ProductRepository : IProductRepository
             .ToListAsync(cancellationToken);
 
     public Task<List<Product>> GetByBrandAsync(string brandName, CancellationToken cancellationToken) =>
+        _context.Products
             .Where(product => product.Brand == brandName)
             .OrderBy(product => product.Name)
             .ThenBy(product => product.Brand)
