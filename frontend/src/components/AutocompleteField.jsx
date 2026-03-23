@@ -36,14 +36,6 @@ export default function AutocompleteField({
   hideLabel = false,
   containerClassName = 'form-field'
 }) {
-  const handleInputChange = (event, newValue, reason) => {
-    if (reason === 'reset' && value) {
-      return;
-    }
-
-    onInputChange?.(event, newValue, reason);
-  };
-
   return (
     <div className={containerClassName}>
       {hideLabel ? null : <span className="form-label">{label}</span>}
@@ -53,7 +45,7 @@ export default function AutocompleteField({
         value={value}
         inputValue={inputValue}
         onChange={onChange}
-        onInputChange={handleInputChange}
+        onInputChange={onInputChange}
         loading={loading}
         disabled={disabled}
         openOnFocus
