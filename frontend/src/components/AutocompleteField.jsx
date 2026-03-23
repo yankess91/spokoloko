@@ -40,6 +40,7 @@ export default function AutocompleteField({
     <div className={containerClassName}>
       {hideLabel ? null : <span className="form-label">{label}</span>}
       <Autocomplete
+        disablePortal
         options={options}
         value={value}
         inputValue={inputValue}
@@ -47,9 +48,28 @@ export default function AutocompleteField({
         onInputChange={onInputChange}
         loading={loading}
         disabled={disabled}
+        openOnFocus
+        autoHighlight
+        clearOnBlur={false}
+        handleHomeEndKeys
         isOptionEqualToValue={isOptionEqualToValue}
         getOptionLabel={getOptionLabel}
         filterOptions={(items) => items}
+        slotProps={{
+          paper: {
+            elevation: 6,
+            sx: {
+              mt: 0.5,
+              border: '1px solid #d7cbb8',
+              borderRadius: '12px'
+            }
+          },
+          popper: {
+            sx: {
+              zIndex: 1600
+            }
+          }
+        }}
         renderInput={(params) => (
           <TextField
             {...params}
