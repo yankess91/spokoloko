@@ -20,7 +20,9 @@ export default class ApiClient {
       if (response.status === 401) {
         notifyUnauthorized();
       }
-      throw new Error(`Nie udało się wykonać żądania: ${response.status}`);
+      const error = new Error(`Nie udało się wykonać żądania: ${response.status}`);
+      error.status = response.status;
+      throw error;
     }
 
     if (response.status === 204) {
