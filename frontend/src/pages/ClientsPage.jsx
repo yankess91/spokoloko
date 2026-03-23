@@ -8,18 +8,16 @@ import AddIcon from '@mui/icons-material/Add';
 import { t } from '../utils/i18n';
 
 export default function ClientsPage() {
-  const { clients, isLoading, error, addClient, updateStatus, removeClient } = useClients();
+  const { clients, isLoading, error, addClient, updateClient, updateStatus, removeClient } = useClients();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingClient, setEditingClient] = useState(null);
   const [statusFilter, setStatusFilter] = useState('active');
   const [searchTerm, setSearchTerm] = useState('');
   const [updatingClientId, setUpdatingClientId] = useState(null);
   const { showToast } = useToast();
 
-  const sortedClients = useMemo(
-    () => [...clients].sort((a, b) => a.fullName.localeCompare(b.fullName)),
-    [clients]
-  );
+  const sortedClients = useMemo(() => [...clients].sort((a, b) => a.fullName.localeCompare(b.fullName)), [clients]);
 
   const filteredClients = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
@@ -53,10 +51,7 @@ export default function ClientsPage() {
     );
   }, [sortedClients, statusFilter, searchTerm]);
 
-  const showError = useCallback(
-    (message) => showToast(message, { severity: 'error' }),
-    [showToast]
-  );
+  const showError = useCallback((message) => showToast(message, { severity: 'error' }), [showToast]);
 
   useEffect(() => {
     if (error) {
@@ -64,26 +59,42 @@ export default function ClientsPage() {
     }
   }, [error, showError]);
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingClient(null);
+  };
+
   const handleSubmit = async (payload) => {
     setIsSubmitting(true);
     try {
-      await addClient(payload);
-      showToast(t('clientsPage.toastSaved'));
-      setIsModalOpen(false);
+      if (editingClient) {
+        await updateClient(editingClient.id, payload);
+        showToast(t('clientsPage.toastUpdated'));
+      } else {
+        await addClient(payload);
+        showToast(t('clientsPage.toastSaved'));
+      }
+      closeModal();
     } catch (err) {
       showError(err.message ?? t('clientsPage.toastSaveError'));
+      return false;
     } finally {
       setIsSubmitting(false);
     }
+
+    return true;
+  };
+
+  const handleEdit = (client) => {
+    setEditingClient(client);
+    setIsModalOpen(true);
   };
 
   const handleStatusToggle = async (client) => {
     setUpdatingClientId(client.id);
     try {
       await updateStatus(client.id, !client.isActive);
-      showToast(
-        client.isActive ? t('clientsPage.toastDeactivated') : t('clientsPage.toastActivated')
-      );
+      showToast(client.isActive ? t('clientsPage.toastDeactivated') : t('clientsPage.toastActivated'));
     } catch (err) {
       showError(err.message ?? t('clientsPage.toastStatusError'));
     } finally {
@@ -123,7 +134,14 @@ export default function ClientsPage() {
             </div>
           </header>
           <div className="grid-actions">
-            <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
+            <button
+              type="button"
+              className="primary"
+              onClick={() => {
+                setEditingClient(null);
+                setIsModalOpen(true);
+              }}
+            >
               <AddIcon fontSize="small" />
               {t('clientsPage.newClient')}
             </button>
@@ -151,6 +169,7 @@ export default function ClientsPage() {
             clients={filteredClients}
             isLoading={isLoading}
             linkBase="/clients"
+            onEdit={handleEdit}
             onToggleStatus={handleStatusToggle}
             updatingClientId={updatingClientId}
             onDelete={handleDelete}
@@ -159,8 +178,17 @@ export default function ClientsPage() {
       </section>
 
       {isModalOpen ? (
-        <Modal title={t('clientsPage.modalTitle')} onClose={() => setIsModalOpen(false)}>
-          <ClientForm onSubmit={handleSubmit} isSubmitting={isSubmitting} showTitle={false} variant="plain" />
+        <Modal
+          title={editingClient ? t('clientsPage.editModalTitle') : t('clientsPage.modalTitle')}
+          onClose={closeModal}
+        >
+          <ClientForm
+            onSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
+            initialValues={editingClient}
+            showTitle={false}
+            variant="plain"
+          />
         </Modal>
       ) : null}
     </div>

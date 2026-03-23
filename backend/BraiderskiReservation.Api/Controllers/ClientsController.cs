@@ -37,6 +37,13 @@ public sealed class ClientsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = client.Id }, client);
     }
 
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<ClientProfileResponse>> Update(Guid id, UpdateClientRequest request, CancellationToken cancellationToken)
+    {
+        var client = await _clientService.UpdateAsync(id, request, cancellationToken);
+        return client is null ? NotFound() : Ok(client);
+    }
+
     [HttpPatch("{id:guid}/status")]
     public async Task<ActionResult<ClientProfileResponse>> UpdateStatus(
         Guid id,

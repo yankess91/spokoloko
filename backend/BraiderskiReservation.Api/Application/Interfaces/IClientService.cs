@@ -7,6 +7,7 @@ public interface IClientService
     Task<List<ClientProfileResponse>> SearchAsync(string? searchTerm, CancellationToken cancellationToken);
     Task<ClientProfileResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task<ClientProfileResponse> CreateAsync(CreateClientRequest request, CancellationToken cancellationToken);
+    Task<ClientProfileResponse?> UpdateAsync(Guid id, UpdateClientRequest request, CancellationToken cancellationToken);
     Task<ClientProfileResponse?> UpdateStatusAsync(Guid id, UpdateClientStatusRequest request, CancellationToken cancellationToken);
     Task<bool> AddUsedProductAsync(Guid clientId, AddUsedProductRequest request, CancellationToken cancellationToken);
 }

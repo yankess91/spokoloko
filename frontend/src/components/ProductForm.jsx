@@ -1,17 +1,43 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { t } from '../utils/i18n';
 
-export default function ProductForm({ onSubmit, isSubmitting, showTitle = true, variant = 'card' }) {
-  const [formState, setFormState] = useState({
-    name: '',
-    brand: '',
-    notes: '',
-    imageUrl: '',
-    price: '',
-    shopUrl: '',
-    isAvailable: false,
-    availabilityCheckedAt: ''
-  });
+const formatDateTimeLocal = (value) => {
+  if (!value) {
+    return '';
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+
+  const pad = (part) => String(part).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
+
+const createInitialState = (initialValues = {}) => ({
+  name: initialValues.name ?? '',
+  brand: initialValues.brand ?? '',
+  notes: initialValues.notes ?? '',
+  imageUrl: initialValues.imageUrl ?? '',
+  price: initialValues.price ?? '',
+  shopUrl: initialValues.shopUrl ?? '',
+  isAvailable: initialValues.isAvailable ?? false,
+  availabilityCheckedAt: formatDateTimeLocal(initialValues.availabilityCheckedAt)
+});
+
+export default function ProductForm({
+  onSubmit,
+  isSubmitting,
+  initialValues,
+  showTitle = true,
+  variant = 'card'
+}) {
+  const [formState, setFormState] = useState(() => createInitialState(initialValues));
+
+  useEffect(() => {
+    setFormState(createInitialState(initialValues));
+  }, [initialValues]);
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -23,28 +49,21 @@ export default function ProductForm({ onSubmit, isSubmitting, showTitle = true, 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await onSubmit?.({
+    const shouldReset = await onSubmit?.({
       ...formState,
       price: Number(formState.price) || 0,
       availabilityCheckedAt: formState.availabilityCheckedAt
         ? new Date(formState.availabilityCheckedAt).toISOString()
         : null
     });
-    setFormState({
-      name: '',
-      brand: '',
-      notes: '',
-      imageUrl: '',
-      price: '',
-      shopUrl: '',
-      isAvailable: false,
-      availabilityCheckedAt: ''
-    });
+    if (shouldReset !== false) {
+      setFormState(createInitialState());
+    }
   };
 
   const formContent = (
     <>
-      {showTitle ? <h2>{t('productForm.title')}</h2> : null}
+      {showTitle ? <h2>{initialValues ? t('productForm.editTitle') : t('productForm.title')}</h2> : null}
       <form className="form" onSubmit={handleSubmit}>
         <label>
           {t('productForm.name')}
@@ -127,7 +146,11 @@ export default function ProductForm({ onSubmit, isSubmitting, showTitle = true, 
           />
         </label>
         <button type="submit" className="primary" disabled={isSubmitting}>
-          {isSubmitting ? t('common.saving') : t('productForm.save')}
+          {isSubmitting
+            ? t('common.saving')
+            : initialValues
+            ? t('productForm.update')
+            : t('productForm.save')}
         </button>
       </form>
     </>

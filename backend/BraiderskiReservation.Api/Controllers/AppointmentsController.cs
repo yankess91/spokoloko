@@ -42,6 +42,13 @@ public sealed class AppointmentsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = appointment.Id }, appointment);
     }
 
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<AppointmentResponse>> Update(Guid id, UpdateAppointmentRequest request, CancellationToken cancellationToken)
+    {
+        var appointment = await _appointmentService.UpdateAsync(id, request, cancellationToken);
+        return appointment is null ? NotFound() : Ok(appointment);
+    }
+
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {

@@ -58,16 +58,40 @@ public sealed class AppointmentService : IAppointmentService
             StartAt = request.StartAt,
             EndAt = request.EndAt,
             Notes = request.Notes,
-            AppointmentProducts = (request.ProductIds ?? new List<Guid>())
-                .Distinct()
-                .Select(productId => new AppointmentProduct
-                {
-                    ProductId = productId
-                })
-                .ToList()
+            AppointmentProducts = BuildAppointmentProducts(request.ProductIds)
         };
 
         await _appointmentRepository.AddAsync(appointment, cancellationToken);
+        await _appointmentRepository.SaveChangesAsync(cancellationToken);
+        return appointment.ToResponse();
+    }
+
+    public async Task<AppointmentResponse?> UpdateAsync(Guid id, UpdateAppointmentRequest request, CancellationToken cancellationToken)
+    {
+        var client = await _clientRepository.GetByIdAsync(request.ClientId, cancellationToken);
+        if (client is null || !client.IsActive)
+        {
+            throw new InvalidOperationException("Nie można zapisać wizyty dla nieaktywnego klienta.");
+        }
+
+        var appointment = await _appointmentRepository.GetByIdForUpdateAsync(id, cancellationToken);
+        if (appointment is null)
+        {
+            return null;
+        }
+
+        appointment.ClientId = request.ClientId;
+        appointment.ServiceId = request.ServiceId;
+        appointment.StartAt = request.StartAt;
+        appointment.EndAt = request.EndAt;
+        appointment.Notes = request.Notes;
+        appointment.AppointmentProducts.Clear();
+
+        foreach (var appointmentProduct in BuildAppointmentProducts(request.ProductIds))
+        {
+            appointment.AppointmentProducts.Add(appointmentProduct);
+        }
+
         await _appointmentRepository.SaveChangesAsync(cancellationToken);
         return appointment.ToResponse();
     }
@@ -83,4 +107,13 @@ public sealed class AppointmentService : IAppointmentService
         await _appointmentRepository.SaveChangesAsync(cancellationToken);
         return true;
     }
+
+    private static List<AppointmentProduct> BuildAppointmentProducts(IEnumerable<Guid>? productIds) =>
+        (productIds ?? new List<Guid>())
+            .Distinct()
+            .Select(productId => new AppointmentProduct
+            {
+                ProductId = productId
+            })
+            .ToList();
 }

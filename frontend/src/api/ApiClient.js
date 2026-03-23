@@ -43,6 +43,13 @@ export default class ApiClient {
     });
   }
 
+  put(path, payload) {
+    return this.request(path, {
+      method: 'PUT',
+      body: JSON.stringify(payload)
+    });
+  }
+
   delete(path) {
     return this.request(path, { method: 'DELETE' });
   }

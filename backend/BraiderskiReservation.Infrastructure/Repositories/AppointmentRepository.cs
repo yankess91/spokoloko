@@ -41,6 +41,11 @@ public sealed class AppointmentRepository : IAppointmentRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(appointment => appointment.Id == id, cancellationToken);
 
+    public Task<Appointment?> GetByIdForUpdateAsync(Guid id, CancellationToken cancellationToken) =>
+        _context.Appointments
+            .Include(appointment => appointment.AppointmentProducts)
+            .FirstOrDefaultAsync(appointment => appointment.Id == id, cancellationToken);
+
     public async Task AddAsync(Appointment appointment, CancellationToken cancellationToken) =>
         await _context.Appointments.AddAsync(appointment, cancellationToken);
 

@@ -46,7 +46,8 @@
   "common": {
     "saving": "Zapisywanie...",
     "deleting": "Usuwanie...",
-    "add": "Dodaj"
+    "add": "Dodaj",
+    "edit": "Edytuj"
   },
   "modal": {
     "closeAria": "Zamknij okno dialogowe",
@@ -93,7 +94,8 @@
     "deactivate": "Dezaktywuj",
     "activate": "Aktywuj",
     "deleteDisabled": "Usuwanie niedostępne",
-    "delete": "Usuń"
+    "delete": "Usuń",
+    "edit": "Edytuj"
   },
   "appointmentList": {
     "loading": "Ładowanie wizyt...",
@@ -111,7 +113,8 @@
     "noContact": "Brak danych kontaktowych",
     "details": "Szczegóły",
     "deleteDisabled": "Usuwanie niedostępne",
-    "delete": "Usuń"
+    "delete": "Usuń",
+    "edit": "Edytuj"
   },
   "appointmentCalendar": {
     "title": "Kalendarz wizyt",
@@ -143,7 +146,8 @@
     "zoomImage": "Powiększ zdjęcie",
     "available": "Dostępny",
     "unavailable": "Niedostępny",
-    "noAvailabilityDate": "Brak daty sprawdzenia"
+    "noAvailabilityDate": "Brak daty sprawdzenia",
+    "edit": "Edytuj"
   },
   "serviceList": {
     "loading": "Ładowanie usług...",
@@ -195,7 +199,9 @@
     "addProductPlaceholder": "Dodaj produkt",
     "removeProduct": "{label} ✕",
     "noProducts": "Nie dodano jeszcze produktów.",
-    "save": "Zapisz wizytę"
+    "save": "Zapisz wizytę",
+    "editTitle": "Edytuj wizytę",
+    "update": "Zapisz zmiany"
   },
   "hero": {
     "eyebrow": "System rezerwacyjny",
@@ -225,7 +231,9 @@
     "status": "Status klienta",
     "activeLabel": "Aktywny klient",
     "inactiveLabel": "Nieaktywny klient",
-    "save": "Zapisz profil"
+    "save": "Zapisz profil",
+    "editTitle": "Edytuj klienta",
+    "update": "Zapisz zmiany"
   },
   "productForm": {
     "title": "Dodaj produkt",
@@ -243,7 +251,9 @@
     "shopUrl": "Link do sklepu",
     "shopUrlPlaceholder": "https://sklep.pl/produkt",
     "isAvailable": "Produkt dostępny",
-    "availabilityCheckedAt": "Data sprawdzenia dostępności"
+    "availabilityCheckedAt": "Data sprawdzenia dostępności",
+    "editTitle": "Edytuj produkt",
+    "update": "Zapisz zmiany"
   },
   "clientDetails": {
     "toastAppointmentAdded": "Wizyta została dodana.",
@@ -346,7 +356,9 @@
     "availabilityAvailable": "Dostępne",
     "availabilityUnavailable": "Niedostępne",
     "sortCheckedDesc": "Data sprawdzenia (od najnowszych)",
-    "sortCheckedAsc": "Data sprawdzenia (od najstarszych)"
+    "sortCheckedAsc": "Data sprawdzenia (od najstarszych)",
+    "toastUpdated": "Produkt został zaktualizowany.",
+    "editModalTitle": "Edytuj produkt"
   },
   "appointmentsPage": {
     "toastSaved": "Wizyta została zapisana.",
@@ -366,7 +378,9 @@
     "sortServiceDesc": "Usługa (Z-A)",
     "sortClientAsc": "Klient (A-Z)",
     "sortClientDesc": "Klient (Z-A)",
-    "toastDeleteError": "Nie udało się usunąć wizyty."
+    "toastDeleteError": "Nie udało się usunąć wizyty.",
+    "toastUpdated": "Wizyta została zaktualizowana.",
+    "editModalTitle": "Edytuj wizytę"
   },
   "productDetails": {
     "loading": "Ładowanie produktu...",
@@ -434,7 +448,9 @@
     "statusAll": "Wszyscy klienci",
     "statusActive": "Aktywni klienci",
     "statusInactive": "Nieaktywni klienci",
-    "modalTitle": "Nowy klient"
+    "modalTitle": "Nowy klient",
+    "toastUpdated": "Profil klienta został zaktualizowany.",
+    "editModalTitle": "Edytuj klienta"
   },
   "servicesPage": {
     "toastSaved": "Usługa została zapisana.",
