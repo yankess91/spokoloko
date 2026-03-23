@@ -56,6 +56,29 @@ public sealed class ServiceCatalogService : IServiceCatalogService
         return service.ToResponse();
     }
 
+
+    public async Task<ServiceItemResponse?> UpdateAsync(Guid id, CreateServiceRequest request, CancellationToken cancellationToken)
+    {
+        var updated = await _serviceRepository.UpdateAsync(
+            id,
+            request.Name,
+            request.Description,
+            TimeSpan.FromMinutes(request.DurationMinutes),
+            request.Price,
+            request.RequiredProductIds ?? new List<Guid>(),
+            cancellationToken);
+
+        if (updated is null)
+        {
+            return null;
+        }
+
+        await _serviceRepository.SaveChangesAsync(cancellationToken);
+
+        var refreshed = await _serviceRepository.GetByIdAsync(id, cancellationToken);
+        return refreshed?.ToResponse();
+    }
+
     public async Task<ServiceItemResponse?> AddProductAsync(Guid serviceId, Guid productId, CancellationToken cancellationToken)
     {
         var product = await _productRepository.GetByIdAsync(productId, cancellationToken);

@@ -14,15 +14,19 @@ const mapSelectedProducts = (products = []) =>
     label: product.label ?? buildProductLabel(product)
   }));
 
-const createInitialState = (initialValues = {}) => ({
-  name: initialValues.name ?? '',
-  description: initialValues.description ?? '',
-  durationMinutes: initialValues.durationMinutes ?? initialValues.duration ?? 60,
-  price: initialValues.price ?? '',
-  selectedProducts: mapSelectedProducts(
-    initialValues.selectedProducts ?? initialValues.requiredProducts ?? []
-  )
-});
+const createInitialState = (initialValues) => {
+  const values = initialValues ?? {};
+
+  return ({
+    name: values.name ?? '',
+    description: values.description ?? '',
+    durationMinutes: values.durationMinutes ?? values.duration ?? 60,
+    price: values.price ?? '',
+    selectedProducts: mapSelectedProducts(
+      values.selectedProducts ?? values.requiredProducts ?? []
+    )
+  });
+};
 
 export default function ServiceForm({
   onSubmit,

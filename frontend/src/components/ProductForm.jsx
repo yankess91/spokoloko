@@ -15,16 +15,20 @@ const formatDateTimeLocal = (value) => {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 };
 
-const createInitialState = (initialValues = {}) => ({
-  name: initialValues.name ?? '',
-  brand: initialValues.brand ?? '',
-  notes: initialValues.notes ?? '',
-  imageUrl: initialValues.imageUrl ?? '',
-  price: initialValues.price ?? '',
-  shopUrl: initialValues.shopUrl ?? '',
-  isAvailable: initialValues.isAvailable ?? false,
-  availabilityCheckedAt: formatDateTimeLocal(initialValues.availabilityCheckedAt)
-});
+const createInitialState = (initialValues) => {
+  const values = initialValues ?? {};
+
+  return ({
+    name: values.name ?? '',
+    brand: values.brand ?? '',
+    notes: values.notes ?? '',
+    imageUrl: values.imageUrl ?? '',
+    price: values.price ?? '',
+    shopUrl: values.shopUrl ?? '',
+    isAvailable: values.isAvailable ?? false,
+    availabilityCheckedAt: formatDateTimeLocal(values.availabilityCheckedAt)
+  });
+};
 
 export default function ProductForm({
   onSubmit,
