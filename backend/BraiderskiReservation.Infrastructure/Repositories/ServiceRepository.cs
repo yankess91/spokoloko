@@ -1,5 +1,5 @@
-using BraiderskiReservation.Domain.Interfaces;
 using BraiderskiReservation.Domain.Entities;
+using BraiderskiReservation.Domain.Interfaces;
 using BraiderskiReservation.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,26 +15,30 @@ public sealed class ServiceRepository : IServiceRepository
     }
 
     public Task<List<ServiceItem>> GetAllAsync(CancellationToken cancellationToken) =>
-        BuildServiceQuery().ToListAsync(cancellationToken);
+        BuildServiceQuery(includeProducts: true)
+            .OrderBy(service => service.Name)
+            .ToListAsync(cancellationToken);
 
     public Task<List<ServiceItem>> SearchAsync(string? searchTerm, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(searchTerm))
+        var query = BuildServiceQuery(includeProducts: false);
+        var normalizedSearch = NormalizeSearch(searchTerm);
+
+        if (normalizedSearch is not null)
         {
-            return GetAllAsync(cancellationToken);
+            var searchPattern = ToContainsPattern(normalizedSearch);
+            query = query.Where(service =>
+                EF.Functions.ILike(service.Name, searchPattern) ||
+                EF.Functions.ILike(service.Description, searchPattern));
         }
 
-        var normalized = searchTerm.Trim().ToLowerInvariant();
-
-        return BuildServiceQuery()
-            .Where(service =>
-                service.Name.ToLower().Contains(normalized) ||
-                service.Description.ToLower().Contains(normalized))
+        return query
+            .OrderBy(service => service.Name)
             .ToListAsync(cancellationToken);
     }
 
     public Task<ServiceItem?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
-        BuildServiceQuery()
+        BuildServiceQuery(includeProducts: true)
             .FirstOrDefaultAsync(service => service.Id == id, cancellationToken);
 
     public async Task AddAsync(ServiceItem service, CancellationToken cancellationToken) =>
@@ -78,9 +82,23 @@ public sealed class ServiceRepository : IServiceRepository
     public Task SaveChangesAsync(CancellationToken cancellationToken) =>
         _context.SaveChangesAsync(cancellationToken);
 
-    private IQueryable<ServiceItem> BuildServiceQuery() =>
-        _context.Services
+    private IQueryable<ServiceItem> BuildServiceQuery(bool includeProducts)
+    {
+        var query = _context.Services.AsNoTracking();
+
+        if (!includeProducts)
+        {
+            return query;
+        }
+
+        return query
             .Include(service => service.ServiceProducts)
             .ThenInclude(serviceProduct => serviceProduct.Product)
-            .AsNoTracking();
+            .AsSplitQuery();
+    }
+
+    private static string? NormalizeSearch(string? searchTerm) =>
+        string.IsNullOrWhiteSpace(searchTerm) ? null : searchTerm.Trim();
+
+    private static string ToContainsPattern(string searchTerm) => $"%{searchTerm.Replace("%", "\\%").Replace("_", "\\_")}%";
 }

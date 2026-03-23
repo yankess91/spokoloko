@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { clientsApi } from '../api';
 import { t } from '../utils/i18n';
+import { prependItem, removeItemById, updateItemById } from '../utils/collectionOptimizers';
 
 export default function useClients() {
   const [clients, setClients] = useState([]);
@@ -26,27 +27,26 @@ export default function useClients() {
 
   const addClient = useCallback(async (payload) => {
     const created = await clientsApi.create(payload);
-    await load();
+    setClients((current) => prependItem(current, created));
     return created;
-  }, [load]);
+  }, []);
 
   const updateClient = useCallback(async (clientId, payload) => {
     const updated = await clientsApi.update(clientId, payload);
-    await load();
+    setClients((current) => updateItemById(current, updated));
     return updated;
-  }, [load]);
+  }, []);
 
   const updateStatus = useCallback(async (clientId, isActive) => {
     const updated = await clientsApi.updateStatus(clientId, { isActive });
-    await load();
+    setClients((current) => updateItemById(current, updated));
     return updated;
-  }, [load]);
+  }, []);
 
   const removeClient = useCallback(async (clientId) => {
-    const updated = await clientsApi.delete(clientId);
-    await load();
-    return updated;
-  }, [load]);
+    await clientsApi.delete(clientId);
+    setClients((current) => removeItemById(current, clientId));
+  }, []);
 
   return { clients, isLoading, error, reload: load, addClient, updateClient, updateStatus, removeClient };
 }

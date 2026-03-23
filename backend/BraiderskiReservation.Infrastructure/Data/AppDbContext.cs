@@ -30,6 +30,9 @@ public sealed class AppDbContext : DbContext
             entity.Property(client => client.PhoneNumber).HasColumnName("phone_number");
             entity.Property(client => client.Notes).HasColumnName("notes");
             entity.Property(client => client.IsActive).HasColumnName("is_active");
+            entity.HasIndex(client => client.FullName);
+            entity.HasIndex(client => client.Email);
+            entity.HasIndex(client => client.PhoneNumber);
             entity.HasMany(client => client.UsedProducts)
                 .WithOne(usedProduct => usedProduct.ClientProfile)
                 .HasForeignKey(usedProduct => usedProduct.ClientId)
@@ -64,6 +67,8 @@ public sealed class AppDbContext : DbContext
             entity.Property(product => product.ShopUrl).HasColumnName("shop_url");
             entity.Property(product => product.IsAvailable).HasColumnName("is_available");
             entity.Property(product => product.AvailabilityCheckedAt).HasColumnName("availability_checked_at");
+            entity.HasIndex(product => product.Name);
+            entity.HasIndex(product => product.Brand);
         });
 
         modelBuilder.Entity<ServiceItem>(entity =>
@@ -75,6 +80,7 @@ public sealed class AppDbContext : DbContext
             entity.Property(service => service.Description).HasColumnName("description");
             entity.Property(service => service.Duration).HasColumnName("duration");
             entity.Property(service => service.Price).HasColumnName("price");
+            entity.HasIndex(service => service.Name);
             entity.HasMany(service => service.Appointments)
                 .WithOne(appointment => appointment.ServiceItem)
                 .HasForeignKey(appointment => appointment.ServiceId);

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react';
 import ProductForm from '../components/ProductForm';
 import ProductList from '../components/ProductList';
 import Modal from '../components/Modal';
@@ -6,6 +6,10 @@ import useProducts from '../hooks/useProducts';
 import { useToast } from '../components/ToastProvider';
 import AddIcon from '@mui/icons-material/Add';
 import { t } from '../utils/i18n';
+import { createCollator, includesNormalizedValue, normalizeSearchTerm } from '../utils/collectionOptimizers';
+
+const collator = createCollator();
+const pageSize = 8;
 
 export default function ProductsPage() {
   const { products, isLoading, error, addProduct, updateProduct, removeProduct } = useProducts();
@@ -15,27 +19,30 @@ export default function ProductsPage() {
   const { showToast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const deferredSearchTerm = useDeferredValue(searchTerm);
   const [brandFilter, setBrandFilter] = useState('all');
   const [availabilityFilter, setAvailabilityFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name-asc');
 
   const brandOptions = useMemo(() => {
-    const brands = products.map((product) => product.brand?.trim()).filter(Boolean);
-    return [...new Set(brands)].sort((a, b) => a.localeCompare(b));
+    const brands = new Set();
+
+    for (const product of products) {
+      const brand = product.brand?.trim();
+      if (brand) {
+        brands.add(brand);
+      }
+    }
+
+    return Array.from(brands).sort(collator.compare);
   }, [products]);
 
   const filteredProducts = useMemo(() => {
-    const normalizedSearch = searchTerm.trim().toLowerCase();
+    const normalizedSearch = normalizeSearchTerm(deferredSearchTerm);
 
     return products.filter((product) => {
-      const matchesSearch =
-        !normalizedSearch ||
-        [product.name, product.brand, product.notes]
-          .filter(Boolean)
-          .some((value) => value.toLowerCase().includes(normalizedSearch));
-
-      const matchesBrand = brandFilter === 'all' || (product.brand?.trim().toLowerCase() ?? '') === brandFilter;
-
+      const matchesSearch = includesNormalizedValue([product.name, product.brand, product.notes], normalizedSearch);
+      const matchesBrand = brandFilter === 'all' || (product.brand?.trim().toLocaleLowerCase('pl') ?? '') === brandFilter;
       const matchesAvailability =
         availabilityFilter === 'all' ||
         (availabilityFilter === 'available' && product.isAvailable) ||
@@ -43,13 +50,14 @@ export default function ProductsPage() {
 
       return matchesSearch && matchesBrand && matchesAvailability;
     });
-  }, [products, searchTerm, brandFilter, availabilityFilter]);
+  }, [products, deferredSearchTerm, brandFilter, availabilityFilter]);
 
   const sortedProducts = useMemo(() => {
-    const collator = new Intl.Collator('pl', { sensitivity: 'base' });
     const getPrice = (product) => Number(product.price ?? 0);
+    const getAvailabilityCheckedAt = (product) => Date.parse(product.availabilityCheckedAt ?? '') || 0;
+    const items = [...filteredProducts];
 
-    return [...filteredProducts].sort((a, b) => {
+    items.sort((a, b) => {
       switch (sortBy) {
         case 'name-desc':
           return collator.compare(b.name ?? '', a.name ?? '');
@@ -62,17 +70,18 @@ export default function ProductsPage() {
         case 'price-desc':
           return getPrice(b) - getPrice(a);
         case 'availability-checked-desc':
-          return new Date(b.availabilityCheckedAt ?? 0) - new Date(a.availabilityCheckedAt ?? 0);
+          return getAvailabilityCheckedAt(b) - getAvailabilityCheckedAt(a);
         case 'availability-checked-asc':
-          return new Date(a.availabilityCheckedAt ?? 0) - new Date(b.availabilityCheckedAt ?? 0);
+          return getAvailabilityCheckedAt(a) - getAvailabilityCheckedAt(b);
         case 'name-asc':
         default:
           return collator.compare(a.name ?? '', b.name ?? '');
       }
     });
+
+    return items;
   }, [filteredProducts, sortBy]);
 
-  const pageSize = 8;
   const totalPages = Math.max(1, Math.ceil(sortedProducts.length / pageSize));
   const paginatedProducts = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
@@ -89,7 +98,7 @@ export default function ProductsPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [sortedProducts.length]);
+  }, [deferredSearchTerm, brandFilter, availabilityFilter, sortBy]);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -178,7 +187,7 @@ export default function ProductsPage() {
               <select value={brandFilter} onChange={(event) => setBrandFilter(event.target.value)}>
                 <option value="all">{t('productsPage.brandAll')}</option>
                 {brandOptions.map((brand) => (
-                  <option key={brand} value={brand.toLowerCase()}>{brand}</option>
+                  <option key={brand} value={brand.toLocaleLowerCase('pl')}>{brand}</option>
                 ))}
               </select>
             </label>

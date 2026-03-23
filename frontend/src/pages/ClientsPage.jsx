@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react';
 import ClientForm from '../components/ClientForm';
 import ClientGrid from '../components/ClientGrid';
 import Modal from '../components/Modal';
@@ -6,6 +6,9 @@ import useClients from '../hooks/useClients';
 import { useToast } from '../components/ToastProvider';
 import AddIcon from '@mui/icons-material/Add';
 import { t } from '../utils/i18n';
+import { createCollator, includesNormalizedValue, normalizeSearchTerm } from '../utils/collectionOptimizers';
+
+const collator = createCollator();
 
 export default function ClientsPage() {
   const { clients, isLoading, error, addClient, updateClient, updateStatus, removeClient } = useClients();
@@ -14,42 +17,30 @@ export default function ClientsPage() {
   const [editingClient, setEditingClient] = useState(null);
   const [statusFilter, setStatusFilter] = useState('active');
   const [searchTerm, setSearchTerm] = useState('');
+  const deferredSearchTerm = useDeferredValue(searchTerm);
   const [updatingClientId, setUpdatingClientId] = useState(null);
   const { showToast } = useToast();
 
-  const sortedClients = useMemo(() => [...clients].sort((a, b) => a.fullName.localeCompare(b.fullName)), [clients]);
+  const sortedClients = useMemo(() => {
+    const items = [...clients];
+    items.sort((a, b) => collator.compare(a.fullName ?? '', b.fullName ?? ''));
+    return items;
+  }, [clients]);
 
   const filteredClients = useMemo(() => {
-    const normalizedSearch = searchTerm.trim().toLowerCase();
-    if (statusFilter === 'active') {
-      return sortedClients.filter(
-        (client) =>
-          client.isActive &&
-          (!normalizedSearch ||
-            [client.fullName, client.email, client.phoneNumber]
-              .filter(Boolean)
-              .some((value) => value.toLowerCase().includes(normalizedSearch)))
+    const normalizedSearch = normalizeSearchTerm(deferredSearchTerm);
+
+    return sortedClients.filter((client) => {
+      const matchesStatus =
+        statusFilter === 'all' || (statusFilter === 'active' ? client.isActive : !client.isActive);
+      const matchesSearch = includesNormalizedValue(
+        [client.fullName, client.email, client.phoneNumber],
+        normalizedSearch
       );
-    }
-    if (statusFilter === 'inactive') {
-      return sortedClients.filter(
-        (client) =>
-          !client.isActive &&
-          (!normalizedSearch ||
-            [client.fullName, client.email, client.phoneNumber]
-              .filter(Boolean)
-              .some((value) => value.toLowerCase().includes(normalizedSearch)))
-      );
-    }
-    if (!normalizedSearch) {
-      return sortedClients;
-    }
-    return sortedClients.filter((client) =>
-      [client.fullName, client.email, client.phoneNumber]
-        .filter(Boolean)
-        .some((value) => value.toLowerCase().includes(normalizedSearch))
-    );
-  }, [sortedClients, statusFilter, searchTerm]);
+
+      return matchesStatus && matchesSearch;
+    });
+  }, [sortedClients, statusFilter, deferredSearchTerm]);
 
   const showError = useCallback((message) => showToast(message, { severity: 'error' }), [showToast]);
 
