@@ -22,16 +22,27 @@ public sealed class AppointmentRepository : IAppointmentRepository
             .AsNoTracking()
             .ToListAsync(cancellationToken);
 
-    public Task<Appointment?> GetNearestUpcomingAsync(DateTime from, CancellationToken cancellationToken) =>
-        _context.Appointments
-            .Include(appointment => appointment.ClientProfile)
-            .Include(appointment => appointment.AppointmentProducts)
-            .ThenInclude(appointmentProduct => appointmentProduct.Product)
+    public async Task<Appointment?> GetNearestUpcomingAsync(DateTime from, CancellationToken cancellationToken)
+    {
+        var appointmentId = await _context.Appointments
             .AsNoTracking()
-            .Where(appointment => appointment.StartAt >= from)
-            .Where(appointment => appointment.ClientProfile != null && appointment.ClientProfile.IsActive)
-            .OrderBy(appointment => appointment.StartAt)
+            .Where(a => a.StartAt >= from && a.ClientProfile != null && a.ClientProfile.IsActive)
+            .OrderBy(a => a.StartAt)
+            .Select(a => a.Id)
             .FirstOrDefaultAsync(cancellationToken);
+
+        if (appointmentId == default)
+        {
+            return null;
+        }
+
+        return await _context.Appointments
+            .AsNoTracking()
+            .Include(a => a.ClientProfile)
+            .Include(a => a.AppointmentProducts)
+                .ThenInclude(ap => ap.Product)
+            .FirstOrDefaultAsync(a => a.Id == appointmentId, cancellationToken);
+    }
 
     public Task<Appointment?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
         _context.Appointments
