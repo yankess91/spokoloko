@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { formatCurrency } from '../utils/formatters';
 import { t } from '../utils/i18n';
 
-export default function ServiceList({ services, isLoading, linkBase, onDelete }) {
+export default function ServiceList({ services, isLoading, linkBase, onEdit, onDelete }) {
   if (isLoading) {
     return <p className="muted">{t('serviceList.loading')}</p>;
   }
@@ -56,6 +57,10 @@ export default function ServiceList({ services, isLoading, linkBase, onDelete })
                   {t('serviceList.details')}
                 </Link>
               ) : null}
+              <button type="button" className="ghost" onClick={() => onEdit?.(service)}>
+                <EditOutlinedIcon fontSize="small" />
+                {t('serviceList.edit')}
+              </button>
               <button
                 type="button"
                 className="ghost danger icon-button"
