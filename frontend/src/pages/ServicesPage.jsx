@@ -8,9 +8,10 @@ import AddIcon from '@mui/icons-material/Add';
 import { t } from '../utils/i18n';
 
 export default function ServicesPage() {
-  const { services, isLoading, error, addService, removeService } = useServices();
+  const { services, isLoading, error, addService, updateService, removeService } = useServices();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingService, setEditingService] = useState(null);
   const { showToast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState('name-asc');
@@ -65,17 +66,30 @@ export default function ServicesPage() {
     }
   }, [currentPage, totalPages]);
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingService(null);
+  };
+
   const handleSubmit = async (payload) => {
     setIsSubmitting(true);
     try {
-      await addService(payload);
-      showToast(t('servicesPage.toastSaved'));
-      setIsModalOpen(false);
+      if (editingService) {
+        await updateService(editingService.id, payload);
+        showToast(t('servicesPage.toastUpdated'));
+      } else {
+        await addService(payload);
+        showToast(t('servicesPage.toastSaved'));
+      }
+      closeModal();
     } catch (err) {
       showError(err.message ?? t('servicesPage.toastSaveError'));
+      return false;
     } finally {
       setIsSubmitting(false);
     }
+
+    return true;
   };
 
   const handleDelete = async (service) => {
@@ -106,7 +120,14 @@ export default function ServicesPage() {
             </div>
           </header>
           <div className="grid-actions">
-            <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
+            <button
+              type="button"
+              className="primary"
+              onClick={() => {
+                setEditingService(null);
+                setIsModalOpen(true);
+              }}
+            >
               <AddIcon fontSize="small" />
               {t('servicesPage.newService')}
             </button>
@@ -128,6 +149,10 @@ export default function ServicesPage() {
             services={paginatedServices}
             isLoading={isLoading}
             linkBase="/services"
+            onEdit={(service) => {
+              setEditingService(service);
+              setIsModalOpen(true);
+            }}
             onDelete={handleDelete}
           />
           {!isLoading && sortedServices.length > 0 ? (
@@ -157,8 +182,17 @@ export default function ServicesPage() {
       </section>
 
       {isModalOpen ? (
-        <Modal title={t('servicesPage.modalTitle')} onClose={() => setIsModalOpen(false)}>
-          <ServiceForm onSubmit={handleSubmit} isSubmitting={isSubmitting} showTitle={false} variant="plain" />
+        <Modal
+          title={editingService ? t('servicesPage.editModalTitle') : t('servicesPage.modalTitle')}
+          onClose={closeModal}
+        >
+          <ServiceForm
+            onSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
+            initialValues={editingService}
+            showTitle={false}
+            variant="plain"
+          />
         </Modal>
       ) : null}
     </div>

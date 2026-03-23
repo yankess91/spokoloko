@@ -8,20 +8,42 @@ import { t } from '../utils/i18n';
 const buildProductLabel = (product) =>
   product.brand ? `${product.name} (${product.brand})` : product.name;
 
-export default function ServiceForm({ onSubmit, isSubmitting, showTitle = true, variant = 'card' }) {
+const mapSelectedProducts = (products = []) =>
+  products.map((product) => ({
+    id: product.id,
+    label: product.label ?? buildProductLabel(product)
+  }));
+
+const createInitialState = (initialValues = {}) => ({
+  name: initialValues.name ?? '',
+  description: initialValues.description ?? '',
+  durationMinutes: initialValues.durationMinutes ?? initialValues.duration ?? 60,
+  price: initialValues.price ?? '',
+  selectedProducts: mapSelectedProducts(
+    initialValues.selectedProducts ?? initialValues.requiredProducts ?? []
+  )
+});
+
+export default function ServiceForm({
+  onSubmit,
+  isSubmitting,
+  initialValues,
+  showTitle = true,
+  variant = 'card'
+}) {
   const { showToast } = useToast();
-  const [formState, setFormState] = useState({
-    name: '',
-    description: '',
-    durationMinutes: 60,
-    price: '',
-    selectedProducts: []
-  });
+  const [formState, setFormState] = useState(() => createInitialState(initialValues));
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const productSearch = useAutocompleteSearch({
     searchFn: (query) => productsApi.search(query)
   });
+
+  useEffect(() => {
+    setFormState(createInitialState(initialValues));
+    setSelectedProduct(null);
+    productSearch.setInputValue('');
+  }, [initialValues, productSearch.setInputValue]);
 
   const productOptions = useMemo(
     () =>
@@ -74,27 +96,24 @@ export default function ServiceForm({ onSubmit, isSubmitting, showTitle = true, 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await onSubmit?.({
+    const shouldReset = await onSubmit?.({
       name: formState.name,
       description: formState.description,
       durationMinutes: Number(formState.durationMinutes),
       price: Number(formState.price),
       requiredProductIds: formState.selectedProducts.map((item) => item.id)
     });
-    setFormState({
-      name: '',
-      description: '',
-      durationMinutes: 60,
-      price: '',
-      selectedProducts: []
-    });
-    setSelectedProduct(null);
-    productSearch.setInputValue('');
+
+    if (shouldReset !== false) {
+      setFormState(createInitialState());
+      setSelectedProduct(null);
+      productSearch.setInputValue('');
+    }
   };
 
   const formContent = (
     <>
-      {showTitle ? <h2>{t('serviceForm.title')}</h2> : null}
+      {showTitle ? <h2>{initialValues ? t('serviceForm.editTitle') : t('serviceForm.title')}</h2> : null}
       <form className="form" onSubmit={handleSubmit}>
         <label>
           {t('serviceForm.name')}
@@ -180,7 +199,11 @@ export default function ServiceForm({ onSubmit, isSubmitting, showTitle = true, 
           <p className="muted">{t('serviceForm.noProducts')}</p>
         )}
         <button type="submit" className="primary" disabled={isSubmitting}>
-          {isSubmitting ? t('common.saving') : t('serviceForm.save')}
+          {isSubmitting
+            ? t('common.saving')
+            : initialValues
+            ? t('serviceForm.update')
+            : t('serviceForm.save')}
         </button>
       </form>
     </>

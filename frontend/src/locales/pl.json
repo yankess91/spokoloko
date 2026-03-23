@@ -162,7 +162,8 @@
     "noDescription": "Brak opisu",
     "details": "Szczegóły",
     "deleteDisabled": "Usuwanie dostępne tylko w widoku szczegółów",
-    "delete": "Usuń"
+    "delete": "Usuń",
+    "edit": "Edytuj"
   },
   "serviceForm": {
     "selectProductError": "Wybierz produkt z listy podpowiedzi.",
@@ -179,7 +180,9 @@
     "selectProductPlaceholder": "Wybierz produkt",
     "removeProduct": "{label} ✕",
     "noProducts": "Nie dodano jeszcze produktów.",
-    "save": "Zapisz usługę"
+    "save": "Zapisz usługę",
+    "editTitle": "Edytuj usługę",
+    "update": "Zapisz zmiany"
   },
   "appointmentForm": {
     "selectProductError": "Wybierz produkt z listy podpowiedzi.",
@@ -470,7 +473,9 @@
     "sortDurationAsc": "Czas trwania (rosnąco)",
     "sortDurationDesc": "Czas trwania (malejąco)",
     "sortPriceAsc": "Cena (rosnąco)",
-    "sortPriceDesc": "Cena (malejąco)"
+    "sortPriceDesc": "Cena (malejąco)",
+    "toastUpdated": "Usługa została zaktualizowana.",
+    "editModalTitle": "Edytuj usługę"
   },
   "pagination": {
     "ariaLabel": "Paginacja listy",
