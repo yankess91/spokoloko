@@ -1,16 +1,28 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import { t } from '../utils/i18n';
 
-export default function ClientForm({ onSubmit, isSubmitting, showTitle = true, variant = 'card' }) {
-  const [formState, setFormState] = useState({
-    fullName: '',
-    email: '',
-    phoneNumber: '',
-    notes: '',
-    isActive: true
-  });
+const createInitialState = (initialValues = {}) => ({
+  fullName: initialValues.fullName ?? '',
+  email: initialValues.email ?? '',
+  phoneNumber: initialValues.phoneNumber ?? '',
+  notes: initialValues.notes ?? '',
+  isActive: initialValues.isActive ?? true
+});
+
+export default function ClientForm({
+  onSubmit,
+  isSubmitting,
+  initialValues,
+  showTitle = true,
+  variant = 'card'
+}) {
+  const [formState, setFormState] = useState(() => createInitialState(initialValues));
+
+  useEffect(() => {
+    setFormState(createInitialState(initialValues));
+  }, [initialValues]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -24,13 +36,15 @@ export default function ClientForm({ onSubmit, isSubmitting, showTitle = true, v
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await onSubmit?.(formState);
-    setFormState({ fullName: '', email: '', phoneNumber: '', notes: '', isActive: true });
+    const shouldReset = await onSubmit?.(formState);
+    if (shouldReset !== false) {
+      setFormState(createInitialState());
+    }
   };
 
   const formContent = (
     <>
-      {showTitle ? <h2>{t('clientForm.title')}</h2> : null}
+      {showTitle ? <h2>{initialValues ? t('clientForm.editTitle') : t('clientForm.title')}</h2> : null}
       <form className="form" onSubmit={handleSubmit}>
         <label>
           {t('clientForm.fullName')}
@@ -81,7 +95,11 @@ export default function ClientForm({ onSubmit, isSubmitting, showTitle = true, v
           />
         </div>
         <button type="submit" className="primary" disabled={isSubmitting}>
-          {isSubmitting ? t('common.saving') : t('clientForm.save')}
+          {isSubmitting
+            ? t('common.saving')
+            : initialValues
+            ? t('clientForm.update')
+            : t('clientForm.save')}
         </button>
       </form>
     </>

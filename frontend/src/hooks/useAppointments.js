@@ -24,22 +24,22 @@ export default function useAppointments() {
     load();
   }, [load]);
 
-  const addAppointment = useCallback(
-    async (payload) => {
-      const created = await appointmentsApi.create(payload);
-      await load();
-      return created;
-    },
-    [load]
-  );
+  const addAppointment = useCallback(async (payload) => {
+    const created = await appointmentsApi.create(payload);
+    await load();
+    return created;
+  }, [load]);
 
-  const removeAppointment = useCallback(
-    async (appointmentId) => {
-      await appointmentsApi.delete(appointmentId);
-      await load();
-    },
-    [load]
-  );
+  const updateAppointment = useCallback(async (appointmentId, payload) => {
+    const updated = await appointmentsApi.update(appointmentId, payload);
+    await load();
+    return updated;
+  }, [load]);
 
-  return { appointments, isLoading, error, reload: load, addAppointment, removeAppointment };
+  const removeAppointment = useCallback(async (appointmentId) => {
+    await appointmentsApi.delete(appointmentId);
+    await load();
+  }, [load]);
+
+  return { appointments, isLoading, error, reload: load, addAppointment, updateAppointment, removeAppointment };
 }

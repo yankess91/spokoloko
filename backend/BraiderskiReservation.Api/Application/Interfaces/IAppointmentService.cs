@@ -7,5 +7,6 @@ public interface IAppointmentService
     Task<AppointmentResponse?> GetNearestUpcomingAsync(CancellationToken cancellationToken);
     Task<AppointmentResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task<AppointmentResponse> CreateAsync(CreateAppointmentRequest request, CancellationToken cancellationToken);
+    Task<AppointmentResponse?> UpdateAsync(Guid id, UpdateAppointmentRequest request, CancellationToken cancellationToken);
     Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken);
 }

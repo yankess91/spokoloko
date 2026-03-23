@@ -19,19 +19,20 @@ export default function AppointmentForm({
   onSubmit,
   isSubmitting,
   defaultClient,
+  defaultAppointment,
   clientLocked = false,
   showTitle = true,
   variant = 'card'
 }) {
   const { showToast } = useToast();
   const [formState, setFormState] = useState({
-    startAt: null,
-    endAt: null,
-    notes: '',
-    selectedProducts: []
+    startAt: defaultAppointment?.startAt ?? null,
+    endAt: defaultAppointment?.endAt ?? null,
+    notes: defaultAppointment?.notes ?? '',
+    selectedProducts: defaultAppointment?.selectedProducts ?? []
   });
-  const [selectedClient, setSelectedClient] = useState(defaultClient ?? null);
-  const [selectedService, setSelectedService] = useState(null);
+  const [selectedClient, setSelectedClient] = useState(defaultClient ?? defaultAppointment?.client ?? null);
+  const [selectedService, setSelectedService] = useState(defaultAppointment?.service ?? null);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const clientSearch = useAutocompleteSearch({
@@ -40,11 +41,11 @@ export default function AppointmentForm({
   });
   const serviceSearch = useAutocompleteSearch({
     searchFn: (query) => servicesApi.search(query),
-     loadOnEmpty: true
+    loadOnEmpty: true
   });
   const productSearch = useAutocompleteSearch({
     searchFn: (query) => productsApi.search(query),
-     loadOnEmpty: true
+    loadOnEmpty: true
   });
 
   const clientOptions = useMemo(
@@ -55,8 +56,7 @@ export default function AppointmentForm({
     [clientSearch.options]
   );
   const serviceOptions = useMemo(
-    () =>
-      serviceSearch.options.map((service) => ({ id: service.id, label: buildServiceLabel(service) })),
+    () => serviceSearch.options.map((service) => ({ id: service.id, label: buildServiceLabel(service) })),
     [serviceSearch.options]
   );
   const productOptions = useMemo(
@@ -81,11 +81,23 @@ export default function AppointmentForm({
   }, [clientSearch.error, productSearch.error, serviceSearch.error, showError]);
 
   useEffect(() => {
-    if (defaultClient) {
-      setSelectedClient(defaultClient);
-      clientSearch.setInputValue(defaultClient.label ?? '');
-    }
-  }, [defaultClient, clientSearch]);
+    const nextClient = defaultClient ?? defaultAppointment?.client ?? null;
+    setSelectedClient(nextClient);
+    clientSearch.setInputValue(nextClient?.label ?? '');
+  }, [defaultAppointment, defaultClient, clientSearch]);
+
+  useEffect(() => {
+    setSelectedService(defaultAppointment?.service ?? null);
+    serviceSearch.setInputValue(defaultAppointment?.service?.label ?? '');
+    setFormState({
+      startAt: defaultAppointment?.startAt ?? null,
+      endAt: defaultAppointment?.endAt ?? null,
+      notes: defaultAppointment?.notes ?? '',
+      selectedProducts: defaultAppointment?.selectedProducts ?? []
+    });
+    setSelectedProduct(null);
+    productSearch.setInputValue('');
+  }, [defaultAppointment, productSearch, serviceSearch]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -134,7 +146,7 @@ export default function AppointmentForm({
       showError(t('appointmentForm.missingDatesError'));
       return;
     }
-    await onSubmit?.({
+    const shouldReset = await onSubmit?.({
       clientId: selectedClient.id,
       serviceId: selectedService.id,
       startAt: formState.startAt.toISOString(),
@@ -142,20 +154,22 @@ export default function AppointmentForm({
       notes: formState.notes,
       productIds: formState.selectedProducts.map((product) => product.id)
     });
-    setFormState({
-      startAt: null,
-      endAt: null,
-      notes: '',
-      selectedProducts: []
-    });
-    if (!clientLocked) {
-      setSelectedClient(null);
-      clientSearch.setInputValue('');
+    if (shouldReset !== false) {
+      setFormState({
+        startAt: null,
+        endAt: null,
+        notes: '',
+        selectedProducts: []
+      });
+      if (!clientLocked) {
+        setSelectedClient(null);
+        clientSearch.setInputValue('');
+      }
+      setSelectedService(null);
+      setSelectedProduct(null);
+      serviceSearch.setInputValue('');
+      productSearch.setInputValue('');
     }
-    setSelectedService(null);
-    setSelectedProduct(null);
-    serviceSearch.setInputValue('');
-    productSearch.setInputValue('');
   };
 
   const textFieldSx = {
@@ -180,17 +194,12 @@ export default function AppointmentForm({
 
   const formContent = (
     <>
-      {showTitle ? <h2>{t('appointmentForm.title')}</h2> : null}
+      {showTitle ? <h2>{defaultAppointment ? t('appointmentForm.editTitle') : t('appointmentForm.title')}</h2> : null}
       <form className="form" onSubmit={handleSubmit}>
         {clientLocked ? (
           <label>
             {t('appointmentForm.client')}
-            <input
-              type="text"
-              value={selectedClient?.label ?? ''}
-              disabled
-              aria-disabled="true"
-            />
+            <input type="text" value={selectedClient?.label ?? ''} disabled aria-disabled="true" />
           </label>
         ) : (
           <AutocompleteField
@@ -299,7 +308,11 @@ export default function AppointmentForm({
         )}
         <button type="submit" className="primary" disabled={isSubmitting}>
           <SaveIcon fontSize="small" />
-          {isSubmitting ? t('common.saving') : t('appointmentForm.save')}
+          {isSubmitting
+            ? t('common.saving')
+            : defaultAppointment
+            ? t('appointmentForm.update')
+            : t('appointmentForm.save')}
         </button>
       </form>
     </>

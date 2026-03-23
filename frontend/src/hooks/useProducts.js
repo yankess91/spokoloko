@@ -24,22 +24,22 @@ export default function useProducts() {
     load();
   }, [load]);
 
-  const addProduct = useCallback(
-    async (payload) => {
-      const created = await productsApi.create(payload);
-      await load();
-      return created;
-    },
-    [load]
-  );
+  const addProduct = useCallback(async (payload) => {
+    const created = await productsApi.create(payload);
+    await load();
+    return created;
+  }, [load]);
 
-  const removeProduct = useCallback(
-    async (productId) => {
-      await productsApi.delete(productId);
-      await load();
-    },
-    [load]
-  );
+  const updateProduct = useCallback(async (productId, payload) => {
+    const updated = await productsApi.update(productId, payload);
+    await load();
+    return updated;
+  }, [load]);
 
-  return { products, isLoading, error, reload: load, addProduct, removeProduct };
+  const removeProduct = useCallback(async (productId) => {
+    await productsApi.delete(productId);
+    await load();
+  }, [load]);
+
+  return { products, isLoading, error, reload: load, addProduct, updateProduct, removeProduct };
 }

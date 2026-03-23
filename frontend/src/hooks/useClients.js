@@ -24,32 +24,29 @@ export default function useClients() {
     load();
   }, [load]);
 
-  const addClient = useCallback(
-    async (payload) => {
-      const created = await clientsApi.create(payload);
-      await load();
-      return created;
-    },
-    [load]
-  );
+  const addClient = useCallback(async (payload) => {
+    const created = await clientsApi.create(payload);
+    await load();
+    return created;
+  }, [load]);
 
-  const updateStatus = useCallback(
-    async (clientId, isActive) => {
-      const updated = await clientsApi.updateStatus(clientId, { isActive });
-      await load();
-      return updated;
-    },
-    [load]
-  );
+  const updateClient = useCallback(async (clientId, payload) => {
+    const updated = await clientsApi.update(clientId, payload);
+    await load();
+    return updated;
+  }, [load]);
 
-  const removeClient = useCallback(
-    async (clientId) => {
-      const updated = await clientsApi.delete(clientId);
-      await load();
-      return updated;
-    },
-    [load]
-  );
+  const updateStatus = useCallback(async (clientId, isActive) => {
+    const updated = await clientsApi.updateStatus(clientId, { isActive });
+    await load();
+    return updated;
+  }, [load]);
 
-  return { clients, isLoading, error, reload: load, addClient, updateStatus, removeClient };
+  const removeClient = useCallback(async (clientId) => {
+    const updated = await clientsApi.delete(clientId);
+    await load();
+    return updated;
+  }, [load]);
+
+  return { clients, isLoading, error, reload: load, addClient, updateClient, updateStatus, removeClient };
 }

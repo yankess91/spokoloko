@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import dayjs from 'dayjs';
 import AppointmentForm from '../components/AppointmentForm';
 import AppointmentList from '../components/AppointmentList';
 import Modal from '../components/Modal';
@@ -10,23 +11,17 @@ import AddIcon from '@mui/icons-material/Add';
 import { t } from '../utils/i18n';
 
 export default function AppointmentsPage() {
-  const { appointments, isLoading, error, addAppointment, removeAppointment } = useAppointments();
+  const { appointments, isLoading, error, addAppointment, updateAppointment, removeAppointment } = useAppointments();
   const { clients, isLoading: clientsLoading } = useClients();
   const { services, isLoading: servicesLoading } = useServices();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingAppointment, setEditingAppointment] = useState(null);
   const [sortBy, setSortBy] = useState('date-desc');
   const { showToast } = useToast();
 
-  const clientsById = useMemo(
-    () => new Map(clients.map((client) => [client.id, client])),
-    [clients]
-  );
-
-  const servicesById = useMemo(
-    () => new Map(services.map((service) => [service.id, service])),
-    [services]
-  );
+  const clientsById = useMemo(() => new Map(clients.map((client) => [client.id, client])), [clients]);
+  const servicesById = useMemo(() => new Map(services.map((service) => [service.id, service])), [services]);
 
   const visibleAppointments = useMemo(
     () => appointments.filter((appointment) => clientsById.get(appointment.clientId)?.isActive !== false),
@@ -67,10 +62,7 @@ export default function AppointmentsPage() {
     });
   }, [visibleAppointments, sortBy, clientsById, servicesById]);
 
-  const showError = useCallback(
-    (message) => showToast(message, { severity: 'error' }),
-    [showToast]
-  );
+  const showError = useCallback((message) => showToast(message, { severity: 'error' }), [showToast]);
 
   useEffect(() => {
     if (error) {
@@ -78,17 +70,30 @@ export default function AppointmentsPage() {
     }
   }, [error, showError]);
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingAppointment(null);
+  };
+
   const handleSubmit = async (payload) => {
     setIsSubmitting(true);
     try {
-      await addAppointment(payload);
-      showToast(t('appointmentsPage.toastSaved'));
-      setIsModalOpen(false);
+      if (editingAppointment) {
+        await updateAppointment(editingAppointment.id, payload);
+        showToast(t('appointmentsPage.toastUpdated'));
+      } else {
+        await addAppointment(payload);
+        showToast(t('appointmentsPage.toastSaved'));
+      }
+      closeModal();
     } catch (err) {
       showError(err.message ?? t('appointmentsPage.toastSaveError'));
+      return false;
     } finally {
       setIsSubmitting(false);
     }
+
+    return true;
   };
 
   const handleDelete = async (appointment) => {
@@ -102,6 +107,23 @@ export default function AppointmentsPage() {
     } catch (err) {
       showError(err.message ?? t('appointmentsPage.toastDeleteError'));
     }
+  };
+
+  const buildEditableAppointment = (appointment) => {
+    const client = clientsById.get(appointment.clientId);
+    const service = servicesById.get(appointment.serviceId);
+
+    return {
+      ...appointment,
+      client: client ? { id: client.id, label: client.fullName, isActive: client.isActive } : null,
+      service: service ? { id: service.id, label: service.name } : null,
+      startAt: dayjs(appointment.startAt),
+      endAt: dayjs(appointment.endAt),
+      selectedProducts: (appointment.products ?? []).map((product) => ({
+        id: product.id,
+        label: product.brand ? `${product.name} (${product.brand})` : product.name
+      }))
+    };
   };
 
   return (
@@ -120,7 +142,14 @@ export default function AppointmentsPage() {
             </div>
           </header>
           <div className="grid-actions">
-            <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
+            <button
+              type="button"
+              className="primary"
+              onClick={() => {
+                setEditingAppointment(null);
+                setIsModalOpen(true);
+              }}
+            >
               <AddIcon fontSize="small" />
               {t('appointmentsPage.newAppointment')}
             </button>
@@ -143,16 +172,21 @@ export default function AppointmentsPage() {
             clientsById={clientsById}
             servicesById={servicesById}
             isLoading={isLoading}
+            onEdit={(appointment) => {
+              setEditingAppointment(buildEditableAppointment(appointment));
+              setIsModalOpen(true);
+            }}
             onDelete={handleDelete}
           />
         </article>
       </section>
 
       {isModalOpen ? (
-        <Modal title={t('appointmentsPage.modalTitle')} onClose={() => setIsModalOpen(false)}>
+        <Modal title={editingAppointment ? t('appointmentsPage.editModalTitle') : t('appointmentsPage.modalTitle')} onClose={closeModal}>
           <AppointmentForm
             onSubmit={handleSubmit}
             isSubmitting={isSubmitting || clientsLoading || servicesLoading}
+            defaultAppointment={editingAppointment}
             showTitle={false}
             variant="plain"
           />

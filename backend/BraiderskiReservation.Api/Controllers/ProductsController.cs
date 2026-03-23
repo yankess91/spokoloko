@@ -37,6 +37,13 @@ public sealed class ProductsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
     }
 
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<ProductResponse>> Update(Guid id, UpdateProductRequest request, CancellationToken cancellationToken)
+    {
+        var product = await _productService.UpdateAsync(id, request, cancellationToken);
+        return product is null ? NotFound() : Ok(product);
+    }
+
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {

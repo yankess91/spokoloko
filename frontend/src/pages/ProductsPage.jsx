@@ -8,9 +8,10 @@ import AddIcon from '@mui/icons-material/Add';
 import { t } from '../utils/i18n';
 
 export default function ProductsPage() {
-  const { products, isLoading, error, addProduct, removeProduct } = useProducts();
+  const { products, isLoading, error, addProduct, updateProduct, removeProduct } = useProducts();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
   const { showToast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,10 +20,7 @@ export default function ProductsPage() {
   const [sortBy, setSortBy] = useState('name-asc');
 
   const brandOptions = useMemo(() => {
-    const brands = products
-      .map((product) => product.brand?.trim())
-      .filter(Boolean);
-
+    const brands = products.map((product) => product.brand?.trim()).filter(Boolean);
     return [...new Set(brands)].sort((a, b) => a.localeCompare(b));
   }, [products]);
 
@@ -36,9 +34,7 @@ export default function ProductsPage() {
           .filter(Boolean)
           .some((value) => value.toLowerCase().includes(normalizedSearch));
 
-      const matchesBrand =
-        brandFilter === 'all' ||
-        (product.brand?.trim().toLowerCase() ?? '') === brandFilter;
+      const matchesBrand = brandFilter === 'all' || (product.brand?.trim().toLowerCase() ?? '') === brandFilter;
 
       const matchesAvailability =
         availabilityFilter === 'all' ||
@@ -75,6 +71,7 @@ export default function ProductsPage() {
       }
     });
   }, [filteredProducts, sortBy]);
+
   const pageSize = 8;
   const totalPages = Math.max(1, Math.ceil(sortedProducts.length / pageSize));
   const paginatedProducts = useMemo(() => {
@@ -82,10 +79,7 @@ export default function ProductsPage() {
     return sortedProducts.slice(start, start + pageSize);
   }, [currentPage, sortedProducts]);
 
-  const showError = useCallback(
-    (message) => showToast(message, { severity: 'error' }),
-    [showToast]
-  );
+  const showError = useCallback((message) => showToast(message, { severity: 'error' }), [showToast]);
 
   useEffect(() => {
     if (error) {
@@ -103,17 +97,30 @@ export default function ProductsPage() {
     }
   }, [currentPage, totalPages]);
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingProduct(null);
+  };
+
   const handleSubmit = async (payload) => {
     setIsSubmitting(true);
     try {
-      await addProduct(payload);
-      showToast(t('productsPage.toastSaved'));
-      setIsModalOpen(false);
+      if (editingProduct) {
+        await updateProduct(editingProduct.id, payload);
+        showToast(t('productsPage.toastUpdated'));
+      } else {
+        await addProduct(payload);
+        showToast(t('productsPage.toastSaved'));
+      }
+      closeModal();
     } catch (err) {
       showError(err.message ?? t('productsPage.toastSaveError'));
+      return false;
     } finally {
       setIsSubmitting(false);
     }
+
+    return true;
   };
 
   const handleDelete = async (product) => {
@@ -144,7 +151,14 @@ export default function ProductsPage() {
             </div>
           </header>
           <div className="grid-actions">
-            <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
+            <button
+              type="button"
+              className="primary"
+              onClick={() => {
+                setEditingProduct(null);
+                setIsModalOpen(true);
+              }}
+            >
               <AddIcon fontSize="small" />
               {t('productsPage.newProduct')}
             </button>
@@ -164,18 +178,13 @@ export default function ProductsPage() {
               <select value={brandFilter} onChange={(event) => setBrandFilter(event.target.value)}>
                 <option value="all">{t('productsPage.brandAll')}</option>
                 {brandOptions.map((brand) => (
-                  <option key={brand} value={brand.toLowerCase()}>
-                    {brand}
-                  </option>
+                  <option key={brand} value={brand.toLowerCase()}>{brand}</option>
                 ))}
               </select>
             </label>
             <label className="filter-field">
               {t('productsPage.availabilityLabel')}
-              <select
-                value={availabilityFilter}
-                onChange={(event) => setAvailabilityFilter(event.target.value)}
-              >
+              <select value={availabilityFilter} onChange={(event) => setAvailabilityFilter(event.target.value)}>
                 <option value="all">{t('productsPage.availabilityAll')}</option>
                 <option value="available">{t('productsPage.availabilityAvailable')}</option>
                 <option value="unavailable">{t('productsPage.availabilityUnavailable')}</option>
@@ -199,6 +208,10 @@ export default function ProductsPage() {
             products={paginatedProducts}
             isLoading={isLoading}
             linkBase="/products"
+            onEdit={(product) => {
+              setEditingProduct(product);
+              setIsModalOpen(true);
+            }}
             onDelete={handleDelete}
           />
           {!isLoading && sortedProducts.length > 0 ? (
@@ -211,9 +224,7 @@ export default function ProductsPage() {
               >
                 {t('pagination.previous')}
               </button>
-              <span className="pagination-status">
-                {t('pagination.status', { current: currentPage, total: totalPages })}
-              </span>
+              <span className="pagination-status">{t('pagination.status', { current: currentPage, total: totalPages })}</span>
               <button
                 type="button"
                 className="ghost"
@@ -228,8 +239,14 @@ export default function ProductsPage() {
       </section>
 
       {isModalOpen ? (
-        <Modal title={t('productsPage.modalTitle')} onClose={() => setIsModalOpen(false)}>
-          <ProductForm onSubmit={handleSubmit} isSubmitting={isSubmitting} showTitle={false} variant="plain" />
+        <Modal title={editingProduct ? t('productsPage.editModalTitle') : t('productsPage.modalTitle')} onClose={closeModal}>
+          <ProductForm
+            onSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
+            initialValues={editingProduct}
+            showTitle={false}
+            variant="plain"
+          />
         </Modal>
       ) : null}
     </div>

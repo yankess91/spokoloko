@@ -7,5 +7,6 @@ public interface IProductCatalogService
     Task<List<ProductResponse>> SearchAsync(string? searchTerm, CancellationToken cancellationToken);
     Task<ProductResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task<ProductResponse> CreateAsync(CreateProductRequest request, CancellationToken cancellationToken);
+    Task<ProductResponse?> UpdateAsync(Guid id, UpdateProductRequest request, CancellationToken cancellationToken);
     Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken);
 }

@@ -20,6 +20,10 @@ export default class ClientsApi {
     return this.client.post('/api/clients', payload);
   }
 
+  update(id, payload) {
+    return this.client.put(`/api/clients/${id}`, payload);
+  }
+
   updateStatus(id, payload) {
     return this.client.patch(`/api/clients/${id}/status`, payload);
   }

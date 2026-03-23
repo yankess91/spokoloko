@@ -37,6 +37,9 @@ public sealed class ProductRepository : IProductRepository
         BuildProductQuery()
             .FirstOrDefaultAsync(product => product.Id == id, cancellationToken);
 
+    public Task<Product?> GetByIdForUpdateAsync(Guid id, CancellationToken cancellationToken) =>
+        _context.Products.FirstOrDefaultAsync(product => product.Id == id, cancellationToken);
+
     public async Task AddAsync(Product product, CancellationToken cancellationToken) =>
         await _context.Products.AddAsync(product, cancellationToken);
 

@@ -20,6 +20,10 @@ export default class ProductsApi {
     return this.client.post('/api/products', payload);
   }
 
+  update(id, payload) {
+    return this.client.put(`/api/products/${id}`, payload);
+  }
+
   delete(id) {
     return this.client.delete(`/api/products/${id}`);
   }

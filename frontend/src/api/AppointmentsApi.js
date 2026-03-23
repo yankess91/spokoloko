@@ -19,6 +19,10 @@ export default class AppointmentsApi {
     return this.client.post('/api/appointments', payload);
   }
 
+  update(id, payload) {
+    return this.client.put(`/api/appointments/${id}`, payload);
+  }
+
   delete(id) {
     return this.client.delete(`/api/appointments/${id}`);
   }
