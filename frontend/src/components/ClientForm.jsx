@@ -3,13 +3,17 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import { t } from '../utils/i18n';
 
-const createInitialState = (initialValues = {}) => ({
-  fullName: initialValues.fullName ?? '',
-  email: initialValues.email ?? '',
-  phoneNumber: initialValues.phoneNumber ?? '',
-  notes: initialValues.notes ?? '',
-  isActive: initialValues.isActive ?? true
-});
+const createInitialState = (initialValues) => {
+  const values = initialValues ?? {};
+
+  return ({
+    fullName: values.fullName ?? '',
+    email: values.email ?? '',
+    phoneNumber: values.phoneNumber ?? '',
+    notes: values.notes ?? '',
+    isActive: values.isActive ?? true
+  });
+};
 
 export default function ClientForm({
   onSubmit,

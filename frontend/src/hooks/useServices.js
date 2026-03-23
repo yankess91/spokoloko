@@ -5,9 +5,17 @@ import { t } from '../utils/i18n';
 import { prependItem, removeItemById, updateItemById } from '../utils/collectionOptimizers';
 
 function mapService(service) {
+  const durationValue = service?.duration ?? '';
+  const durationMinutes =
+    service?.durationMinutes ??
+    (typeof durationValue === 'string' && durationValue.includes(':')
+      ? Number(durationValue.split(':')[0] ?? 0) * 60 + Number(durationValue.split(':')[1] ?? 0)
+      : null);
+
   return {
     ...service,
-    duration: formatDuration(service.duration)
+    durationMinutes: durationMinutes ?? 0,
+    duration: formatDuration(durationValue)
   };
 }
 

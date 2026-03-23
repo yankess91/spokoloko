@@ -44,6 +44,56 @@ public sealed class ServiceRepository : IServiceRepository
     public async Task AddAsync(ServiceItem service, CancellationToken cancellationToken) =>
         await _context.Services.AddAsync(service, cancellationToken);
 
+    public async Task<ServiceItem?> UpdateAsync(
+        Guid id,
+        string name,
+        string description,
+        TimeSpan duration,
+        decimal price,
+        List<Guid> requiredProductIds,
+        CancellationToken cancellationToken)
+    {
+        var service = await _context.Services
+            .Include(item => item.ServiceProducts)
+            .FirstOrDefaultAsync(item => item.Id == id, cancellationToken);
+
+        if (service is null)
+        {
+            return null;
+        }
+
+        service.Name = name;
+        service.Description = description;
+        service.Duration = duration;
+        service.Price = price;
+
+        var normalizedRequiredProductIds = (requiredProductIds ?? new List<Guid>())
+            .Distinct()
+            .ToHashSet();
+
+        service.ServiceProducts.RemoveAll(serviceProduct => !normalizedRequiredProductIds.Contains(serviceProduct.ProductId));
+
+        var assignedProductIds = service.ServiceProducts
+            .Select(serviceProduct => serviceProduct.ProductId)
+            .ToHashSet();
+
+        foreach (var productId in normalizedRequiredProductIds)
+        {
+            if (assignedProductIds.Contains(productId))
+            {
+                continue;
+            }
+
+            service.ServiceProducts.Add(new ServiceProduct
+            {
+                ServiceId = id,
+                ProductId = productId
+            });
+        }
+
+        return await GetByIdAsync(id, cancellationToken);
+    }
+
     public async Task<ServiceItem?> AddProductAsync(Guid serviceId, Guid productId, CancellationToken cancellationToken)
     {
         var serviceExists = await _context.Services
