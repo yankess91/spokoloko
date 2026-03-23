@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { t } from '../utils/i18n';
 
 const DEFAULT_DEBOUNCE_MS = 250;
@@ -61,12 +61,17 @@ export default function useAutocompleteSearch({
     return () => clearTimeout(timeoutId);
   }, [inputValue, debounceMs, load, loadOnEmpty]);
 
-  return {
-    options,
-    inputValue,
-    setInputValue,
-    isLoading,
-    error,
-    reload: () => load(inputValue.trim())
-  };
+  const reload = useCallback(() => load(inputValue.trim()), [inputValue, load]);
+
+  return useMemo(
+    () => ({
+      options,
+      inputValue,
+      setInputValue,
+      isLoading,
+      error,
+      reload
+    }),
+    [options, inputValue, isLoading, error, reload]
+  );
 }
