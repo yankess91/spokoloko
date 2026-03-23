@@ -6,6 +6,10 @@ import useServices from '../hooks/useServices';
 import { useToast } from '../components/ToastProvider';
 import AddIcon from '@mui/icons-material/Add';
 import { t } from '../utils/i18n';
+import { createCollator } from '../utils/collectionOptimizers';
+
+const collator = createCollator();
+const pageSize = 8;
 
 export default function ServicesPage() {
   const { services, isLoading, error, addService, updateService, removeService } = useServices();
@@ -17,9 +21,9 @@ export default function ServicesPage() {
   const [sortBy, setSortBy] = useState('name-asc');
 
   const sortedServices = useMemo(() => {
-    const collator = new Intl.Collator('pl', { sensitivity: 'base' });
+    const items = [...services];
 
-    return [...services].sort((a, b) => {
+    items.sort((a, b) => {
       switch (sortBy) {
         case 'name-desc':
           return collator.compare(b.name ?? '', a.name ?? '');
@@ -36,9 +40,10 @@ export default function ServicesPage() {
           return collator.compare(a.name ?? '', b.name ?? '');
       }
     });
+
+    return items;
   }, [services, sortBy]);
 
-  const pageSize = 8;
   const totalPages = Math.max(1, Math.ceil(sortedServices.length / pageSize));
   const paginatedServices = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
@@ -58,7 +63,7 @@ export default function ServicesPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [sortedServices.length]);
+  }, [sortBy]);
 
   useEffect(() => {
     if (currentPage > totalPages) {

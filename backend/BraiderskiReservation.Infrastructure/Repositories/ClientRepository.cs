@@ -1,5 +1,5 @@
-using BraiderskiReservation.Domain.Interfaces;
 using BraiderskiReservation.Domain.Entities;
+using BraiderskiReservation.Domain.Interfaces;
 using BraiderskiReservation.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,39 +15,35 @@ public sealed class ClientRepository : IClientRepository
     }
 
     public Task<List<ClientProfile>> GetAllAsync(CancellationToken cancellationToken) =>
-        BuildClientQuery().ToListAsync(cancellationToken);
+        BuildClientQuery(includeDetails: true)
+            .OrderBy(client => client.FullName)
+            .ToListAsync(cancellationToken);
 
     public Task<List<ClientProfile>> SearchAsync(string? searchTerm, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(searchTerm))
+        var query = BuildClientQuery(includeDetails: false);
+        var normalizedSearch = NormalizeSearch(searchTerm);
+
+        if (normalizedSearch is not null)
         {
-            return BuildClientQuery()
-                .OrderBy(client => client.FullName)
-                .ToListAsync(cancellationToken);
+            var searchPattern = ToContainsPattern(normalizedSearch);
+            query = query.Where(client =>
+                EF.Functions.ILike(client.FullName, searchPattern) ||
+                EF.Functions.ILike(client.Email, searchPattern) ||
+                EF.Functions.ILike(client.PhoneNumber, searchPattern));
         }
 
-        var normalized = searchTerm.Trim().ToLowerInvariant();
-
-        return BuildClientQuery()
-            .Where(client =>
-                client.FullName.ToLower().Contains(normalized) ||
-                client.Email.ToLower().Contains(normalized) ||
-                client.PhoneNumber.ToLower().Contains(normalized))
+        return query
+            .OrderBy(client => client.FullName)
             .ToListAsync(cancellationToken);
     }
 
     public Task<ClientProfile?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
-        BuildClientQuery()
+        BuildClientQuery(includeDetails: true)
             .FirstOrDefaultAsync(client => client.Id == id, cancellationToken);
 
     public Task<ClientProfile?> GetByIdForUpdateAsync(Guid id, CancellationToken cancellationToken) =>
-        _context.Clients
-            .Include(client => client.UsedProducts)
-            .Include(client => client.Appointments)
-            .ThenInclude(appointment => appointment.ServiceItem)
-            .Include(client => client.Appointments)
-            .ThenInclude(appointment => appointment.AppointmentProducts)
-            .ThenInclude(appointmentProduct => appointmentProduct.Product)
+        BuildTrackedClientQuery()
             .FirstOrDefaultAsync(client => client.Id == id, cancellationToken);
 
     public async Task AddAsync(ClientProfile client, CancellationToken cancellationToken) =>
@@ -59,7 +55,26 @@ public sealed class ClientRepository : IClientRepository
     public Task SaveChangesAsync(CancellationToken cancellationToken) =>
         _context.SaveChangesAsync(cancellationToken);
 
-    private IQueryable<ClientProfile> BuildClientQuery() =>
+    private IQueryable<ClientProfile> BuildClientQuery(bool includeDetails)
+    {
+        var query = _context.Clients.AsNoTracking();
+
+        if (!includeDetails)
+        {
+            return query;
+        }
+
+        return query
+            .Include(client => client.UsedProducts)
+            .Include(client => client.Appointments)
+            .ThenInclude(appointment => appointment.ServiceItem)
+            .Include(client => client.Appointments)
+            .ThenInclude(appointment => appointment.AppointmentProducts)
+            .ThenInclude(appointmentProduct => appointmentProduct.Product)
+            .AsSplitQuery();
+    }
+
+    private IQueryable<ClientProfile> BuildTrackedClientQuery() =>
         _context.Clients
             .Include(client => client.UsedProducts)
             .Include(client => client.Appointments)
@@ -67,5 +82,10 @@ public sealed class ClientRepository : IClientRepository
             .Include(client => client.Appointments)
             .ThenInclude(appointment => appointment.AppointmentProducts)
             .ThenInclude(appointmentProduct => appointmentProduct.Product)
-            .AsNoTracking();
+            .AsSplitQuery();
+
+    private static string? NormalizeSearch(string? searchTerm) =>
+        string.IsNullOrWhiteSpace(searchTerm) ? null : searchTerm.Trim();
+
+    private static string ToContainsPattern(string searchTerm) => $"%{searchTerm.Replace("%", "\\%").Replace("_", "\\_")}%";
 }

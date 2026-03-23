@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { productsApi } from '../api';
 import { t } from '../utils/i18n';
+import { prependItem, removeItemById, updateItemById } from '../utils/collectionOptimizers';
 
 export default function useProducts() {
   const [products, setProducts] = useState([]);
@@ -26,20 +27,20 @@ export default function useProducts() {
 
   const addProduct = useCallback(async (payload) => {
     const created = await productsApi.create(payload);
-    await load();
+    setProducts((current) => prependItem(current, created));
     return created;
-  }, [load]);
+  }, []);
 
   const updateProduct = useCallback(async (productId, payload) => {
     const updated = await productsApi.update(productId, payload);
-    await load();
+    setProducts((current) => updateItemById(current, updated));
     return updated;
-  }, [load]);
+  }, []);
 
   const removeProduct = useCallback(async (productId) => {
     await productsApi.delete(productId);
-    await load();
-  }, [load]);
+    setProducts((current) => removeItemById(current, productId));
+  }, []);
 
   return { products, isLoading, error, reload: load, addProduct, updateProduct, removeProduct };
 }
