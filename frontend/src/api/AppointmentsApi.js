@@ -7,6 +7,10 @@ export default class AppointmentsApi {
     return this.client.get('/api/appointments');
   }
 
+  getNearestUpcoming() {
+    return this.client.get('/api/appointments/nearest-upcoming');
+  }
+
   getById(id) {
     return this.client.get(`/api/appointments/${id}`);
   }

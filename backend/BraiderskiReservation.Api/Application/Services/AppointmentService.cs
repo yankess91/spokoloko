@@ -26,6 +26,12 @@ public sealed class AppointmentService : IAppointmentService
             .ToList();
     }
 
+    public async Task<AppointmentResponse?> GetNearestUpcomingAsync(CancellationToken cancellationToken)
+    {
+        var appointment = await _appointmentRepository.GetNearestUpcomingAsync(DateTime.UtcNow, cancellationToken);
+        return appointment?.ToResponse();
+    }
+
     public async Task<AppointmentResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var appointment = await _appointmentRepository.GetByIdAsync(id, cancellationToken);

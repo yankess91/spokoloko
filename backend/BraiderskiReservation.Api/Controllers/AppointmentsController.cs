@@ -21,6 +21,13 @@ public sealed class AppointmentsController : ControllerBase
     public async Task<ActionResult<IEnumerable<AppointmentResponse>>> GetAll(CancellationToken cancellationToken) =>
         Ok(await _appointmentService.GetAllAsync(cancellationToken));
 
+    [HttpGet("nearest-upcoming")]
+    public async Task<ActionResult<AppointmentResponse>> GetNearestUpcoming(CancellationToken cancellationToken)
+    {
+        var appointment = await _appointmentService.GetNearestUpcomingAsync(cancellationToken);
+        return appointment is null ? NotFound() : Ok(appointment);
+    }
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<AppointmentResponse>> GetById(Guid id, CancellationToken cancellationToken)
     {

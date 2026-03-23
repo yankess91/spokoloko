@@ -5,6 +5,7 @@ import HeroSection from '../components/HeroSection';
 import ProductList from '../components/ProductList';
 import ServiceList from '../components/ServiceList';
 import useAppointments from '../hooks/useAppointments';
+import useNearestUpcomingAppointment from '../hooks/useNearestUpcomingAppointment';
 import useClients from '../hooks/useClients';
 import useProducts from '../hooks/useProducts';
 import useServices from '../hooks/useServices';
@@ -18,12 +19,26 @@ export default function DashboardPage() {
   const { services, isLoading: servicesLoading, error: servicesError } = useServices();
   const { appointments, isLoading: appointmentsLoading, error: appointmentsError } =
     useAppointments();
+  const {
+    appointment: nearestUpcomingAppointment,
+    isLoading: nearestUpcomingAppointmentLoading,
+    error: nearestUpcomingAppointmentError
+  } = useNearestUpcomingAppointment();
   const { showToast } = useToast();
 
   const isLoading =
-    clientsLoading || productsLoading || servicesLoading || appointmentsLoading;
+    clientsLoading ||
+    productsLoading ||
+    servicesLoading ||
+    appointmentsLoading ||
+    nearestUpcomingAppointmentLoading;
 
-  const error = clientsError || productsError || servicesError || appointmentsError;
+  const error =
+    clientsError ||
+    productsError ||
+    servicesError ||
+    appointmentsError ||
+    nearestUpcomingAppointmentError;
 
   useEffect(() => {
     if (error) {
@@ -52,31 +67,21 @@ export default function DashboardPage() {
   const previewAppointments = useMemo(() => appointments.slice(0, 4), [appointments]);
 
   const upcomingAppointment = useMemo(() => {
-    if (appointments.length === 0) {
+    if (!nearestUpcomingAppointment) {
       return null;
     }
 
-    const now = new Date();
-    const sorted = [...appointments].sort(
-      (a, b) => new Date(a.startAt) - new Date(b.startAt)
-    );
-    const appointment = sorted.find((item) => new Date(item.startAt) >= now);
-
-    if (!appointment) {
-      return null;
-    }
-
-    const client = clientsById.get(appointment.clientId);
-    const service = servicesById.get(appointment.serviceId);
+    const client = clientsById.get(nearestUpcomingAppointment.clientId);
+    const service = servicesById.get(nearestUpcomingAppointment.serviceId);
 
     return {
-      id: appointment.id,
+      id: nearestUpcomingAppointment.id,
       clientName: client?.fullName ?? t('dashboard.unknownClient'),
       serviceName: service?.name ?? t('dashboard.unknownService'),
-      date: formatDate(appointment.startAt),
-      time: formatTime(appointment.startAt)
+      date: formatDate(nearestUpcomingAppointment.startAt),
+      time: formatTime(nearestUpcomingAppointment.startAt)
     };
-  }, [appointments, clientsById, servicesById]);
+  }, [nearestUpcomingAppointment, clientsById, servicesById]);
 
   return (
     <div className="page-content">

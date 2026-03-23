@@ -22,6 +22,17 @@ public sealed class AppointmentRepository : IAppointmentRepository
             .AsNoTracking()
             .ToListAsync(cancellationToken);
 
+    public Task<Appointment?> GetNearestUpcomingAsync(DateTime from, CancellationToken cancellationToken) =>
+        _context.Appointments
+            .Include(appointment => appointment.ClientProfile)
+            .Include(appointment => appointment.AppointmentProducts)
+            .ThenInclude(appointmentProduct => appointmentProduct.Product)
+            .AsNoTracking()
+            .Where(appointment => appointment.StartAt >= from)
+            .Where(appointment => appointment.ClientProfile != null && appointment.ClientProfile.IsActive)
+            .OrderBy(appointment => appointment.StartAt)
+            .FirstOrDefaultAsync(cancellationToken);
+
     public Task<Appointment?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
         _context.Appointments
             .Include(appointment => appointment.ClientProfile)
