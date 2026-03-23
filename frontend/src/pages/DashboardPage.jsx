@@ -56,15 +56,24 @@ export default function DashboardPage() {
     [services]
   );
 
-  const activeClientCount = useMemo(
-    () => clients.filter((client) => client.isActive).length,
+  const activeClients = useMemo(
+    () => clients.filter((client) => client.isActive),
     [clients]
   );
 
-  const previewClients = useMemo(() => clients.slice(0, 3), [clients]);
+  const now = useMemo(() => new Date(), []);
+
+  const upcomingAppointments = useMemo(
+    () => appointments
+      .filter((appointment) => new Date(appointment.startAt) >= now)
+      .sort((a, b) => new Date(a.startAt) - new Date(b.startAt)),
+    [appointments, now]
+  );
+
+  const previewClients = useMemo(() => activeClients.slice(0, 3), [activeClients]);
   const previewServices = useMemo(() => services.slice(0, 3), [services]);
   const previewProducts = useMemo(() => products.slice(0, 3), [products]);
-  const previewAppointments = useMemo(() => appointments.slice(0, 4), [appointments]);
+  const previewAppointments = useMemo(() => upcomingAppointments.slice(0, 4), [upcomingAppointments]);
 
   const upcomingAppointment = useMemo(() => {
     if (!nearestUpcomingAppointment) {
@@ -94,44 +103,6 @@ export default function DashboardPage() {
         upcomingAppointment={upcomingAppointment}
         isLoading={isLoading}
       />
-
-      <section className="section">
-        <div className="section-header">
-          <h2>{t('dashboard.summaryTitle')}</h2>
-          <p className="muted">{t('dashboard.summarySubtitle')}</p>
-        </div>
-        <div className="grid metrics-grid">
-          <article className="card metric-card">
-            <span className="metric-label">{t('dashboard.activeClients')}</span>
-            <span className="metric-value">{activeClientCount}</span>
-            <p className="muted">{t('dashboard.activeClientsHint')}</p>
-          </article>
-          <article className="card metric-card">
-            <span className="metric-label">{t('dashboard.servicesCount')}</span>
-            <span className="metric-value">{services.length}</span>
-            <p className="muted">{t('dashboard.servicesHint')}</p>
-          </article>
-          <article className="card metric-card">
-            <span className="metric-label">{t('dashboard.productsCount')}</span>
-            <span className="metric-value">{products.length}</span>
-            <p className="muted">{t('dashboard.productsHint')}</p>
-          </article>
-          <article className="card metric-card">
-            <span className="metric-label">{t('dashboard.nextAppointment')}</span>
-            <span className="metric-value">
-              {upcomingAppointment ? `${upcomingAppointment.date}` : t('dashboard.none')}
-            </span>
-            <p className="muted">
-              {upcomingAppointment
-                ? t('dashboard.nextAppointmentDetails', {
-                    name: upcomingAppointment.clientName,
-                    time: upcomingAppointment.time,
-                  })
-                : t('dashboard.nextAppointmentHint')}
-            </p>
-          </article>
-        </div>
-      </section>
 
       <section className="section">
         <div className="section-header">

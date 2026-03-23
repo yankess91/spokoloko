@@ -118,7 +118,7 @@
   },
   "appointmentCalendar": {
     "title": "Kalendarz wizyt",
-    "subtitle": "Szybki podgląd terminów z podziałem na dni.",
+    "subtitle": "Szybki podgląd nadchodzących wizyt z podziałem na dni.",
     "loading": "Ładowanie wizyt...",
     "empty": "Brak zaplanowanych wizyt.",
     "unknownService": "Nieznana usługa",
