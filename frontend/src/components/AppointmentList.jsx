@@ -34,8 +34,14 @@ export default function AppointmentList({
       {appointments.map((appointment) => {
         const client = clientsById.get(appointment.clientId);
         const service = servicesById.get(appointment.serviceId);
+        const isPastAppointment = new Date(appointment.startAt).getTime() < Date.now();
+
         return (
-          <div key={appointment.id} className="data-grid-row" role="row">
+          <div
+            key={appointment.id}
+            className={`data-grid-row${isPastAppointment ? ' data-grid-row-past' : ''}`}
+            role="row"
+          >
             <div className="data-grid-cell" role="cell">
               <div className="data-grid-title">{service?.name ?? t('appointmentList.unknownService')}</div>
               <div className="data-grid-meta">{appointment.notes || t('appointmentList.noNotes')}</div>

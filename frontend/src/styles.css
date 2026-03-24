@@ -830,6 +830,11 @@ button:focus-visible {
   box-shadow: 0 8px 20px rgba(17, 17, 17, 0.12);
 }
 
+.data-grid-row-past {
+  background: rgba(201, 162, 39, 0.08);
+  border-color: rgba(201, 162, 39, 0.3);
+}
+
 .data-grid-header {
   background: rgba(201, 162, 39, 0.08);
   text-transform: uppercase;

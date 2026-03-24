@@ -18,6 +18,7 @@ export default function AppointmentsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAppointment, setEditingAppointment] = useState(null);
   const [sortBy, setSortBy] = useState('date-desc');
+  const [timelineFilter, setTimelineFilter] = useState('all');
   const { showToast } = useToast();
 
   const clientsById = useMemo(() => new Map(clients.map((client) => [client.id, client])), [clients]);
@@ -28,10 +29,29 @@ export default function AppointmentsPage() {
     [appointments, clientsById]
   );
 
+  const filteredAppointments = useMemo(() => {
+    const now = Date.now();
+
+    return visibleAppointments.filter((appointment) => {
+      const appointmentTime = new Date(appointment.startAt).getTime();
+      const isPast = appointmentTime < now;
+
+      switch (timelineFilter) {
+        case 'past':
+          return isPast;
+        case 'upcoming':
+          return !isPast;
+        case 'all':
+        default:
+          return true;
+      }
+    });
+  }, [visibleAppointments, timelineFilter]);
+
   const sortedAppointments = useMemo(() => {
     const collator = new Intl.Collator('pl', { sensitivity: 'base' });
 
-    return [...visibleAppointments].sort((a, b) => {
+    return [...filteredAppointments].sort((a, b) => {
       switch (sortBy) {
         case 'date-asc':
           return new Date(a.startAt).getTime() - new Date(b.startAt).getTime();
@@ -60,7 +80,7 @@ export default function AppointmentsPage() {
           return new Date(b.startAt).getTime() - new Date(a.startAt).getTime();
       }
     });
-  }, [visibleAppointments, sortBy, clientsById, servicesById]);
+  }, [filteredAppointments, sortBy, clientsById, servicesById]);
 
   const showError = useCallback((message) => showToast(message, { severity: 'error' }), [showToast]);
 
@@ -155,6 +175,14 @@ export default function AppointmentsPage() {
             </button>
           </div>
           <div className="list-controls grid-controls">
+            <label className="filter-field">
+              {t('appointmentsPage.filterLabel')}
+              <select value={timelineFilter} onChange={(event) => setTimelineFilter(event.target.value)}>
+                <option value="all">{t('appointmentsPage.filterAll')}</option>
+                <option value="past">{t('appointmentsPage.filterPast')}</option>
+                <option value="upcoming">{t('appointmentsPage.filterUpcoming')}</option>
+              </select>
+            </label>
             <label className="filter-field">
               {t('appointmentsPage.sortLabel')}
               <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
