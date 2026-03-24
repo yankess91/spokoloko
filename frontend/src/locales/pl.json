@@ -1,6 +1,6 @@
 {
   "app": {
-    "documentTitle": "System rezerwacji · salon braiderski",
+    "documentTitle": "Spoko Loko - Klaudia Czapka",
     "logoAlt": "Logo Spoko Loko",
     "openNavigationMenu": "Otwórz menu",
     "greeting": "Witaj, {name}",
@@ -17,8 +17,8 @@
   },
   "footer": {
     "contactTitle": "Kontakt",
-    "address": "Studio braiderskie · ul. Słoneczna 12, 00-001 Warszawa",
-    "contactLine": "Tel.: +48 555 123 456 · E-mail: kontakt@braiderski.pl",
+    "address": "Spoko Loko - Klaudia Czapka",
+    "contactLine": "Tel.: +48 728 474 460 · E-mail: kontakt@braiderski.pl",
     "followUs": "Obserwuj nas",
     "instagramLabel": "Instagram",
     "instagram": "Instagram",

@@ -868,15 +868,15 @@ button:focus-visible {
 }
 
 .data-grid-products .data-grid-row {
-  grid-template-columns: minmax(220px, 2fr) minmax(140px, max-content) minmax(120px, max-content) minmax(140px, max-content) minmax(160px, max-content) minmax(120px, max-content) minmax(160px, 1fr);
+  grid-template-columns: minmax(220px, 1.5fr) minmax(140px, max-content) minmax(120px, max-content) minmax(140px, max-content) minmax(160px, max-content) minmax(120px, max-content) minmax(160px, 1fr);
 }
 
 .data-grid-services .data-grid-row {
-  grid-template-columns: minmax(220px, 2fr) minmax(160px, max-content) minmax(140px, max-content) minmax(160px, 1fr);
+  grid-template-columns: minmax(220px, 1.2fr) minmax(160px, max-content) minmax(140px, max-content) minmax(160px, 1fr);
 }
 
 .data-grid-appointments .data-grid-row {
-  grid-template-columns: minmax(220px, 2fr) minmax(150px, max-content) minmax(160px, max-content) minmax(160px, 1fr);
+  grid-template-columns: minmax(220px, 1fr) minmax(150px, max-content) minmax(160px, max-content) minmax(160px, 1fr);
 }
 
 .data-grid-row .data-grid-cell:nth-child(2),
