@@ -163,7 +163,6 @@ export default function ClientsPage() {
             onEdit={handleEdit}
             onToggleStatus={handleStatusToggle}
             updatingClientId={updatingClientId}
-            onDelete={handleDelete}
           />
         </article>
       </section>

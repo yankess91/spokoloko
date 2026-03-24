@@ -13,7 +13,6 @@ export default function ClientGrid({
   onEdit,
   onToggleStatus,
   updatingClientId,
-  onDelete
 }) {
   if (isLoading) {
     return <p className="muted">{t('clientGrid.loading')}</p>;
@@ -22,8 +21,6 @@ export default function ClientGrid({
   if (clients.length === 0) {
     return <p className="muted">{t('clientGrid.empty')}</p>;
   }
-
-  const isDeleteDisabled = !onDelete;
 
   return (
     <div className="data-grid" role="table" aria-label={t('clientGrid.ariaLabel')}>
@@ -68,16 +65,6 @@ export default function ClientGrid({
               >
                 {client.isActive ? <ToggleOffIcon fontSize="small" /> : <ToggleOnIcon fontSize="small" />}
                 {isUpdating ? t('clientGrid.saving') : client.isActive ? t('clientGrid.deactivate') : t('clientGrid.activate')}
-              </button>
-              <button
-                type="button"
-                className="ghost danger icon-button"
-                onClick={() => onDelete?.(client)}
-                disabled={isDeleteDisabled}
-                title={isDeleteDisabled ? t('clientGrid.deleteDisabled') : t('clientGrid.delete')}
-              >
-                <DeleteOutlineIcon fontSize="small" />
-                {t('clientGrid.delete')}
               </button>
             </div>
           </div>
