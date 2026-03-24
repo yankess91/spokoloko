@@ -83,7 +83,7 @@ public sealed class ScrapingImportService(
         foreach (var (normalizedUrl, existingProduct) in existingProducts)
         {
             ct.ThrowIfCancellationRequested();
-
+            existingProduct.AvailabilityCheckedAt = todayDate;
             if (scrapedProducts.ContainsKey(normalizedUrl))
                 continue;
 
