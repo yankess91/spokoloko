@@ -48,8 +48,10 @@ public sealed class ServiceRepository : IServiceRepository
         Guid id,
         string name,
         string description,
-        TimeSpan duration,
-        decimal price,
+        TimeSpan durationFrom,
+        TimeSpan durationTo,
+        decimal priceFrom,
+        decimal priceTo,
         List<Guid> requiredProductIds,
         CancellationToken cancellationToken)
     {
@@ -64,8 +66,10 @@ public sealed class ServiceRepository : IServiceRepository
 
         service.Name = name;
         service.Description = description;
-        service.Duration = duration;
-        service.Price = price;
+        service.DurationFrom = durationFrom;
+        service.DurationTo = durationTo;
+        service.PriceFrom = priceFrom;
+        service.PriceTo = priceTo;
 
         var normalizedRequiredProductIds = (requiredProductIds ?? new List<Guid>())
             .Distinct()

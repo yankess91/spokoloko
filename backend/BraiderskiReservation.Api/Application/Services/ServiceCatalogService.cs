@@ -36,12 +36,24 @@ public sealed class ServiceCatalogService : IServiceCatalogService
 
     public async Task<ServiceItemResponse> CreateAsync(CreateServiceRequest request, CancellationToken cancellationToken)
     {
+        if (request.DurationToMinutes < request.DurationFromMinutes)
+        {
+            throw new InvalidOperationException("Pole DurationToMinutes musi być większe lub równe DurationFromMinutes.");
+        }
+
+        if (request.PriceTo < request.PriceFrom)
+        {
+            throw new InvalidOperationException("Pole PriceTo musi być większe lub równe PriceFrom.");
+        }
+
         var service = new ServiceItem
         {
             Name = request.Name,
             Description = request.Description,
-            Duration = TimeSpan.FromMinutes(request.DurationMinutes),
-            Price = request.Price,
+            DurationFrom = TimeSpan.FromMinutes(request.DurationFromMinutes),
+            DurationTo = TimeSpan.FromMinutes(request.DurationToMinutes),
+            PriceFrom = request.PriceFrom,
+            PriceTo = request.PriceTo,
             ServiceProducts = (request.RequiredProductIds ?? new List<Guid>())
                 .Distinct()
                 .Select(productId => new ServiceProduct
@@ -59,12 +71,24 @@ public sealed class ServiceCatalogService : IServiceCatalogService
 
     public async Task<ServiceItemResponse?> UpdateAsync(Guid id, CreateServiceRequest request, CancellationToken cancellationToken)
     {
+        if (request.DurationToMinutes < request.DurationFromMinutes)
+        {
+            throw new InvalidOperationException("Pole DurationToMinutes musi być większe lub równe DurationFromMinutes.");
+        }
+
+        if (request.PriceTo < request.PriceFrom)
+        {
+            throw new InvalidOperationException("Pole PriceTo musi być większe lub równe PriceFrom.");
+        }
+
         var updated = await _serviceRepository.UpdateAsync(
             id,
             request.Name,
             request.Description,
-            TimeSpan.FromMinutes(request.DurationMinutes),
-            request.Price,
+            TimeSpan.FromMinutes(request.DurationFromMinutes),
+            TimeSpan.FromMinutes(request.DurationToMinutes),
+            request.PriceFrom,
+            request.PriceTo,
             request.RequiredProductIds ?? new List<Guid>(),
             cancellationToken);
 

@@ -30,6 +30,7 @@ Aktualny stan schematu startowego jest utrzymywany bezpośrednio w pliku:
 `backend/BraiderskiReservation.Api/database/seed-data.sql`
 
 Repozytorium nie przechowuje już historycznych migracji SQL — od tego momentu stan początkowy bazy jest budowany od zera na podstawie tego pliku.
+Jeżeli aktualizujesz istniejącą bazę danych, użyj skryptów z katalogu `backend/BraiderskiReservation.Api/database/migrations`.
 
 ## Frontend (React)
 

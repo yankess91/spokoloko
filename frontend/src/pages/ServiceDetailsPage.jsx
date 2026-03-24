@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import useServiceDetails from '../hooks/useServiceDetails';
 import useProducts from '../hooks/useProducts';
 import { useToast } from '../components/ToastProvider';
-import { formatCurrency } from '../utils/formatters';
+import { formatCurrencyRange } from '../utils/formatters';
 import { servicesApi } from '../api';
 import { t } from '../utils/i18n';
 
@@ -106,7 +106,7 @@ export default function ServiceDetailsPage() {
           <h2>{t('serviceDetails.descriptionTitle')}</h2>
           <p>{service.description || t('serviceDetails.noDescription')}</p>
           <p>{t('serviceDetails.durationLabel', { value: service.duration })}</p>
-          <p>{t('serviceDetails.priceLabel', { value: formatCurrency(service.price) })}</p>
+          <p>{t('serviceDetails.priceLabel', { value: formatCurrencyRange(service.priceFrom, service.priceTo) })}</p>
         </article>
         <article className="card">
           <h2>{t('serviceDetails.requiredProductsTitle')}</h2>

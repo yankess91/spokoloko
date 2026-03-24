@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { servicesApi } from '../api';
-import { formatDuration } from '../utils/formatters';
+import { formatDurationRange } from '../utils/formatters';
 import { t } from '../utils/i18n';
 
 export default function useServiceDetails(serviceId) {
@@ -20,7 +20,7 @@ export default function useServiceDetails(serviceId) {
       const data = await servicesApi.getById(serviceId);
       setService({
         ...data,
-        duration: formatDuration(data.duration)
+        duration: formatDurationRange(data.durationFrom, data.durationTo)
       });
       setError('');
     } catch (err) {

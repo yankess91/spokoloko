@@ -28,13 +28,13 @@ export default function ServicesPage() {
         case 'name-desc':
           return collator.compare(b.name ?? '', a.name ?? '');
         case 'duration-asc':
-          return Number(a.durationMinutes ?? 0) - Number(b.durationMinutes ?? 0);
+          return Number(a.durationFromMinutes ?? 0) - Number(b.durationFromMinutes ?? 0);
         case 'duration-desc':
-          return Number(b.durationMinutes ?? 0) - Number(a.durationMinutes ?? 0);
+          return Number(b.durationFromMinutes ?? 0) - Number(a.durationFromMinutes ?? 0);
         case 'price-asc':
-          return Number(a.price ?? 0) - Number(b.price ?? 0);
+          return Number(a.priceFrom ?? 0) - Number(b.priceFrom ?? 0);
         case 'price-desc':
-          return Number(b.price ?? 0) - Number(a.price ?? 0);
+          return Number(b.priceFrom ?? 0) - Number(a.priceFrom ?? 0);
         case 'name-asc':
         default:
           return collator.compare(a.name ?? '', b.name ?? '');

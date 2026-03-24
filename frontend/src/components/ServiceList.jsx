@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import { formatCurrency } from '../utils/formatters';
+import { formatCurrencyRange } from '../utils/formatters';
 import { t } from '../utils/i18n';
 
 export default function ServiceList({ services, isLoading, linkBase, onEdit, onDelete }) {
@@ -45,7 +45,7 @@ export default function ServiceList({ services, isLoading, linkBase, onEdit, onD
             </div>
             <div className="data-grid-cell" role="cell">
               <span className="data-grid-title">{service.duration}</span>
-              <span className="data-grid-meta">{formatCurrency(service.price)}</span>
+              <span className="data-grid-meta">{formatCurrencyRange(service.priceFrom, service.priceTo)}</span>
             </div>
             <div className="data-grid-cell" role="cell">
               {requiredProducts}
