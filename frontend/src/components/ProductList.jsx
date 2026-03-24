@@ -5,6 +5,8 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import CloseIcon from '@mui/icons-material/Close';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import { formatCurrency, formatDate } from '../utils/formatters';
 import { t } from '../utils/i18n';
 
@@ -41,7 +43,14 @@ export default function ProductList({ products, isLoading, linkBase, onEdit, onD
           <div className="data-grid-cell" role="cell">{product.brand || t('productList.noBrand')}</div>
           <div className="data-grid-cell" role="cell">{formatCurrency(product.price)}</div>
           <div className="data-grid-cell" role="cell">
-            {product.isAvailable ? t('productList.available') : t('productList.unavailable')}
+            {product.isAvailable ? (
+              <CheckBoxIcon aria-label={t('productList.available')} titleAccess={t('productList.available')} />
+            ) : (
+              <CheckBoxOutlineBlankIcon
+                aria-label={t('productList.unavailable')}
+                titleAccess={t('productList.unavailable')}
+              />
+            )}
           </div>
           <div className="data-grid-cell" role="cell">
             {product.availabilityCheckedAt ? formatDate(product.availabilityCheckedAt) : t('productList.noAvailabilityDate')}
