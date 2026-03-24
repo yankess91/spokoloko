@@ -1,21 +1,26 @@
 import { useCallback, useEffect, useState } from 'react';
 import { servicesApi } from '../api';
-import { formatDuration } from '../utils/formatters';
+import { formatDurationRange } from '../utils/formatters';
 import { t } from '../utils/i18n';
 import { prependItem, removeItemById, updateItemById } from '../utils/collectionOptimizers';
 
 function mapService(service) {
-  const durationValue = service?.duration ?? '';
-  const durationMinutes =
-    service?.durationMinutes ??
-    (typeof durationValue === 'string' && durationValue.includes(':')
+  const durationFromValue = service?.durationFrom ?? '';
+  const durationToValue = service?.durationTo ?? '';
+
+  const parseDurationMinutes = (durationValue) =>
+    typeof durationValue === 'string' && durationValue.includes(':')
       ? Number(durationValue.split(':')[0] ?? 0) * 60 + Number(durationValue.split(':')[1] ?? 0)
-      : null);
+      : null;
+
+  const durationFromMinutes = service?.durationFromMinutes ?? parseDurationMinutes(durationFromValue);
+  const durationToMinutes = service?.durationToMinutes ?? parseDurationMinutes(durationToValue);
 
   return {
     ...service,
-    durationMinutes: durationMinutes ?? 0,
-    duration: formatDuration(durationValue)
+    durationFromMinutes: durationFromMinutes ?? 0,
+    durationToMinutes: durationToMinutes ?? 0,
+    duration: formatDurationRange(durationFromValue, durationToValue)
   };
 }
 

@@ -20,8 +20,10 @@ const createInitialState = (initialValues) => {
   return ({
     name: values.name ?? '',
     description: values.description ?? '',
-    durationMinutes: values.durationMinutes ?? values.duration ?? 60,
-    price: values.price ?? '',
+    durationFromMinutes: values.durationFromMinutes ?? values.durationMinutes ?? 60,
+    durationToMinutes: values.durationToMinutes ?? values.durationMinutes ?? 60,
+    priceFrom: values.priceFrom ?? values.price ?? '',
+    priceTo: values.priceTo ?? values.price ?? '',
     selectedProducts: mapSelectedProducts(
       values.selectedProducts ?? values.requiredProducts ?? []
     )
@@ -100,11 +102,23 @@ export default function ServiceForm({
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (Number(formState.durationToMinutes) < Number(formState.durationFromMinutes)) {
+      showError(t('serviceForm.durationRangeError'));
+      return;
+    }
+
+    if (Number(formState.priceTo) < Number(formState.priceFrom)) {
+      showError(t('serviceForm.priceRangeError'));
+      return;
+    }
+
     const shouldReset = await onSubmit?.({
       name: formState.name,
       description: formState.description,
-      durationMinutes: Number(formState.durationMinutes),
-      price: Number(formState.price),
+      durationFromMinutes: Number(formState.durationFromMinutes),
+      durationToMinutes: Number(formState.durationToMinutes),
+      priceFrom: Number(formState.priceFrom),
+      priceTo: Number(formState.priceTo),
       requiredProductIds: formState.selectedProducts.map((item) => item.id)
     });
 
@@ -141,28 +155,53 @@ export default function ServiceForm({
         </label>
         <label>
           {t('serviceForm.duration')}
-          <input
-            name="durationMinutes"
-            type="number"
-            min="15"
-            step="5"
-            value={formState.durationMinutes}
-            onChange={handleChange}
-            required
-          />
+          <div className="inline-field">
+            <input
+              name="durationFromMinutes"
+              type="number"
+              min="15"
+              step="5"
+              value={formState.durationFromMinutes}
+              onChange={handleChange}
+              required
+            />
+            <span className="muted">-</span>
+            <input
+              name="durationToMinutes"
+              type="number"
+              min="15"
+              step="5"
+              value={formState.durationToMinutes}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </label>
         <label>
           {t('serviceForm.price')}
-          <input
-            name="price"
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder={t('serviceForm.pricePlaceholder')}
-            value={formState.price}
-            onChange={handleChange}
-            required
-          />
+          <div className="inline-field">
+            <input
+              name="priceFrom"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder={t('serviceForm.priceFromPlaceholder')}
+              value={formState.priceFrom}
+              onChange={handleChange}
+              required
+            />
+            <span className="muted">-</span>
+            <input
+              name="priceTo"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder={t('serviceForm.priceToPlaceholder')}
+              value={formState.priceTo}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </label>
         <label>
           {t('serviceForm.requiredProducts')}

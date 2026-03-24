@@ -168,6 +168,8 @@
   "serviceForm": {
     "selectProductError": "Wybierz produkt z listy podpowiedzi.",
     "duplicateProductError": "Ten produkt został już dodany.",
+    "durationRangeError": "Pole czasu \"do\" musi być większe lub równe polu \"od\".",
+    "priceRangeError": "Pole ceny \"do\" musi być większe lub równe polu \"od\".",
     "title": "Dodaj usługę",
     "name": "Nazwa usługi",
     "namePlaceholder": "np. Warkocze klasyczne",
@@ -175,7 +177,8 @@
     "descriptionPlaceholder": "Krótki opis zabiegu",
     "duration": "Czas trwania (min)",
     "price": "Cena (zł)",
-    "pricePlaceholder": "np. 250",
+    "priceFromPlaceholder": "od, np. 250",
+    "priceToPlaceholder": "do, np. 300",
     "requiredProducts": "Wymagane produkty",
     "selectProductPlaceholder": "Wybierz produkt",
     "removeProduct": "{label} ✕",

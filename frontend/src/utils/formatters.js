@@ -59,3 +59,22 @@ export const formatCurrency = (value) => {
     minimumFractionDigits: 2
   }).format(Number(value));
 };
+
+export const formatCurrencyRange = (fromValue, toValue) => {
+  if (fromValue === toValue) {
+    return formatCurrency(fromValue);
+  }
+
+  return `${formatCurrency(fromValue)} - ${formatCurrency(toValue)}`;
+};
+
+export const formatDurationRange = (fromValue, toValue) => {
+  const formattedFrom = formatDuration(fromValue);
+  const formattedTo = formatDuration(toValue);
+
+  if (formattedFrom === formattedTo) {
+    return formattedFrom;
+  }
+
+  return `${formattedFrom} - ${formattedTo}`;
+};

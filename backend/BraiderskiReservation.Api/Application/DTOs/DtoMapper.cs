@@ -45,8 +45,10 @@ public static class DtoMapper
             serviceItem.Id,
             serviceItem.Name,
             serviceItem.Description,
-            serviceItem.Duration,
-            serviceItem.Price,
+            serviceItem.DurationFrom,
+            serviceItem.DurationTo,
+            serviceItem.PriceFrom,
+            serviceItem.PriceTo,
             serviceItem.ServiceProducts
                 .Select(serviceProduct => serviceProduct.Product)
                 .Where(product => product is not null)
@@ -57,8 +59,8 @@ public static class DtoMapper
         new(
             serviceItem.Id,
             serviceItem.Name,
-            serviceItem.Duration,
-            serviceItem.Price);
+            serviceItem.DurationFrom,
+            serviceItem.PriceFrom);
 
     public static ClientServiceHistoryResponse ToHistoryResponse(this Appointment appointment) =>
         new(
