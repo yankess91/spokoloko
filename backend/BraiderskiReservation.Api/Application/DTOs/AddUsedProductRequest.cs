@@ -1,7 +1,9 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace BraiderskiReservation.Api.Application.DTOs;
 
 public sealed record AddUsedProductRequest(
-    string Name,
-    string Notes,
+    [property: Required, MaxLength(120)] string Name,
+    [property: MaxLength(1000)] string Notes,
     DateTime UsedAt
 );

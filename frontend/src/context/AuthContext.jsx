@@ -17,16 +17,25 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const { showToast } = useToast();
 
+  const clearSessionState = useCallback(() => {
+    clearSession();
+    setSession(null);
+  }, []);
+
   const login = useCallback(async (payload) => {
     setLoading(true);
     setError(null);
+
     try {
       const result = await authApi.login(payload);
-      storeSession({ token: result.token, user: result.user, expiresAt: result.expiresAt });
-      setSession({ token: result.token, user: result.user, expiresAt: result.expiresAt });
+      const nextSession = { token: result.token, user: result.user, expiresAt: result.expiresAt };
+
+      storeSession(nextSession);
+      setSession(nextSession);
+
       return { ok: true };
     } catch (err) {
-      setError(t('errors.login'));
+      setError(err.message ?? t('errors.login'));
       return { ok: false, error: err };
     } finally {
       setLoading(false);
@@ -34,20 +43,22 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const logout = useCallback(() => {
-    clearSession();
-    setSession(null);
-  }, []);
+    clearSessionState();
+  }, [clearSessionState]);
 
   useEffect(() => {
     const handleUnauthorized = () => {
-      clearSession();
-      setSession(null);
+      if (!session?.token) {
+        return;
+      }
+
+      clearSessionState();
       showToast(t('errors.sessionExpired'), { severity: 'warning' });
     };
 
     window.addEventListener(UNAUTHORIZED_EVENT, handleUnauthorized);
     return () => window.removeEventListener(UNAUTHORIZED_EVENT, handleUnauthorized);
-  }, [showToast]);
+  }, [clearSessionState, session?.token, showToast]);
 
   const value = useMemo(
     () => ({

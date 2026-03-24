@@ -31,14 +31,14 @@ public sealed class ClientsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ClientProfileResponse>> Create(CreateClientRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<ClientProfileResponse>> Create([FromBody] CreateClientRequest request, CancellationToken cancellationToken)
     {
         var client = await _clientService.CreateAsync(request, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = client.Id }, client);
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<ActionResult<ClientProfileResponse>> Update(Guid id, UpdateClientRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<ClientProfileResponse>> Update(Guid id, [FromBody] UpdateClientRequest request, CancellationToken cancellationToken)
     {
         var client = await _clientService.UpdateAsync(id, request, cancellationToken);
         return client is null ? NotFound() : Ok(client);
@@ -47,7 +47,7 @@ public sealed class ClientsController : ControllerBase
     [HttpPatch("{id:guid}/status")]
     public async Task<ActionResult<ClientProfileResponse>> UpdateStatus(
         Guid id,
-        UpdateClientStatusRequest request,
+        [FromBody] UpdateClientStatusRequest request,
         CancellationToken cancellationToken)
     {
         var client = await _clientService.UpdateStatusAsync(id, request, cancellationToken);
@@ -55,7 +55,7 @@ public sealed class ClientsController : ControllerBase
     }
 
     [HttpPost("{id:guid}/used-products")]
-    public async Task<IActionResult> AddUsedProduct(Guid id, AddUsedProductRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddUsedProduct(Guid id, [FromBody] AddUsedProductRequest request, CancellationToken cancellationToken)
     {
         var added = await _clientService.AddUsedProductAsync(id, request, cancellationToken);
 
