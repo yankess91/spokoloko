@@ -31,7 +31,7 @@ public sealed class ServicesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ServiceItemResponse>> Create(CreateServiceRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<ServiceItemResponse>> Create([FromBody] CreateServiceRequest request, CancellationToken cancellationToken)
     {
         var service = await _serviceCatalog.CreateAsync(request, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = service.Id }, service);
@@ -40,7 +40,7 @@ public sealed class ServicesController : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<ActionResult<ServiceItemResponse>> Update(
         Guid id,
-        CreateServiceRequest request,
+        [FromBody] CreateServiceRequest request,
         CancellationToken cancellationToken)
     {
         var service = await _serviceCatalog.UpdateAsync(id, request, cancellationToken);
@@ -50,7 +50,7 @@ public sealed class ServicesController : ControllerBase
     [HttpPost("{id:guid}/products")]
     public async Task<ActionResult<ServiceItemResponse>> AddProduct(
         Guid id,
-        AddServiceProductRequest request,
+        [FromBody] AddServiceProductRequest request,
         CancellationToken cancellationToken)
     {
         var service = await _serviceCatalog.AddProductAsync(id, request.ProductId, cancellationToken);

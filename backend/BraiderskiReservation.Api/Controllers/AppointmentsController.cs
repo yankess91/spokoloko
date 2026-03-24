@@ -36,14 +36,14 @@ public sealed class AppointmentsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<AppointmentResponse>> Create(CreateAppointmentRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<AppointmentResponse>> Create([FromBody] CreateAppointmentRequest request, CancellationToken cancellationToken)
     {
         var appointment = await _appointmentService.CreateAsync(request, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = appointment.Id }, appointment);
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<ActionResult<AppointmentResponse>> Update(Guid id, UpdateAppointmentRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<AppointmentResponse>> Update(Guid id, [FromBody] UpdateAppointmentRequest request, CancellationToken cancellationToken)
     {
         var appointment = await _appointmentService.UpdateAsync(id, request, cancellationToken);
         return appointment is null ? NotFound() : Ok(appointment);

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace BraiderskiReservation.Api.Application.DTOs;
 
 public sealed record UpdateAppointmentRequest(
@@ -5,5 +7,5 @@ public sealed record UpdateAppointmentRequest(
     Guid ServiceId,
     DateTime StartAt,
     DateTime EndAt,
-    string Notes,
+    [property: MaxLength(1000)] string Notes,
     List<Guid>? ProductIds);

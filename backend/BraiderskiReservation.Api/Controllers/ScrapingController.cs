@@ -1,18 +1,22 @@
-﻿using BraiderskiReservation.Api.Application.Scrapers;
-using BraiderskiReservation.Api.Application.Scrapers.AltHair;
-using BraiderskiReservation.Api.Application.Scrapers.Magfactory;
+using BraiderskiReservation.Api.Application.Scrapers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BraiderskiReservation.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/scraping")]
-public class ScrapingController(IScrapingImportService scrapingImportService) : Controller
+public sealed class ScrapingController(
+    IScrapingImportService scrapingImportService,
+    ILogger<ScrapingController> logger) : ControllerBase
 {
-    [HttpPost()]
-    public async Task<IActionResult> Run()
+    [HttpPost]
+    public async Task<ActionResult> Run(CancellationToken cancellationToken)
     {
-        await scrapingImportService.ImportAllAsync();
-        return Ok();
+        logger.LogInformation("Scraping import started by {User}", User.Identity?.Name ?? "unknown");
+        await scrapingImportService.ImportAllAsync(cancellationToken);
+        logger.LogInformation("Scraping import finished successfully.");
+        return NoContent();
     }
 }

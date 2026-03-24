@@ -10,25 +10,45 @@ namespace BraiderskiReservation.Api.Controllers;
 public sealed class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
+    private readonly ILogger<AuthController> _logger;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, ILogger<AuthController> logger)
     {
         _authService = authService;
+        _logger = logger;
     }
 
     [HttpPost("register")]
     [AllowAnonymous]
-    public async Task<IActionResult> Register(RegisterRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<AuthResponse>> Register([FromBody] RegisterRequest request, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Registration attempt for email: {Email}", request.Email);
+
         var result = await _authService.RegisterAsync(request, cancellationToken);
-        return result is null ? Conflict(new { message = "Użytkownik o tym adresie już istnieje." }) : Ok(result);
+        if (result is null)
+        {
+            _logger.LogWarning("Registration conflict for email: {Email}", request.Email);
+            return Conflict(new { code = "conflict", message = "Użytkownik o tym adresie już istnieje." });
+        }
+
+        _logger.LogInformation("Registration successful for email: {Email}", request.Email);
+        return Ok(result);
     }
 
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<IActionResult> Login(LoginRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<AuthResponse>> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Login attempt for email: {Email}", request.Email);
+
         var result = await _authService.LoginAsync(request, cancellationToken);
-        return result is null ? Unauthorized(new { message = "Niepoprawny email lub hasło." }) : Ok(result);
+        if (result is null)
+        {
+            _logger.LogWarning("Failed login for email: {Email}", request.Email);
+            return Unauthorized(new { code = "unauthorized", message = "Niepoprawny email lub hasło." });
+        }
+
+        _logger.LogInformation("Login successful for email: {Email}", request.Email);
+        return Ok(result);
     }
 }
