@@ -20,6 +20,7 @@ dayjs.locale('pl');
 const START_HOUR = 7;
 const END_HOUR = 22;
 const HOUR_HEIGHT = 72;
+const DAY_NAMES = ['pon.', 'wt.', 'śr.', 'czw.', 'pt.', 'sob.', 'niedz.'];
 
 export default function CalendarPage() {
   const { appointments, isLoading, error } = useAppointments();
@@ -36,8 +37,34 @@ export default function CalendarPage() {
       return [anchorDate.startOf('day')];
     }
 
+    if (viewMode === 'month') {
+      return [];
+    }
+
     const weekStart = anchorDate.startOf('week').add(1, 'day');
     return Array.from({ length: 7 }, (_, index) => weekStart.add(index, 'day'));
+  }, [anchorDate, viewMode]);
+
+  const monthDays = useMemo(() => {
+    if (viewMode !== 'month') {
+      return [];
+    }
+
+    const monthStart = anchorDate.startOf('month');
+    const monthEnd = anchorDate.endOf('month');
+    const firstDay = monthStart.startOf('week').add(1, 'day');
+    const lastDay = monthEnd.endOf('week').add(1, 'day');
+    const totalDays = lastDay.diff(firstDay, 'day') + 1;
+
+    return Array.from({ length: totalDays }, (_, index) => {
+      const date = firstDay.add(index, 'day');
+      return {
+        date,
+        key: date.format('YYYY-MM-DD'),
+        isCurrentMonth: date.month() === anchorDate.month(),
+        isToday: date.isSame(dayjs(), 'day'),
+      };
+    });
   }, [anchorDate, viewMode]);
 
   const visibleAppointments = useMemo(() => {
@@ -74,6 +101,30 @@ export default function CalendarPage() {
       .filter(Boolean);
   }, [appointments, days, servicesById, clientsById]);
 
+  const monthAppointmentsByDay = useMemo(() => {
+    if (viewMode !== 'month') {
+      return new Map();
+    }
+
+    return appointments.reduce((grouped, appointment) => {
+      const start = dayjs(appointment.startAt);
+      const key = start.format('YYYY-MM-DD');
+      const service = servicesById.get(appointment.serviceId);
+      const client = clientsById.get(appointment.clientId);
+      const existing = grouped.get(key) ?? [];
+
+      existing.push({
+        id: appointment.id,
+        timeLabel: start.format('HH:mm'),
+        title: service?.name ?? t('calendarPage.unknownService'),
+        client: client?.fullName ?? t('calendarPage.unknownClient'),
+      });
+
+      grouped.set(key, existing.sort((a, b) => a.timeLabel.localeCompare(b.timeLabel)));
+      return grouped;
+    }, new Map());
+  }, [appointments, clientsById, servicesById, viewMode]);
+
   const hours = Array.from({ length: END_HOUR - START_HOUR }, (_, index) => START_HOUR + index);
 
   const calendarHeight = (END_HOUR - START_HOUR) * HOUR_HEIGHT;
@@ -82,11 +133,18 @@ export default function CalendarPage() {
   const headerLabel =
     viewMode === 'day'
       ? anchorDate.format('dddd, D MMMM YYYY')
-      : `${days[0].format('D MMM')} - ${days[days.length - 1].format('D MMM YYYY')}`;
+      : viewMode === 'month'
+        ? anchorDate.format('MMMM YYYY')
+        : `${days[0].format('D MMM')} - ${days[days.length - 1].format('D MMM YYYY')}`;
 
   const moveWindow = (direction) => {
     if (viewMode === 'day') {
       setAnchorDate((current) => current.add(direction, 'day'));
+      return;
+    }
+
+    if (viewMode === 'month') {
+      setAnchorDate((current) => current.add(direction, 'month'));
       return;
     }
 
@@ -131,6 +189,7 @@ export default function CalendarPage() {
             }}
             size="small"
           >
+            <ToggleButton value="month">{t('calendarPage.month')}</ToggleButton>
             <ToggleButton value="week">{t('calendarPage.week')}</ToggleButton>
             <ToggleButton value="day">{t('calendarPage.day')}</ToggleButton>
           </ToggleButtonGroup>
@@ -139,7 +198,45 @@ export default function CalendarPage() {
         {isLoading ? <p className="muted">{t('calendarPage.loading')}</p> : null}
         {!isLoading && error ? <p className="muted">{error}</p> : null}
 
-        {!isLoading && !error ? (
+        {!isLoading && !error && viewMode === 'month' ? (
+          <Box className="calendar-month-shell">
+            <div className="calendar-month-head">
+              {DAY_NAMES.map((dayName) => (
+                <div key={dayName} className="calendar-month-head-cell">
+                  {dayName}
+                </div>
+              ))}
+            </div>
+            <div className="calendar-month-grid">
+              {monthDays.map((day) => {
+                const dayAppointments = monthAppointmentsByDay.get(day.key) ?? [];
+
+                return (
+                  <article
+                    key={day.key}
+                    className={`calendar-month-day${day.isCurrentMonth ? '' : ' is-muted'}${day.isToday ? ' is-today' : ''}`}
+                  >
+                    <header>
+                      <span>{day.date.format('D')}</span>
+                    </header>
+                    <div className="calendar-month-events">
+                      {dayAppointments.length === 0 ? null : dayAppointments.slice(0, 3).map((appointment) => (
+                        <p key={appointment.id} className="calendar-month-event" title={`${appointment.title} · ${appointment.client}`}>
+                          <strong>{appointment.timeLabel}</strong> {appointment.title}
+                        </p>
+                      ))}
+                      {dayAppointments.length > 3 ? (
+                        <p className="calendar-month-more">+{dayAppointments.length - 3}</p>
+                      ) : null}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </Box>
+        ) : null}
+
+        {!isLoading && !error && viewMode !== 'month' ? (
           <Box className="calendar-shell" sx={{ ['--day-columns']: dayColumnCount, ['--calendar-height']: `${calendarHeight}px` }}>
             <div className="calendar-head">
               <div className="calendar-time-col" />
