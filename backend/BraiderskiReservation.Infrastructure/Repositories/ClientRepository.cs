@@ -21,7 +21,7 @@ public sealed class ClientRepository : IClientRepository
 
     public Task<List<ClientProfile>> SearchAsync(string? searchTerm, CancellationToken cancellationToken)
     {
-        var query = BuildClientQuery(includeDetails: false);
+        var query = BuildClientQuery(includeDetails: true);
         var normalizedSearch = NormalizeSearch(searchTerm);
 
         if (normalizedSearch is not null)
