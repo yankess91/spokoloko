@@ -9,11 +9,16 @@ public sealed class AppointmentService : IAppointmentService
 {
     private readonly IAppointmentRepository _appointmentRepository;
     private readonly IClientRepository _clientRepository;
+    private readonly IProductRepository _productRepository;
 
-    public AppointmentService(IAppointmentRepository appointmentRepository, IClientRepository clientRepository)
+    public AppointmentService(
+        IAppointmentRepository appointmentRepository,
+        IClientRepository clientRepository,
+        IProductRepository productRepository)
     {
         _appointmentRepository = appointmentRepository;
         _clientRepository = clientRepository;
+        _productRepository = productRepository;
     }
 
     public async Task<List<AppointmentResponse>> GetAllAsync(CancellationToken cancellationToken)
@@ -44,6 +49,9 @@ public sealed class AppointmentService : IAppointmentService
 
     public async Task<AppointmentResponse> CreateAsync(CreateAppointmentRequest request, CancellationToken cancellationToken)
     {
+        var normalizedProductIds = NormalizeProductIds(request.ProductIds);
+        await EnsureProductsExistAsync(normalizedProductIds, cancellationToken);
+
         var client = await _clientRepository.GetByIdAsync(request.ClientId, cancellationToken);
         if (client is null || !client.IsActive)
         {
@@ -57,7 +65,7 @@ public sealed class AppointmentService : IAppointmentService
             StartAt = request.StartAt,
             EndAt = request.EndAt,
             Notes = request.Notes,
-            AppointmentProducts = BuildAppointmentProducts(request.ProductIds)
+            AppointmentProducts = BuildAppointmentProducts(normalizedProductIds)
         };
 
         await _appointmentRepository.AddAsync(appointment, cancellationToken);
@@ -67,6 +75,9 @@ public sealed class AppointmentService : IAppointmentService
 
     public async Task<AppointmentResponse?> UpdateAsync(Guid id, UpdateAppointmentRequest request, CancellationToken cancellationToken)
     {
+        var normalizedProductIds = NormalizeProductIds(request.ProductIds);
+        await EnsureProductsExistAsync(normalizedProductIds, cancellationToken);
+
         var client = await _clientRepository.GetByIdAsync(request.ClientId, cancellationToken);
         if (client is null || !client.IsActive)
         {
@@ -86,7 +97,7 @@ public sealed class AppointmentService : IAppointmentService
         appointment.Notes = request.Notes;
         appointment.AppointmentProducts.Clear();
 
-        foreach (var appointmentProduct in BuildAppointmentProducts(request.ProductIds))
+        foreach (var appointmentProduct in BuildAppointmentProducts(normalizedProductIds))
         {
             appointment.AppointmentProducts.Add(appointmentProduct);
         }
@@ -107,9 +118,33 @@ public sealed class AppointmentService : IAppointmentService
         return true;
     }
 
-    private static List<AppointmentProduct> BuildAppointmentProducts(IEnumerable<Guid>? productIds) =>
+    private async Task EnsureProductsExistAsync(IReadOnlyCollection<Guid> productIds, CancellationToken cancellationToken)
+    {
+        if (productIds.Count == 0)
+        {
+            return;
+        }
+
+        var existingIds = await _productRepository.GetExistingIdsAsync(productIds, cancellationToken);
+        var missingIds = productIds.Except(existingIds).ToList();
+
+        if (missingIds.Count == 0)
+        {
+            return;
+        }
+
+        throw new InvalidOperationException(
+            $"Nie można przypisać produktów do wizyty. Brak produktów o ID: {string.Join(", ", missingIds)}");
+    }
+
+    private static List<Guid> NormalizeProductIds(IEnumerable<Guid>? productIds) =>
         (productIds ?? new List<Guid>())
+            .Where(id => id != Guid.Empty)
             .Distinct()
+            .ToList();
+
+    private static List<AppointmentProduct> BuildAppointmentProducts(IEnumerable<Guid> productIds) =>
+        productIds
             .Select(productId => new AppointmentProduct
             {
                 ProductId = productId
