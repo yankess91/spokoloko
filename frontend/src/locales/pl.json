@@ -13,7 +13,8 @@
     "clients": "Klienci",
     "appointments": "Wizyty",
     "products": "Produkty",
-    "services": "Usługi"
+    "services": "Usługi",
+    "calendar": "Kalendarz"
   },
   "footer": {
     "contactTitle": "Kontakt",
@@ -489,5 +490,18 @@
     "previous": "Poprzednia",
     "next": "Następna",
     "status": "Strona {current} z {total}"
+  },
+  "calendarPage": {
+    "title": "Kalendarz wizyt",
+    "subtitle": "Widok dzienny i tygodniowy z wizytami osadzonymi w konkretnych slotach godzinowych, podobnie jak w Google Calendar.",
+    "loading": "Ładowanie kalendarza...",
+    "unknownService": "Nieznana usługa",
+    "unknownClient": "Nieznany klient",
+    "today": "Dzisiaj",
+    "week": "Tydzień",
+    "day": "Dzień",
+    "previous": "Poprzedni zakres",
+    "next": "Następny zakres",
+    "noEvents": "Brak wizyt do wyświetlenia"
   }
 }
