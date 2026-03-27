@@ -45,6 +45,9 @@ export default function AppointmentList({
             <div className="data-grid-cell" role="cell">
               <div className="data-grid-title">{service?.name ?? t('appointmentList.unknownService')}</div>
               <div className="data-grid-meta">{appointment.notes || t('appointmentList.noNotes')}</div>
+              <div className="data-grid-meta">
+                {t('appointmentList.usedProducts', { count: appointment.usedProducts?.length ?? 0 })}
+              </div>
             </div>
             <div className="data-grid-cell" role="cell">
               <span className="data-grid-title">{formatDate(appointment.startAt)}</span>
