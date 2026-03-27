@@ -97,6 +97,8 @@ public sealed class AppointmentService : IAppointmentService
         appointment.EndAt = request.EndAt;
         appointment.Notes = request.Notes;
 
+        appointment.AppointmentProducts.Clear();
+
         foreach (var appointmentProduct in BuildAppointmentProducts(normalizedProductIds))
         {
             appointment.AppointmentProducts.Add(appointmentProduct);
