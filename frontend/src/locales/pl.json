@@ -493,11 +493,12 @@
   },
   "calendarPage": {
     "title": "Kalendarz wizyt",
-    "subtitle": "Widok dzienny i tygodniowy z wizytami osadzonymi w konkretnych slotach godzinowych, podobnie jak w Google Calendar.",
+    "subtitle": "Widok miesięczny, tygodniowy i dzienny z wizytami osadzonymi w konkretnych slotach godzinowych.",
     "loading": "Ładowanie kalendarza...",
     "unknownService": "Nieznana usługa",
     "unknownClient": "Nieznany klient",
     "today": "Dzisiaj",
+    "month": "Miesiąc",
     "week": "Tydzień",
     "day": "Dzień",
     "previous": "Poprzedni zakres",
