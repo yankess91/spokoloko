@@ -1176,3 +1176,122 @@ button:focus-visible {
     align-items: flex-start;
   }
 }
+
+
+.calendar-view {
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+  overflow-x: auto;
+}
+
+.calendar-shell {
+  display: grid;
+  gap: 0;
+  min-width: 760px;
+}
+
+.calendar-head {
+  display: grid;
+  grid-template-columns: 70px repeat(var(--day-columns), minmax(130px, 1fr));
+}
+
+.calendar-time-col {
+  border-right: 1px solid var(--color-border);
+}
+
+.calendar-day-head {
+  border: 1px solid var(--color-border);
+  border-left: none;
+  padding: 8px 10px;
+  background: var(--color-surface-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-transform: capitalize;
+}
+
+.calendar-body {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  position: relative;
+}
+
+.calendar-hours {
+  border-right: 1px solid var(--color-border);
+}
+
+.calendar-hour-label {
+  height: 72px;
+  border-bottom: 1px solid var(--color-border);
+  padding: 6px 8px;
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.calendar-grid-area {
+  position: relative;
+}
+
+.calendar-grid-lines {
+  display: grid;
+  grid-template-rows: repeat(calc(22 - 7), 72px);
+}
+
+.calendar-grid-line {
+  border-bottom: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  background-image: linear-gradient(
+    to right,
+    transparent 0,
+    transparent calc((100% / var(--day-columns)) - 1px),
+    var(--color-border) calc((100% / var(--day-columns)) - 1px),
+    var(--color-border) calc(100% / var(--day-columns))
+  );
+  background-size: calc(100% / var(--day-columns)) 100%;
+}
+
+.calendar-events-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.calendar-event-card {
+  position: absolute;
+  border-radius: 10px;
+  border: 1px solid rgba(163, 123, 18, 0.65);
+  background: rgba(201, 162, 39, 0.22);
+  padding: 6px 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 14px rgba(15, 23, 42, 0.08);
+}
+
+.calendar-event-title,
+.calendar-event-client,
+.calendar-event-time {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.calendar-event-title {
+  font-weight: 700;
+}
+
+.calendar-event-client {
+  color: #4c4c4c;
+}
+
+.calendar-event-time {
+  color: #6a5210;
+}
+
+.calendar-empty {
+  position: absolute;
+  inset: 12px;
+  display: grid;
+  place-items: center;
+  color: var(--color-muted);
+  font-weight: 600;
+  pointer-events: none;
+}

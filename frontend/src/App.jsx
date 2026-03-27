@@ -15,6 +15,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import AppointmentDetailsPage from './pages/AppointmentDetailsPage';
 import AppointmentsPage from './pages/AppointmentsPage';
+import CalendarPage from './pages/CalendarPage';
 import ClientDetailsPage from './pages/ClientDetailsPage';
 import ClientsPage from './pages/ClientsPage';
 import DashboardPage from './pages/DashboardPage';
@@ -30,6 +31,7 @@ import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
 import EventAvailableRoundedIcon from '@mui/icons-material/EventAvailableRounded';
 import Inventory2RoundedIcon from '@mui/icons-material/Inventory2Rounded';
 import DesignServicesRoundedIcon from '@mui/icons-material/DesignServicesRounded';
+import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookRoundedIcon from '@mui/icons-material/FacebookRounded';
@@ -72,6 +74,11 @@ export default function App() {
       label: t('nav.appointments'),
       to: '/appointments',
       icon: <EventAvailableRoundedIcon fontSize="small" />,
+    },
+    {
+      label: t('nav.calendar'),
+      to: '/calendar',
+      icon: <CalendarMonthRoundedIcon fontSize="small" />,
     },
     {
       label: t('nav.products'),
@@ -287,6 +294,7 @@ export default function App() {
           <Route path="/services/:id" element={<ServiceDetailsPage />} />
           <Route path="/appointments" element={<AppointmentsPage />} />
           <Route path="/appointments/:id" element={<AppointmentDetailsPage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
         </Route>
       </Routes>
 
