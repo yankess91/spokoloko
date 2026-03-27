@@ -1,8 +1,7 @@
 using BraiderskiReservation.Api.Application.DTOs;
 using BraiderskiReservation.Api.Application.Interfaces;
-using System.Linq;
-using BraiderskiReservation.Domain.Interfaces;
 using BraiderskiReservation.Domain.Entities;
+using BraiderskiReservation.Domain.Interfaces;
 
 namespace BraiderskiReservation.Api.Application.Services;
 

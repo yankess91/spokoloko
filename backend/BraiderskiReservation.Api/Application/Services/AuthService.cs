@@ -1,14 +1,13 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using BraiderskiReservation.Api.Application.DTOs;
 using BraiderskiReservation.Api.Application.Interfaces;
 using BraiderskiReservation.Api.Application.Settings;
 using BraiderskiReservation.Domain.Entities;
 using BraiderskiReservation.Domain.Interfaces;
-using BCrypt.Net;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace BraiderskiReservation.Api.Application.Services;
 

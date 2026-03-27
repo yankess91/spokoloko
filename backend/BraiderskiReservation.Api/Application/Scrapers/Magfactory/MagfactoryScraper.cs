@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 
 namespace BraiderskiReservation.Api.Application.Scrapers.Magfactory;
 
-
 public class MagfactoryListingScraper(HttpClient http, IMagfactoryImageUrlProvider magfactoryImageUrlProvider) : IListingScraper
 {
     public string Name => "Magfactory";

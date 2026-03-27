@@ -1,8 +1,8 @@
-using System.Text.Json;
 using BraiderskiReservation.Api.Application.Common;
 using BraiderskiReservation.Api.Middleware;
 using BraiderskiReservation.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace BraiderskiReservation.Api.Configuration;
 

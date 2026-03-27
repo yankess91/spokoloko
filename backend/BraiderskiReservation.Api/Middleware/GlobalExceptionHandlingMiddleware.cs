@@ -1,6 +1,6 @@
+using BraiderskiReservation.Api.Application.Common;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
-using BraiderskiReservation.Api.Application.Common;
 
 namespace BraiderskiReservation.Api.Middleware;
 

@@ -1,4 +1,3 @@
-using System.Text;
 using BraiderskiReservation.Api.Application.Interfaces;
 using BraiderskiReservation.Api.Application.Scrapers;
 using BraiderskiReservation.Api.Application.Scrapers.AltHair;
@@ -13,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace BraiderskiReservation.Api.Configuration;
 
