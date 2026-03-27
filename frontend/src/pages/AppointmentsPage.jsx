@@ -139,7 +139,7 @@ export default function AppointmentsPage() {
       service: service ? { id: service.id, label: service.name } : null,
       startAt: dayjs(appointment.startAt),
       endAt: dayjs(appointment.endAt),
-      selectedProducts: (appointment.products ?? []).map((product) => ({
+      selectedProducts: (appointment.usedProducts ?? appointment.products ?? []).map((product) => ({
         id: product.id,
         label: product.brand ? `${product.name} (${product.brand})` : product.name
       }))

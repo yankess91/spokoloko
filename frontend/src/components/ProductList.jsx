@@ -5,8 +5,6 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import CloseIcon from '@mui/icons-material/Close';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import { formatCurrency, formatDate } from '../utils/formatters';
 import { t } from '../utils/i18n';
 
@@ -29,29 +27,22 @@ export default function ProductList({ products, isLoading, linkBase, onEdit, onD
         <span className="data-grid-cell" role="columnheader">{t('productList.columns.product')}</span>
         <span className="data-grid-cell" role="columnheader">{t('productList.columns.manufacturer')}</span>
         <span className="data-grid-cell" role="columnheader">{t('productList.columns.price')}</span>
-        <span className="data-grid-cell" role="columnheader">{t('productList.columns.availability')}</span>
         <span className="data-grid-cell" role="columnheader">{t('productList.columns.availabilityCheckedAt')}</span>
         <span className="data-grid-cell" role="columnheader">{t('productList.columns.image')}</span>
         <span className="data-grid-cell" role="columnheader">{t('productList.columns.actions')}</span>
       </div>
       {products.map((product) => (
-        <div key={product.id} className="data-grid-row" role="row">
+        <div
+          key={product.id}
+          className={`data-grid-row ${product.isAvailable ? 'product-row-available' : 'product-row-unavailable'}`}
+          role="row"
+        >
           <div className="data-grid-cell" role="cell">
             <div className="data-grid-title">{product.name}</div>
             <div className="data-grid-meta">{product.notes || t('productList.noNotes')}</div>
           </div>
           <div className="data-grid-cell" role="cell">{product.brand || t('productList.noBrand')}</div>
           <div className="data-grid-cell" role="cell">{formatCurrency(product.price)}</div>
-          <div className="data-grid-cell" role="cell">
-            {product.isAvailable ? (
-              <CheckBoxIcon aria-label={t('productList.available')} titleAccess={t('productList.available')} />
-            ) : (
-              <CheckBoxOutlineBlankIcon
-                aria-label={t('productList.unavailable')}
-                titleAccess={t('productList.unavailable')}
-              />
-            )}
-          </div>
           <div className="data-grid-cell" role="cell">
             {product.availabilityCheckedAt ? formatDate(product.availabilityCheckedAt) : t('productList.noAvailabilityDate')}
           </div>
