@@ -2,6 +2,7 @@ using BraiderskiReservation.Api.Application.DTOs;
 using BraiderskiReservation.Api.Application.Interfaces;
 using BraiderskiReservation.Domain.Entities;
 using BraiderskiReservation.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace BraiderskiReservation.Api.Application.Services;
 
@@ -95,14 +96,16 @@ public sealed class AppointmentService : IAppointmentService
         appointment.StartAt = request.StartAt;
         appointment.EndAt = request.EndAt;
         appointment.Notes = request.Notes;
-        appointment.AppointmentProducts.Clear();
 
         foreach (var appointmentProduct in BuildAppointmentProducts(normalizedProductIds))
         {
             appointment.AppointmentProducts.Add(appointmentProduct);
+
         }
 
         await _appointmentRepository.SaveChangesAsync(cancellationToken);
+
+
         return appointment.ToResponse();
     }
 
@@ -147,6 +150,7 @@ public sealed class AppointmentService : IAppointmentService
         productIds
             .Select(productId => new AppointmentProduct
             {
+                Id = new Guid(),
                 ProductId = productId
             })
             .ToList();
