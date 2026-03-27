@@ -4,6 +4,8 @@ namespace BraiderskiReservation.Domain.Interfaces;
 
 public interface IProductRepository
 {
+    Task<List<Guid>> GetExistingIdsAsync(IEnumerable<Guid> productIds, CancellationToken cancellationToken);
+
     Task<List<Product>> GetAllAsync(CancellationToken cancellationToken);
 
     Task<List<Product>> GetByBrandAsync(string brandName, CancellationToken cancellationToken);

@@ -20,6 +20,25 @@ public sealed class ProductRepository : IProductRepository
             .ThenBy(product => product.Brand)
             .ToListAsync(cancellationToken);
 
+    public Task<List<Guid>> GetExistingIdsAsync(IEnumerable<Guid> productIds, CancellationToken cancellationToken)
+    {
+        var normalizedIds = (productIds ?? Array.Empty<Guid>())
+            .Where(id => id != Guid.Empty)
+            .Distinct()
+            .ToList();
+
+        if (normalizedIds.Count == 0)
+        {
+            return Task.FromResult(new List<Guid>());
+        }
+
+        return _context.Products
+            .AsNoTracking()
+            .Where(product => normalizedIds.Contains(product.Id))
+            .Select(product => product.Id)
+            .ToListAsync(cancellationToken);
+    }
+
     public Task<List<Product>> GetByBrandAsync(string brandName, CancellationToken cancellationToken) =>
         _context.Products
             .Where(product => product.Brand == brandName)
