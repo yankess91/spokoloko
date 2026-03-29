@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { t } from '../utils/i18n';
 
-export default function HeroSection({ summary, upcomingAppointment, isLoading }) {
+export default function HeroSection({ summary, upcomingAppointment, nextDayRevenueEstimate, isLoading }) {
   return (
     <header className="hero">
       <div className="hero-main">
@@ -47,9 +47,15 @@ export default function HeroSection({ summary, upcomingAppointment, isLoading })
             <Link className="secondary" to={`/appointments/${upcomingAppointment.id}`}>
               {t('hero.viewDetails')}
             </Link>
+            <p className="muted">{t('hero.nextDayRevenueTitle')}</p>
+            <p>{nextDayRevenueEstimate}</p>
           </>
         ) : (
-          <p className="muted">{t('hero.noAppointments')}</p>
+          <>
+            <p className="muted">{t('hero.noAppointments')}</p>
+            <p className="muted">{t('hero.nextDayRevenueTitle')}</p>
+            <p>{nextDayRevenueEstimate}</p>
+          </>
         )}
       </div>
     </header>

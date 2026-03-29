@@ -6,10 +6,11 @@ import ProductList from '../components/ProductList';
 import ServiceList from '../components/ServiceList';
 import useAppointments from '../hooks/useAppointments';
 import useNearestUpcomingAppointment from '../hooks/useNearestUpcomingAppointment';
+import useNextDayRevenueEstimate from '../hooks/useNextDayRevenueEstimate';
 import useClients from '../hooks/useClients';
 import useProducts from '../hooks/useProducts';
 import useServices from '../hooks/useServices';
-import { formatDate, formatTime } from '../utils/formatters';
+import { formatCurrencyRange, formatDate, formatTime } from '../utils/formatters';
 import { useToast } from '../components/ToastProvider';
 import { t } from '../utils/i18n';
 
@@ -24,6 +25,11 @@ export default function DashboardPage() {
     isLoading: nearestUpcomingAppointmentLoading,
     error: nearestUpcomingAppointmentError
   } = useNearestUpcomingAppointment();
+  const {
+    estimate: nextDayRevenueEstimate,
+    isLoading: nextDayRevenueEstimateLoading,
+    error: nextDayRevenueEstimateError
+  } = useNextDayRevenueEstimate();
   const { showToast } = useToast();
 
   const isLoading =
@@ -31,14 +37,16 @@ export default function DashboardPage() {
     productsLoading ||
     servicesLoading ||
     appointmentsLoading ||
-    nearestUpcomingAppointmentLoading;
+    nearestUpcomingAppointmentLoading ||
+    nextDayRevenueEstimateLoading;
 
   const error =
     clientsError ||
     productsError ||
     servicesError ||
     appointmentsError ||
-    nearestUpcomingAppointmentError;
+    nearestUpcomingAppointmentError ||
+    nextDayRevenueEstimateError;
 
   useEffect(() => {
     if (error) {
@@ -92,6 +100,22 @@ export default function DashboardPage() {
     };
   }, [nearestUpcomingAppointment, clientsById, servicesById]);
 
+  const formattedNextDayRevenueEstimate = useMemo(() => {
+    if (!nextDayRevenueEstimate) {
+      return t('hero.loading');
+    }
+
+    const amount = formatCurrencyRange(
+      nextDayRevenueEstimate.amountFrom,
+      nextDayRevenueEstimate.amountTo
+    );
+
+    return t('hero.nextDayRevenueValue', {
+      amount,
+      appointmentsCount: nextDayRevenueEstimate.appointmentsCount
+    });
+  }, [nextDayRevenueEstimate]);
+
   return (
     <div className="page-content">
       <HeroSection
@@ -101,6 +125,7 @@ export default function DashboardPage() {
           products: products.length
         }}
         upcomingAppointment={upcomingAppointment}
+        nextDayRevenueEstimate={formattedNextDayRevenueEstimate}
         isLoading={isLoading}
       />
 

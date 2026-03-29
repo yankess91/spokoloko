@@ -41,7 +41,7 @@ export default function CalendarPage() {
       return [];
     }
 
-    const weekStart = anchorDate.startOf('week').add(1, 'day');
+    const weekStart = anchorDate.startOf('week');
     return Array.from({ length: 7 }, (_, index) => weekStart.add(index, 'day'));
   }, [anchorDate, viewMode]);
 
@@ -52,8 +52,8 @@ export default function CalendarPage() {
 
     const monthStart = anchorDate.startOf('month');
     const monthEnd = anchorDate.endOf('month');
-    const firstDay = monthStart.startOf('week').add(1, 'day');
-    const lastDay = monthEnd.endOf('week').add(1, 'day');
+    const firstDay = monthStart.startOf('week');
+    const lastDay = monthEnd.endOf('week');
     const totalDays = lastDay.diff(firstDay, 'day') + 1;
 
     return Array.from({ length: totalDays }, (_, index) => {
