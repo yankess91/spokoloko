@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace BraiderskiReservation.Api.Controllers;
 
 [ApiController]
-[Authorize]
 [Route("api/scraping")]
 public sealed class ScrapingController(
     IScrapingImportService scrapingImportService,
