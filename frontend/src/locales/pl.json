@@ -224,7 +224,9 @@
     "serviceLabel": "Usługa: {name}",
     "dateLabel": "Termin: {date}, {time}",
     "viewDetails": "Zobacz szczegóły",
-    "noAppointments": "Brak zaplanowanych wizyt."
+    "noAppointments": "Brak zaplanowanych wizyt.",
+    "nextDayRevenueTitle": "Szacowane przychody na kolejny dzień",
+    "nextDayRevenueValue": "{amount} · wizyty: {appointmentsCount}"
   },
   "clientForm": {
     "title": "Dodaj klienta",

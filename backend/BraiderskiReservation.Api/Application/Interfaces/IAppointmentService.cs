@@ -8,6 +8,8 @@ public interface IAppointmentService
 
     Task<AppointmentResponse?> GetNearestUpcomingAsync(CancellationToken cancellationToken);
 
+    Task<NextDayRevenueEstimateResponse> GetNextDayRevenueEstimateAsync(CancellationToken cancellationToken);
+
     Task<AppointmentResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 
     Task<AppointmentResponse> CreateAsync(CreateAppointmentRequest request, CancellationToken cancellationToken);

@@ -11,6 +11,10 @@ export default class AppointmentsApi {
     return this.client.get('/api/appointments/nearest-upcoming');
   }
 
+  getNextDayRevenueEstimate() {
+    return this.client.get('/api/appointments/next-day-revenue-estimate');
+  }
+
   getById(id) {
     return this.client.get(`/api/appointments/${id}`);
   }

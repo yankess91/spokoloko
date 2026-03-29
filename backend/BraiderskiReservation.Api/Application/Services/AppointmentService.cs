@@ -11,15 +11,18 @@ public sealed class AppointmentService : IAppointmentService
     private readonly IAppointmentRepository _appointmentRepository;
     private readonly IClientRepository _clientRepository;
     private readonly IProductRepository _productRepository;
+    private readonly IServiceRepository _serviceRepository;
 
     public AppointmentService(
         IAppointmentRepository appointmentRepository,
         IClientRepository clientRepository,
-        IProductRepository productRepository)
+        IProductRepository productRepository,
+        IServiceRepository serviceRepository)
     {
         _appointmentRepository = appointmentRepository;
         _clientRepository = clientRepository;
         _productRepository = productRepository;
+        _serviceRepository = serviceRepository;
     }
 
     public async Task<List<AppointmentResponse>> GetAllAsync(CancellationToken cancellationToken)
@@ -35,6 +38,36 @@ public sealed class AppointmentService : IAppointmentService
     {
         var appointment = await _appointmentRepository.GetNearestUpcomingAsync(DateTime.UtcNow, cancellationToken);
         return appointment?.ToResponse();
+    }
+
+    public async Task<NextDayRevenueEstimateResponse> GetNextDayRevenueEstimateAsync(CancellationToken cancellationToken)
+    {
+        var tomorrowStart = DateTime.UtcNow.Date.AddDays(1);
+        var tomorrowEnd = tomorrowStart.AddDays(1);
+
+        var appointments = await _appointmentRepository.GetAllAsync(cancellationToken);
+        var services = await _serviceRepository.GetAllAsync(cancellationToken);
+
+        var servicesById = services.ToDictionary(service => service.Id);
+
+        var nextDayAppointments = appointments
+            .Where(appointment => appointment.ClientProfile?.IsActive != false)
+            .Where(appointment => appointment.StartAt >= tomorrowStart && appointment.StartAt < tomorrowEnd)
+            .ToList();
+
+        var amountFrom = nextDayAppointments
+            .Where(appointment => servicesById.ContainsKey(appointment.ServiceId))
+            .Sum(appointment => servicesById[appointment.ServiceId].PriceFrom);
+
+        var amountTo = nextDayAppointments
+            .Where(appointment => servicesById.ContainsKey(appointment.ServiceId))
+            .Sum(appointment => servicesById[appointment.ServiceId].PriceTo);
+
+        return new NextDayRevenueEstimateResponse(
+            DateOnly.FromDateTime(tomorrowStart),
+            amountFrom,
+            amountTo,
+            nextDayAppointments.Count);
     }
 
     public async Task<AppointmentResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken)

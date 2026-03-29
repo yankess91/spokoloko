@@ -28,6 +28,10 @@ public sealed class AppointmentsController : ControllerBase
         return appointment is null ? NotFound() : Ok(appointment);
     }
 
+    [HttpGet("next-day-revenue-estimate")]
+    public async Task<ActionResult<NextDayRevenueEstimateResponse>> GetNextDayRevenueEstimate(CancellationToken cancellationToken) =>
+        Ok(await _appointmentService.GetNextDayRevenueEstimateAsync(cancellationToken));
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<AppointmentResponse>> GetById(Guid id, CancellationToken cancellationToken)
     {
