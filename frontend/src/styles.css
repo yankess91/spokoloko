@@ -396,6 +396,71 @@ a:focus-visible {
   gap: 14px;
 }
 
+.detail-fields {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.detail-field-item {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-muted);
+}
+
+.detail-field-item dt {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
+  font-weight: 700;
+}
+
+.detail-field-item dd {
+  margin: 0;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.detail-field-item-notes dd {
+  white-space: pre-wrap;
+}
+
+.history-list {
+  gap: 14px;
+}
+
+.history-list-item {
+  gap: 10px !important;
+}
+
+.history-list-item-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.history-date-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 162, 39, 0.35);
+  background: rgba(201, 162, 39, 0.14);
+  color: var(--color-text);
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .detail-stack-list {
   margin-top: 4px;
   margin-bottom: 8px;

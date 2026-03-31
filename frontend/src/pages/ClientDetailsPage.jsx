@@ -5,6 +5,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import EventAvailableRoundedIcon from '@mui/icons-material/EventAvailableRounded';
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
+import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
+import PhoneRoundedIcon from '@mui/icons-material/PhoneRounded';
+import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded';
+import VerifiedUserRoundedIcon from '@mui/icons-material/VerifiedUserRounded';
 import useClientDetails from '../hooks/useClientDetails';
 import { appointmentsApi } from '../api';
 import AppointmentForm from '../components/AppointmentForm';
@@ -57,6 +61,8 @@ export default function ClientDetailsPage() {
     return <div className="page-content" />;
   }
 
+  const stripDetailLabel = (label) => label.replace(/\{.*?\}/g, '').replace(/:\s*$/, '').trim();
+
   return (
     <div className="page-content">
       <header className="section-header detail-header modern-surface">
@@ -87,45 +93,55 @@ export default function ClientDetailsPage() {
       <section className="grid detail-grid">
         <article className="card detail-card">
           <h2>{t('clientDetails.contactTitle')}</h2>
-          <p>
-            {t('clientDetails.emailLabel', {
-              value: client.email || t('clientDetails.noEmail'),
-            })}
-          </p>
-          <p>
-            {t('clientDetails.phoneLabel', {
-              value: client.phoneNumber || t('clientDetails.noPhone'),
-            })}
-          </p>
-          <p>
-            {t('clientDetails.notesLabel', {
-              value: client.notes || t('clientDetails.noNotes'),
-            })}
-          </p>
-          <p>
-            {t('clientDetails.statusLabel', {
-              value: client.isActive ? t('clientDetails.activeStatus') : t('clientDetails.inactiveStatus'),
-            })}
-          </p>
+          <dl className="detail-fields">
+            <div className="detail-field-item">
+              <dt>
+                <EmailRoundedIcon fontSize="small" />
+                {stripDetailLabel(t('clientDetails.emailLabel', { value: '' }))}
+              </dt>
+              <dd>{client.email || t('clientDetails.noEmail')}</dd>
+            </div>
+            <div className="detail-field-item">
+              <dt>
+                <PhoneRoundedIcon fontSize="small" />
+                {stripDetailLabel(t('clientDetails.phoneLabel', { value: '' }))}
+              </dt>
+              <dd>{client.phoneNumber || t('clientDetails.noPhone')}</dd>
+            </div>
+            <div className="detail-field-item detail-field-item-notes">
+              <dt>
+                <DescriptionRoundedIcon fontSize="small" />
+                {stripDetailLabel(t('clientDetails.notesLabel', { value: '' }))}
+              </dt>
+              <dd>{client.notes || t('clientDetails.noNotes')}</dd>
+            </div>
+            <div className="detail-field-item">
+              <dt>
+                <VerifiedUserRoundedIcon fontSize="small" />
+                {stripDetailLabel(t('clientDetails.statusLabel', { value: '' }))}
+              </dt>
+              <dd>{client.isActive ? t('clientDetails.activeStatus') : t('clientDetails.inactiveStatus')}</dd>
+            </div>
+          </dl>
         </article>
         <article className="card detail-card">
           <h2>{t('clientDetails.serviceHistory')}</h2>
           {!client.isActive ? (
             <p className="muted">{t('clientsPage.statusInactive')}</p>
           ) : client.serviceHistory?.length ? (
-            <ul className="list stacked detail-stack-list">
+            <ul className="list stacked detail-stack-list history-list">
               {client.serviceHistory.map((history) => (
-                <li key={history.appointmentId}>
-                  <span className="list-title">{history.service?.name || t('clientDetails.unknownService')}</span>
+                <li key={history.appointmentId} className="history-list-item">
+                  <div className="history-list-item-header">
+                    <span className="list-title">{history.service?.name || t('clientDetails.unknownService')}</span>
+                    <span className="history-date-pill">
+                      {history.startAt
+                        ? new Date(history.startAt).toLocaleDateString('pl-PL')
+                        : t('clientDetails.noDate')}
+                    </span>
+                  </div>
                   <span className="muted">
-                    {history.startAt
-                      ? new Date(history.startAt).toLocaleDateString('pl-PL')
-                      : t('clientDetails.noDate')}
-                  </span>
-                  <span className="muted">
-                    {t('clientDetails.historyNotesLabel', {
-                      value: history.notes || t('clientDetails.noNotes'),
-                    })}
+                    {t('clientDetails.historyNotesLabel', { value: history.notes || t('clientDetails.noNotes') })}
                   </span>
                   {history.usedProducts?.length ? (
                     <ul className="list stacked detail-stack-list">
