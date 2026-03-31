@@ -91,9 +91,12 @@ export default function AppointmentDetailsPage() {
         <article className="card">
           <h2>{t('appointmentDetails.infoTitle')}</h2>
           <p>
-            {t('appointmentDetails.clientLabel', {
-              value: client?.fullName ?? t('appointmentDetails.unknownClient'),
-            })}
+            {t('appointmentDetails.clientLabel')}{' '}
+            {client ? (
+              <Link to={`/clients/${client.id}`}>{client.fullName}</Link>
+            ) : (
+              t('appointmentDetails.unknownClient')
+            )}
           </p>
           <p>
             {t('appointmentDetails.serviceLabel', {
