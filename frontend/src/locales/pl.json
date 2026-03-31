@@ -433,7 +433,7 @@
     "toastUpdated": "Wizyta została zaktualizowana.",
     "toastUpdateError": "Nie udało się zaktualizować wizyty.",
     "infoTitle": "Informacje",
-    "clientLabel": "Klient: {value}",
+    "clientLabel": "Klient:",
     "unknownClient": "Nieznany klient",
     "serviceLabel": "Usługa: {value}",
     "unknownService": "Nieznana usługa",
