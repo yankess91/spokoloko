@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace BraiderskiReservation.Api.Application.Scrapers.Magfactory;
 
-public class MagfactoryListingScraper(HttpClient http, IMagfactoryImageUrlProvider magfactoryImageUrlProvider) : IListingScraper
+public class MagfactoryListingScraper(HttpClient http, IMagfactoryImageUrlProvider magfactoryImageUrlProvider, ILocalImageStorage localImageStorage) : IListingScraper
 {
     public string Name => "Magfactory";
 
@@ -88,9 +88,10 @@ public class MagfactoryListingScraper(HttpClient http, IMagfactoryImageUrlProvid
             string? imgUrl = null;
             try
             {
-                imgUrl = await magfactoryImageUrlProvider.GetMainImageUrlAsync(productUrl, ct);
+                var externalImageUrl = await magfactoryImageUrlProvider.GetMainImageUrlAsync(productUrl, ct);
+                imgUrl = await localImageStorage.SaveFromUrlIfNeededAsync(externalImageUrl, Name, ct);
             }
-            catch (Exception ex)
+            catch
             {
                 continue;
             }

@@ -24,3 +24,6 @@ obj/
 # Logs
 logs/
 *.log
+
+# Scraped images cache
+backend/BraiderskiReservation.Api/wwwroot/scraped-images/
