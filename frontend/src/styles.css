@@ -338,6 +338,84 @@ a:focus-visible {
   gap: 8px;
 }
 
+.modern-surface {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(239, 233, 220, 0.8));
+  border: 1px solid var(--color-border);
+  border-radius: 22px;
+  padding: clamp(18px, 2vw, 28px);
+  box-shadow: var(--shadow-sm);
+}
+
+.detail-header {
+  gap: 12px;
+}
+
+.detail-header-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.detail-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 7px 14px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.detail-badge.is-accent {
+  background: rgba(201, 162, 39, 0.15);
+  border-color: rgba(201, 162, 39, 0.5);
+}
+
+.detail-badge.is-success {
+  background: rgba(29, 138, 90, 0.12);
+  border-color: rgba(29, 138, 90, 0.45);
+}
+
+.detail-badge.is-muted {
+  background: var(--color-surface);
+  color: var(--color-muted);
+}
+
+.detail-actions {
+  margin-top: 8px;
+}
+
+.detail-grid {
+  grid-template-columns: minmax(280px, 1.05fr) minmax(280px, 0.95fr);
+}
+
+.detail-card {
+  gap: 14px;
+}
+
+.detail-stack-list {
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.detail-main-image {
+  width: 100%;
+  max-width: none;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: #ffffff;
+}
+
+.detail-inline-form {
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface-muted);
+}
+
 .section-actions {
   display: flex;
   flex-wrap: wrap;
@@ -1177,6 +1255,10 @@ button:focus-visible {
 
   .section {
     padding: 24px;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
   }
 }
 
