@@ -6,6 +6,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import EventAvailableRoundedIcon from '@mui/icons-material/EventAvailableRounded';
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
+import SpaRoundedIcon from '@mui/icons-material/SpaRounded';
+import ScheduleRoundedIcon from '@mui/icons-material/ScheduleRounded';
+import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded';
 import useAppointmentDetails from '../hooks/useAppointmentDetails';
 import useClients from '../hooks/useClients';
 import useServices from '../hooks/useServices';
@@ -43,6 +47,8 @@ export default function AppointmentDetailsPage() {
   if (error) {
     return <div className="page-content" />;
   }
+
+  const stripDetailLabel = (label) => label.replace(/\{.*?\}/g, '').replace(/:\s*$/, '').trim();
 
   const client = clients.find((item) => item.id === appointment.clientId);
   const service = services.find((item) => item.id === appointment.serviceId);
@@ -103,32 +109,51 @@ export default function AppointmentDetailsPage() {
       <section className="grid detail-grid">
         <article className="card detail-card">
           <h2>{t('appointmentDetails.infoTitle')}</h2>
-          <p>
-            {t('appointmentDetails.clientLabel')}{' '}
-            {client ? <Link to={`/clients/${client.id}`}>{client.fullName}</Link> : t('appointmentDetails.unknownClient')}
-          </p>
-          <p>
-            {t('appointmentDetails.serviceLabel', {
-              value: service?.name ?? t('appointmentDetails.unknownService'),
-            })}
-          </p>
-          <p>
-            {t('appointmentDetails.dateLabel', {
-              value: formatDate(appointment.startAt),
-              time: appointment.startAt ? `, ${formatTime(appointment.startAt)}` : '',
-            })}
-          </p>
-          <p>
-            {t('appointmentDetails.endLabel', {
-              value: formatDate(appointment.endAt),
-              time: appointment.endAt ? `, ${formatTime(appointment.endAt)}` : '',
-            })}
-          </p>
-          <p>
-            {t('appointmentDetails.notesLabel', {
-              value: appointment.notes || t('appointmentDetails.noNotes'),
-            })}
-          </p>
+          <dl className="detail-fields">
+            <div className="detail-field-item">
+              <dt>
+                <PersonRoundedIcon fontSize="small" />
+                {t('appointmentDetails.clientLabel')}
+              </dt>
+              <dd>
+                {client ? <Link to={`/clients/${client.id}`}>{client.fullName}</Link> : t('appointmentDetails.unknownClient')}
+              </dd>
+            </div>
+            <div className="detail-field-item">
+              <dt>
+                <SpaRoundedIcon fontSize="small" />
+                {stripDetailLabel(t('appointmentDetails.serviceLabel', { value: '' }))}
+              </dt>
+              <dd>{service?.name ?? t('appointmentDetails.unknownService')}</dd>
+            </div>
+            <div className="detail-field-item">
+              <dt>
+                <EventAvailableRoundedIcon fontSize="small" />
+                {stripDetailLabel(t('appointmentDetails.dateLabel', { value: '', time: '' }))}
+              </dt>
+              <dd>
+                {formatDate(appointment.startAt)}
+                {appointment.startAt ? `, ${formatTime(appointment.startAt)}` : ''}
+              </dd>
+            </div>
+            <div className="detail-field-item">
+              <dt>
+                <ScheduleRoundedIcon fontSize="small" />
+                {stripDetailLabel(t('appointmentDetails.endLabel', { value: '', time: '' }))}
+              </dt>
+              <dd>
+                {formatDate(appointment.endAt)}
+                {appointment.endAt ? `, ${formatTime(appointment.endAt)}` : ''}
+              </dd>
+            </div>
+            <div className="detail-field-item detail-field-item-notes">
+              <dt>
+                <DescriptionRoundedIcon fontSize="small" />
+                {stripDetailLabel(t('appointmentDetails.notesLabel', { value: '' }))}
+              </dt>
+              <dd>{appointment.notes || t('appointmentDetails.noNotes')}</dd>
+            </div>
+          </dl>
         </article>
         <article className="card detail-card">
           <h2>{t('appointmentDetails.productsTitle')}</h2>
