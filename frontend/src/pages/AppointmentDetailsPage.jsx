@@ -4,6 +4,8 @@ import dayjs from 'dayjs';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import CloseIcon from '@mui/icons-material/Close';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
+import EventAvailableRoundedIcon from '@mui/icons-material/EventAvailableRounded';
 import useAppointmentDetails from '../hooks/useAppointmentDetails';
 import useClients from '../hooks/useClients';
 import useServices from '../hooks/useServices';
@@ -52,8 +54,8 @@ export default function AppointmentDetailsPage() {
     endAt: dayjs(appointment.endAt),
     selectedProducts: (appointment.usedProducts ?? []).map((product) => ({
       id: product.id,
-      label: product.brand ? `${product.name} (${product.brand})` : product.name
-    }))
+      label: product.brand ? `${product.name} (${product.brand})` : product.name,
+    })),
   };
 
   const handleSubmit = async (payload) => {
@@ -75,28 +77,35 @@ export default function AppointmentDetailsPage() {
 
   return (
     <div className="page-content">
-      <header className="section-header">
+      <header className="section-header detail-header modern-surface">
+        <div className="detail-header-top">
+          <span className="detail-badge is-accent">
+            <EventAvailableRoundedIcon fontSize="inherit" />
+            {formatDate(appointment.startAt)}
+          </span>
+          {appointment.startAt ? <span className="detail-badge is-muted">{formatTime(appointment.startAt)}</span> : null}
+        </div>
+
         <h1>{t('appointmentDetails.title')}</h1>
         <p className="muted">{t('appointmentDetails.subtitle')}</p>
-        <Link className="ghost" to="/appointments">
-          {t('appointmentDetails.backToList')}
-        </Link>
-        <button type="button" className="secondary" onClick={() => setIsEditModalOpen(true)}>
-          <EditOutlinedIcon fontSize="small" />
-          {t('appointmentDetails.edit')}
-        </button>
+        <div className="section-actions detail-actions">
+          <Link className="ghost" to="/appointments">
+            <ArrowBackRoundedIcon fontSize="small" />
+            {t('appointmentDetails.backToList')}
+          </Link>
+          <button type="button" className="secondary" onClick={() => setIsEditModalOpen(true)}>
+            <EditOutlinedIcon fontSize="small" />
+            {t('appointmentDetails.edit')}
+          </button>
+        </div>
       </header>
 
-      <section className="grid">
-        <article className="card">
+      <section className="grid detail-grid">
+        <article className="card detail-card">
           <h2>{t('appointmentDetails.infoTitle')}</h2>
           <p>
             {t('appointmentDetails.clientLabel')}{' '}
-            {client ? (
-              <Link to={`/clients/${client.id}`}>{client.fullName}</Link>
-            ) : (
-              t('appointmentDetails.unknownClient')
-            )}
+            {client ? <Link to={`/clients/${client.id}`}>{client.fullName}</Link> : t('appointmentDetails.unknownClient')}
           </p>
           <p>
             {t('appointmentDetails.serviceLabel', {
@@ -121,10 +130,10 @@ export default function AppointmentDetailsPage() {
             })}
           </p>
         </article>
-        <article className="card">
+        <article className="card detail-card">
           <h2>{t('appointmentDetails.productsTitle')}</h2>
           {appointment.usedProducts?.length ? (
-            <ul className="list stacked">
+            <ul className="list stacked detail-stack-list">
               {appointment.usedProducts.map((product) => (
                 <li key={product.id} className="appointment-product-item">
                   <div className="list-item-main">

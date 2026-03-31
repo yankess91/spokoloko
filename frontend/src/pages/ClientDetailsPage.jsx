@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import CloseIcon from '@mui/icons-material/Close';
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
+import EventAvailableRoundedIcon from '@mui/icons-material/EventAvailableRounded';
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import useClientDetails from '../hooks/useClientDetails';
 import { appointmentsApi } from '../api';
 import AppointmentForm from '../components/AppointmentForm';
@@ -56,26 +59,33 @@ export default function ClientDetailsPage() {
 
   return (
     <div className="page-content">
-      <header className="section-header">
+      <header className="section-header detail-header modern-surface">
+        <div className="detail-header-top">
+          <span className={`detail-badge ${client.isActive ? 'is-success' : 'is-muted'}`}>
+            <PersonRoundedIcon fontSize="inherit" />
+            {client.isActive ? t('clientDetails.activeStatus') : t('clientDetails.inactiveStatus')}
+          </span>
+          <span className="detail-badge is-muted">
+            <EventAvailableRoundedIcon fontSize="inherit" />
+            {client.serviceHistory?.length ?? 0}
+          </span>
+        </div>
+
         <h1>{client.fullName}</h1>
         <p className="muted">{t('clientDetails.subtitle')}</p>
-        <div className="section-actions">
-          <button
-            type="button"
-            className="primary"
-            onClick={() => setIsModalOpen(true)}
-            disabled={!client.isActive}
-          >
+        <div className="section-actions detail-actions">
+          <button type="button" className="primary" onClick={() => setIsModalOpen(true)} disabled={!client.isActive}>
             {t('clientDetails.addAppointment')}
           </button>
           <Link className="ghost" to="/clients">
+            <ArrowBackRoundedIcon fontSize="small" />
             {t('clientDetails.backToList')}
           </Link>
         </div>
       </header>
 
-      <section className="grid">
-        <article className="card">
+      <section className="grid detail-grid">
+        <article className="card detail-card">
           <h2>{t('clientDetails.contactTitle')}</h2>
           <p>
             {t('clientDetails.emailLabel', {
@@ -94,23 +104,19 @@ export default function ClientDetailsPage() {
           </p>
           <p>
             {t('clientDetails.statusLabel', {
-              value: client.isActive
-                ? t('clientDetails.activeStatus')
-                : t('clientDetails.inactiveStatus'),
+              value: client.isActive ? t('clientDetails.activeStatus') : t('clientDetails.inactiveStatus'),
             })}
           </p>
         </article>
-        <article className="card">
+        <article className="card detail-card">
           <h2>{t('clientDetails.serviceHistory')}</h2>
           {!client.isActive ? (
             <p className="muted">{t('clientsPage.statusInactive')}</p>
           ) : client.serviceHistory?.length ? (
-            <ul className="list stacked">
+            <ul className="list stacked detail-stack-list">
               {client.serviceHistory.map((history) => (
                 <li key={history.appointmentId}>
-                  <span className="list-title">
-                    {history.service?.name || t('clientDetails.unknownService')}
-                  </span>
+                  <span className="list-title">{history.service?.name || t('clientDetails.unknownService')}</span>
                   <span className="muted">
                     {history.startAt
                       ? new Date(history.startAt).toLocaleDateString('pl-PL')
@@ -122,7 +128,7 @@ export default function ClientDetailsPage() {
                     })}
                   </span>
                   {history.usedProducts?.length ? (
-                    <ul className="list stacked">
+                    <ul className="list stacked detail-stack-list">
                       {history.usedProducts.map((product) => (
                         <li key={product.id} className="appointment-product-item">
                           <div className="list-item-main">

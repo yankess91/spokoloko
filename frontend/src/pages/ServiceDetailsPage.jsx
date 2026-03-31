@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
+import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
+import PlaylistAddRoundedIcon from '@mui/icons-material/PlaylistAddRounded';
+import ConstructionRoundedIcon from '@mui/icons-material/ConstructionRounded';
 import useServiceDetails from '../hooks/useServiceDetails';
 import useProducts from '../hooks/useProducts';
 import { useToast } from '../components/ToastProvider';
@@ -49,9 +53,7 @@ export default function ServiceDetailsPage() {
       return;
     }
 
-    const confirmed = window.confirm(
-      t('serviceDetails.deleteConfirm', { name: service.name })
-    );
+    const confirmed = window.confirm(t('serviceDetails.deleteConfirm', { name: service.name }));
     if (!confirmed) {
       return;
     }
@@ -88,30 +90,42 @@ export default function ServiceDetailsPage() {
 
   return (
     <div className="page-content">
-      <header className="section-header">
+      <header className="section-header detail-header modern-surface">
+        <div className="detail-header-top">
+          <span className="detail-badge is-muted">
+            <ConstructionRoundedIcon fontSize="inherit" />
+            {t('serviceDetails.durationLabel', { value: service.duration })}
+          </span>
+          <span className="detail-badge is-accent">
+            {formatCurrencyRange(service.priceFrom, service.priceTo)}
+          </span>
+        </div>
         <h1>{service.name}</h1>
         <p className="muted">{t('serviceDetails.subtitle')}</p>
-        <div className="section-actions">
+        <div className="section-actions detail-actions">
           <Link className="ghost" to="/services">
+            <ArrowBackRoundedIcon fontSize="small" />
             {t('serviceDetails.backToList')}
           </Link>
           <button type="button" className="secondary danger" onClick={handleDelete} disabled={isDeleting}>
+            <DeleteOutlineRoundedIcon fontSize="small" />
             {isDeleting ? t('common.deleting') : t('serviceDetails.delete')}
           </button>
         </div>
       </header>
 
-      <section className="grid">
-        <article className="card">
+      <section className="grid detail-grid">
+        <article className="card detail-card">
           <h2>{t('serviceDetails.descriptionTitle')}</h2>
           <p>{service.description || t('serviceDetails.noDescription')}</p>
           <p>{t('serviceDetails.durationLabel', { value: service.duration })}</p>
           <p>{t('serviceDetails.priceLabel', { value: formatCurrencyRange(service.priceFrom, service.priceTo) })}</p>
         </article>
-        <article className="card">
+
+        <article className="card detail-card">
           <h2>{t('serviceDetails.requiredProductsTitle')}</h2>
           {service.requiredProducts?.length ? (
-            <ul className="list stacked">
+            <ul className="list stacked detail-stack-list">
               {service.requiredProducts.map((product) => (
                 <li key={product.id}>
                   <span className="list-title">{product.name}</span>
@@ -123,13 +137,10 @@ export default function ServiceDetailsPage() {
             <p className="muted">{t('serviceDetails.noProducts')}</p>
           )}
 
-          <div className="stack" style={{ marginTop: '1rem' }}>
+          <div className="stack detail-inline-form" style={{ marginTop: '1rem' }}>
             <label>
               {t('serviceDetails.addProductLabel')}
-              <select
-                value={selectedProductId}
-                onChange={(event) => setSelectedProductId(event.target.value)}
-              >
+              <select value={selectedProductId} onChange={(event) => setSelectedProductId(event.target.value)}>
                 <option value="">{t('serviceDetails.addProductPlaceholder')}</option>
                 {availableProducts.map((product) => (
                   <option key={product.id} value={product.id}>
@@ -144,6 +155,7 @@ export default function ServiceDetailsPage() {
               onClick={handleAddProduct}
               disabled={!selectedProductId || isAddingProduct}
             >
+              <PlaylistAddRoundedIcon fontSize="small" />
               {isAddingProduct ? t('common.saving') : t('serviceDetails.addProductButton')}
             </button>
           </div>
