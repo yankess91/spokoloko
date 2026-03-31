@@ -510,6 +510,8 @@
     "day": "Dzień",
     "previous": "Poprzedni zakres",
     "next": "Następny zakres",
-    "noEvents": "Brak wizyt do wyświetlenia"
+    "noEvents": "Brak wizyt do wyświetlenia",
+    "showMore": "+{count} więcej",
+    "showLess": "Zwiń"
   }
 }
