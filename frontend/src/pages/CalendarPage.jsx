@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pl';
+import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -28,6 +29,7 @@ export default function CalendarPage() {
   const { services } = useServices();
   const [viewMode, setViewMode] = useState('week');
   const [anchorDate, setAnchorDate] = useState(dayjs());
+  const [expandedMonthDays, setExpandedMonthDays] = useState({});
 
   const clientsById = useMemo(() => new Map(clients.map((client) => [client.id, client])), [clients]);
   const servicesById = useMemo(() => new Map(services.map((service) => [service.id, service])), [services]);
@@ -151,6 +153,13 @@ export default function CalendarPage() {
     setAnchorDate((current) => current.add(direction, 'week'));
   };
 
+  const toggleMonthDayExpansion = (dayKey) => {
+    setExpandedMonthDays((current) => ({
+      ...current,
+      [dayKey]: !current[dayKey],
+    }));
+  };
+
   return (
     <div className="page-content">
       <header className="section-header">
@@ -210,6 +219,8 @@ export default function CalendarPage() {
             <div className="calendar-month-grid">
               {monthDays.map((day) => {
                 const dayAppointments = monthAppointmentsByDay.get(day.key) ?? [];
+                const isExpanded = Boolean(expandedMonthDays[day.key]);
+                const visibleAppointmentsForDay = isExpanded ? dayAppointments : dayAppointments.slice(0, 3);
 
                 return (
                   <article
@@ -220,13 +231,26 @@ export default function CalendarPage() {
                       <span>{day.date.format('D')}</span>
                     </header>
                     <div className="calendar-month-events">
-                      {dayAppointments.length === 0 ? null : dayAppointments.slice(0, 3).map((appointment) => (
-                        <p key={appointment.id} className="calendar-month-event" title={`${appointment.title} · ${appointment.client}`}>
+                      {dayAppointments.length === 0 ? null : visibleAppointmentsForDay.map((appointment) => (
+                        <Link
+                          key={appointment.id}
+                          className="calendar-month-event"
+                          to={`/appointments/${appointment.id}`}
+                          title={`${appointment.title} · ${appointment.client}`}
+                        >
                           <strong>{appointment.timeLabel}</strong> {appointment.title}
-                        </p>
+                        </Link>
                       ))}
                       {dayAppointments.length > 3 ? (
-                        <p className="calendar-month-more">+{dayAppointments.length - 3}</p>
+                        <button
+                          type="button"
+                          className="calendar-month-more"
+                          onClick={() => toggleMonthDayExpansion(day.key)}
+                        >
+                          {isExpanded
+                            ? t('calendarPage.showLess')
+                            : t('calendarPage.showMore', { count: dayAppointments.length - 3 })}
+                        </button>
                       ) : null}
                     </div>
                   </article>
@@ -269,9 +293,10 @@ export default function CalendarPage() {
                     <div className="calendar-empty">{t('calendarPage.noEvents')}</div>
                   ) : (
                     visibleAppointments.map((appointment) => (
-                      <article
+                      <Link
                         key={appointment.id}
                         className="calendar-event-card"
+                        to={`/appointments/${appointment.id}`}
                         style={{
                           top: `${appointment.top}px`,
                           height: `${appointment.height}px`,
@@ -282,7 +307,7 @@ export default function CalendarPage() {
                         <p className="calendar-event-title">{appointment.title}</p>
                         <p className="calendar-event-client">{appointment.client}</p>
                         <p className="calendar-event-time">{appointment.timeLabel}</p>
-                      </article>
+                      </Link>
                     ))
                   )}
                 </div>
