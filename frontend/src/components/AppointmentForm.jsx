@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -38,6 +39,8 @@ const toProductOption = (product) =>
         label: product.label ?? buildProductLabel(product)
       }
     : null;
+
+const serializeLocalDateTime = (value) => dayjs(value).format('YYYY-MM-DDTHH:mm:ss');
 
 export default function AppointmentForm({
   onSubmit,
@@ -201,8 +204,8 @@ export default function AppointmentForm({
     const shouldReset = await onSubmit?.({
       clientId: selectedClient.id,
       serviceId: selectedService.id,
-      startAt: formState.startAt.toISOString(),
-      endAt: formState.endAt.toISOString(),
+      startAt: serializeLocalDateTime(formState.startAt),
+      endAt: serializeLocalDateTime(formState.endAt),
       notes: formState.notes,
       productIds: formState.selectedProducts.map((product) => product.id)
     });

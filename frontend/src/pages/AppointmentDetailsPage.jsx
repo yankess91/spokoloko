@@ -20,6 +20,9 @@ import { formatDate, formatTime } from '../utils/formatters';
 import { useToast } from '../components/ToastProvider';
 import { t } from '../utils/i18n';
 
+const parseFloatingDateTime = (value) =>
+  typeof value === 'string' ? dayjs(value.replace(/([+-]\d{2}:\d{2}|Z)$/i, '')) : dayjs(value);
+
 export default function AppointmentDetailsPage() {
   const { id } = useParams();
   const [zoomedImage, setZoomedImage] = useState(null);
@@ -56,8 +59,8 @@ export default function AppointmentDetailsPage() {
     ...appointment,
     client: client ? { id: client.id, label: client.fullName, isActive: client.isActive } : null,
     service: service ? { id: service.id, label: service.name } : null,
-    startAt: dayjs(appointment.startAt),
-    endAt: dayjs(appointment.endAt),
+    startAt: parseFloatingDateTime(appointment.startAt),
+    endAt: parseFloatingDateTime(appointment.endAt),
     selectedProducts: (appointment.usedProducts ?? []).map((product) => ({
       id: product.id,
       label: product.brand ? `${product.name} (${product.brand})` : product.name,
