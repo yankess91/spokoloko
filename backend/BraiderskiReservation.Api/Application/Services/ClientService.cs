@@ -1,5 +1,6 @@
 using BraiderskiReservation.Api.Application.DTOs;
 using BraiderskiReservation.Api.Application.Interfaces;
+using BraiderskiReservation.Api.Application.Common;
 using BraiderskiReservation.Domain.Entities;
 using BraiderskiReservation.Domain.Interfaces;
 
@@ -95,7 +96,7 @@ public sealed class ClientService : IClientService
             ClientId = clientId,
             Name = request.Name,
             Notes = request.Notes,
-            UsedAt = request.UsedAt
+            UsedAt = request.UsedAt.ToUtc()
         };
 
         await _clientRepository.AddUsedProductAsync(usedProduct, cancellationToken);
