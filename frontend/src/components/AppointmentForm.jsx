@@ -40,7 +40,7 @@ const toProductOption = (product) =>
       }
     : null;
 
-const serializeLocalDateTime = (value) => dayjs(value).format('YYYY-MM-DDTHH:mm:ss');
+const serializeUtcDateTime = (value) => dayjs(value).toISOString();
 
 export default function AppointmentForm({
   onSubmit,
@@ -204,8 +204,8 @@ export default function AppointmentForm({
     const shouldReset = await onSubmit?.({
       clientId: selectedClient.id,
       serviceId: selectedService.id,
-      startAt: serializeLocalDateTime(formState.startAt),
-      endAt: serializeLocalDateTime(formState.endAt),
+      startAt: serializeUtcDateTime(formState.startAt),
+      endAt: serializeUtcDateTime(formState.endAt),
       notes: formState.notes,
       productIds: formState.selectedProducts.map((product) => product.id)
     });

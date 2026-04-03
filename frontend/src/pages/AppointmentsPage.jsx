@@ -11,8 +11,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { t } from '../utils/i18n';
 
 export default function AppointmentsPage() {
-  const parseFloatingDateTime = (value) =>
-    typeof value === 'string' ? dayjs(value.replace(/([+-]\d{2}:\d{2}|Z)$/i, '')) : dayjs(value);
+  const parseDateTime = (value) => dayjs(value);
 
   const { appointments, isLoading, error, addAppointment, updateAppointment, removeAppointment } = useAppointments();
   const { clients, isLoading: clientsLoading } = useClients();
@@ -140,8 +139,8 @@ export default function AppointmentsPage() {
       ...appointment,
       client: client ? { id: client.id, label: client.fullName, isActive: client.isActive } : null,
       service: service ? { id: service.id, label: service.name } : null,
-      startAt: parseFloatingDateTime(appointment.startAt),
-      endAt: parseFloatingDateTime(appointment.endAt),
+      startAt: parseDateTime(appointment.startAt),
+      endAt: parseDateTime(appointment.endAt),
       selectedProducts: (appointment.usedProducts ?? appointment.products ?? []).map((product) => ({
         id: product.id,
         label: product.brand ? `${product.name} (${product.brand})` : product.name

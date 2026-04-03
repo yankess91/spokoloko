@@ -1,5 +1,6 @@
 using BraiderskiReservation.Api.Application.DTOs;
 using BraiderskiReservation.Api.Application.Interfaces;
+using BraiderskiReservation.Api.Application.Common;
 using BraiderskiReservation.Domain.Entities;
 using BraiderskiReservation.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -96,8 +97,8 @@ public sealed class AppointmentService : IAppointmentService
         {
             ClientId = request.ClientId,
             ServiceId = request.ServiceId,
-            StartAt = request.StartAt,
-            EndAt = request.EndAt,
+            StartAt = request.StartAt.ToUtc(),
+            EndAt = request.EndAt.ToUtc(),
             Notes = request.Notes,
             AppointmentProducts = BuildAppointmentProducts(normalizedProductIds)
         };
@@ -126,8 +127,8 @@ public sealed class AppointmentService : IAppointmentService
 
         appointment.ClientId = request.ClientId;
         appointment.ServiceId = request.ServiceId;
-        appointment.StartAt = request.StartAt;
-        appointment.EndAt = request.EndAt;
+        appointment.StartAt = request.StartAt.ToUtc();
+        appointment.EndAt = request.EndAt.ToUtc();
         appointment.Notes = request.Notes;
 
         appointment.AppointmentProducts.Clear();

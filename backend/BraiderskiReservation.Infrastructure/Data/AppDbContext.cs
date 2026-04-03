@@ -1,10 +1,29 @@
 using BraiderskiReservation.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BraiderskiReservation.Infrastructure.Data;
 
 public sealed class AppDbContext : DbContext
 {
+    private static readonly ValueConverter<DateTime, DateTime> UtcDateTimeConverter = new(
+        value => value.Kind == DateTimeKind.Utc
+            ? value
+            : value.Kind == DateTimeKind.Local
+                ? value.ToUniversalTime()
+                : DateTime.SpecifyKind(value, DateTimeKind.Utc),
+        value => DateTime.SpecifyKind(value, DateTimeKind.Utc));
+
+    private static readonly ValueConverter<DateTime?, DateTime?> NullableUtcDateTimeConverter = new(
+        value => value == null
+            ? value
+            : value.Value.Kind == DateTimeKind.Utc
+                ? value
+                : value.Value.Kind == DateTimeKind.Local
+                    ? value.Value.ToUniversalTime()
+                    : DateTime.SpecifyKind(value.Value, DateTimeKind.Utc),
+        value => value == null ? value : DateTime.SpecifyKind(value.Value, DateTimeKind.Utc));
+
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
@@ -20,6 +39,21 @@ public sealed class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            foreach (var property in entityType.GetProperties())
+            {
+                if (property.ClrType == typeof(DateTime))
+                {
+                    property.SetValueConverter(UtcDateTimeConverter);
+                }
+                else if (property.ClrType == typeof(DateTime?))
+                {
+                    property.SetValueConverter(NullableUtcDateTimeConverter);
+                }
+            }
+        }
+
         modelBuilder.Entity<ClientProfile>(entity =>
         {
             entity.ToTable("clients");
