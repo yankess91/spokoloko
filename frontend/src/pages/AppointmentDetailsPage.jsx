@@ -19,6 +19,7 @@ import { appointmentsApi } from '../api';
 import { formatDate, formatTime } from '../utils/formatters';
 import { useToast } from '../components/ToastProvider';
 import { t } from '../utils/i18n';
+import { toApiAssetUrl } from '../utils/assets';
 
 export default function AppointmentDetailsPage() {
   const { id } = useParams();
@@ -169,10 +170,10 @@ export default function AppointmentDetailsPage() {
                     <button
                       type="button"
                       className="thumb-button"
-                      onClick={() => setZoomedImage({ src: product.imageUrl, name: product.name })}
+                      onClick={() => setZoomedImage({ src: toApiAssetUrl(product.imageUrl), name: product.name })}
                       title={t('appointmentDetails.zoomImage')}
                     >
-                      <img className="thumb" src={product.imageUrl} alt={product.name} />
+                      <img className="thumb" src={toApiAssetUrl(product.imageUrl)} alt={product.name} />
                       <span className="thumb-overlay">
                         <ZoomInIcon fontSize="small" />
                       </span>
