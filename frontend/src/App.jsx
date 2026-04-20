@@ -66,6 +66,28 @@ const navLinkStyles = {
   },
 };
 
+const sidebarItemStyles = (isCollapsed = false) => ({
+  borderRadius: '10px',
+  marginBottom: 0.75,
+  width: '100%',
+  minHeight: 46,
+  paddingY: 1.1,
+  paddingX: isCollapsed ? 1.1 : 1.6,
+  justifyContent: isCollapsed ? 'center' : 'flex-start',
+  color: 'var(--color-text)',
+  border: '1px solid transparent',
+  transition: 'background-color 180ms ease, border-color 180ms ease, color 180ms ease',
+  '&:hover': {
+    backgroundColor: 'rgba(0, 0, 0, 0.035)',
+    borderColor: 'var(--color-border)',
+  },
+  '&.active': {
+    backgroundColor: 'var(--color-bg-accent)',
+    borderColor: 'rgba(201, 162, 39, 0.45)',
+    color: 'var(--color-text)',
+  },
+});
+
 export default function App() {
   const { isAuthenticated, user, logout } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -125,25 +147,14 @@ export default function App() {
         component={NavLink}
         to={item.to}
         onClick={onNavigate}
-        sx={{
-          borderRadius: 2,
-          marginBottom: 0.5,
-          minHeight: 50,
-          paddingY: 1.2,
-          paddingX: isCollapsed ? 1.2 : 1.8,
-          justifyContent: isCollapsed ? 'center' : 'flex-start',
-          transition: 'all 220ms ease',
-          '&.active': {
-            backgroundColor: 'var(--color-bg-accent)',
-            color: 'var(--color-text)',
-          },
-        }}
+        sx={sidebarItemStyles(isCollapsed)}
       >
         <ListItemIcon
           sx={{
             minWidth: isCollapsed ? 0 : 34,
             marginRight: isCollapsed ? 0 : 1,
             justifyContent: 'center',
+            color: 'inherit',
           }}
         >
           {item.icon}
@@ -199,27 +210,42 @@ export default function App() {
                 overflowX: 'hidden',
                 transition: 'width 240ms cubic-bezier(0.4, 0, 0.2, 1)',
                 borderRight: '1px solid var(--color-border)',
-                backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
                 backdropFilter: 'blur(14px)',
-                padding: 2,
+                padding: 1.5,
               },
             }}
           >
             <Stack spacing={2} sx={{ height: '100%' }}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between">
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{ paddingX: 1, paddingTop: 0.5 }}
+              >
                 <Box component={NavLink} to="/" className="topbar-logo">
                   <Box
                     component="img"
                     src={logoSrc}
                     alt={t('app.logoAlt')}
                     className="topbar-logo-image"
-                    sx={{ height: sidebarExpanded ? 54 : 42 }}
+                    sx={{
+                      height: sidebarExpanded ? 34 : 28,
+                      width: sidebarExpanded ? 168 : 34,
+                      objectFit: 'contain',
+                      objectPosition: sidebarExpanded ? 'left center' : 'center',
+                      transition: 'height 180ms ease, width 180ms ease',
+                    }}
                   />
                 </Box>
                 <IconButton
                   onClick={handleSidebarToggle}
                   aria-label={sidebarExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
-                  sx={{ border: '1px solid var(--color-border)' }}
+                  sx={{
+                    border: '1px solid var(--color-border)',
+                    borderRadius: '10px',
+                    backgroundColor: 'var(--color-surface)',
+                  }}
                 >
                   {sidebarExpanded ? (
                     <ChevronLeftRoundedIcon fontSize="small" />
@@ -229,7 +255,9 @@ export default function App() {
                 </IconButton>
               </Stack>
 
-              <List disablePadding>{renderNavigationItems(!sidebarExpanded)}</List>
+              <List disablePadding sx={{ paddingX: 0.5 }}>
+                {renderNavigationItems(!sidebarExpanded)}
+              </List>
 
               <Box sx={{ marginTop: 'auto' }}>
                 <Divider sx={{ marginBottom: 2 }} />
@@ -242,7 +270,12 @@ export default function App() {
                   <Button
                     onClick={logout}
                     startIcon={<LogoutRoundedIcon fontSize="small" />}
-                    sx={navLinkStyles}
+                    sx={{
+                      ...navLinkStyles,
+                      width: sidebarExpanded ? '100%' : 'auto',
+                      minWidth: sidebarExpanded ? 0 : 42,
+                      paddingX: sidebarExpanded ? 1.25 : 1,
+                    }}
                   >
                     {sidebarExpanded ? t('app.logout') : ''}
                   </Button>
@@ -258,19 +291,20 @@ export default function App() {
             PaperProps={{
               sx: {
                 width: 280,
-                borderTopRightRadius: 20,
-                borderBottomRightRadius: 20,
+                borderTopRightRadius: 14,
+                borderBottomRightRadius: 14,
+                padding: 1,
               },
             }}
           >
             <Stack spacing={2} sx={{ padding: 3 }}>
-              <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                  {t('app.navigationTitle')}
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'var(--color-muted)' }}>
-                  {t('app.navigationSubtitle')}
-                </Typography>
+              <Box component={NavLink} to="/" sx={{ alignSelf: 'flex-start' }} onClick={handleDrawerToggle(false)}>
+                <Box
+                  component="img"
+                  src={logoSrc}
+                  alt={t('app.logoAlt')}
+                  sx={{ height: 30, width: 164, objectFit: 'contain', objectPosition: 'left center' }}
+                />
               </Box>
               <List disablePadding>{renderNavigationItems(false, handleDrawerToggle(false))}</List>
               <Divider />
@@ -304,8 +338,8 @@ export default function App() {
               position="sticky"
               elevation={0}
               sx={{
-                backgroundColor: 'rgba(255, 255, 255, 0.86)',
-                boxShadow: 'var(--shadow-sm)',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                boxShadow: 'none',
                 borderBottom: '1px solid var(--color-border)',
                 backdropFilter: 'blur(14px)',
               }}
