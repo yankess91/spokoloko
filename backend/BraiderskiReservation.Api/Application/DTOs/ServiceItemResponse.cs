@@ -8,7 +8,4 @@ public sealed record ServiceItemResponse(
     TimeSpan DurationTo,
     decimal PriceFrom,
     decimal PriceTo,
-    string Type,
-    DateOnly? CompletionDeadlineDate,
-    int OrderPosition,
     List<ProductResponse> RequiredProducts);

@@ -38,7 +38,8 @@
     "appointmentDetails": "Nie udało się pobrać danych wizyty.",
     "serviceDetails": "Nie udało się pobrać danych usługi.",
     "login": "Nie udało się zalogować. Sprawdź dane logowania.",
-    "sessionExpired": "Sesja wygasła lub token jest nieważny. Zaloguj się ponownie."
+    "sessionExpired": "Sesja wygasła lub token jest nieważny. Zaloguj się ponownie.",
+    "orders": "Nie udało się pobrać zamówień."
   },
   "formatters": {
     "noData": "Brak danych",
@@ -169,28 +170,20 @@
     "edit": "Edytuj"
   },
   "serviceTypes": {
-    "OnSite": "Na miejscu",
-    "CustomOrder": "Na zamówienie"
+    "OnSite": "Na miejscu"
   },
   "serviceForm": {
     "selectProductError": "Wybierz produkt z listy podpowiedzi.",
     "duplicateProductError": "Ten produkt został już dodany.",
     "durationRangeError": "Pole czasu \"do\" musi być większe lub równe polu \"od\".",
     "priceRangeError": "Pole ceny \"do\" musi być większe lub równe polu \"od\".",
-    "completionDeadlineError": "Podaj datę realizacji dla usługi na zamówienie.",
     "title": "Dodaj usługę",
     "name": "Nazwa usługi",
     "namePlaceholder": "np. Warkocze klasyczne",
     "description": "Opis",
     "descriptionPlaceholder": "Krótki opis zabiegu",
-    "type": "Typ usługi",
-    "types": {
-      "onSite": "Wykonywana na miejscu",
-      "customOrder": "Wykonywana na zamówienie"
-    },
     "duration": "Czas trwania (min)",
     "price": "Cena (zł)",
-    "completionDeadlineDate": "Data realizacji",
     "priceFromPlaceholder": "od, np. 250",
     "priceToPlaceholder": "do, np. 300",
     "requiredProducts": "Wymagane produkty",
@@ -306,7 +299,10 @@
     "modalTitle": "Dodaj wizytę",
     "noBrand": "Brak marki",
     "noImage": "Brak zdjęcia",
-    "zoomImage": "Powiększ zdjęcie"
+    "zoomImage": "Powiększ zdjęcie",
+    "ordersTitle": "Zamówienia klienta",
+    "noOrders": "Brak zamówień klienta.",
+    "ordersLoadError": "Nie udało się pobrać zamówień klienta."
   },
   "dashboard": {
     "unknownClient": "Nieznany klient",
@@ -342,7 +338,6 @@
     "typeLabel": "Typ: {value}",
     "durationLabel": "Czas trwania: {value}",
     "priceLabel": "Cena: {value}",
-    "completionDeadlineDateLabel": "Data realizacji: {value}",
     "requiredProductsTitle": "Wymagane produkty",
     "noBrand": "Brak marki",
     "noProducts": "Nie przypisano produktów.",
@@ -512,25 +507,41 @@
     "toastDeleted": "Zamówienie zostało usunięte.",
     "toastDeleteError": "Nie udało się usunąć zamówienia.",
     "toastUpdated": "Zamówienie zostało zaktualizowane.",
-    "toastReordered": "Kolejność zamówień została zaktualizowana.",
-    "toastReorderError": "Nie udało się zmienić kolejności zamówień.",
+    "toastStatusUpdated": "Status zamówienia został zaktualizowany.",
+    "toastLoadError": "Nie udało się pobrać szczegółów zamówienia.",
     "deleteConfirm": "Czy na pewno chcesz usunąć zamówienie \"{name}\"?",
     "title": "Zamówienia",
-    "subtitle": "Usługi wykonywane na zamówienie z widoczną datą realizacji.",
+    "subtitle": "Produkty wykonywane na zamówienie jako osobny moduł.",
     "listTitle": "Lista zamówień",
-    "listSubtitle": "Dodawaj zamówienia i zarządzaj ich kolejnością realizacji.",
+    "listSubtitle": "Zarządzaj realizacją i statusem zamówień klientów.",
     "newOrder": "Nowe zamówienie",
     "modalTitle": "Nowe zamówienie",
     "editModalTitle": "Edytuj zamówienie",
-    "empty": "Brak usług na zamówienie.",
+    "empty": "Brak zamówień.",
+    "loading": "Ładowanie zamówień...",
+    "notFound": "Nie znaleziono zamówienia.",
     "ariaLabel": "Lista zamówień",
-    "moveUp": "Wyżej",
-    "moveDown": "Niżej",
-    "completionDeadlineDateValue": "{date}",
+    "searchLabel": "Szukaj",
+    "searchPlaceholder": "Numer, tytuł albo opis",
+    "statusLabel": "Status",
+    "statusAll": "Wszystkie statusy",
+    "deliveryLabel": "Dostawa",
+    "deliveryAll": "Wszystkie metody",
+    "details": "Szczegóły",
+    "backToList": "Wróć do listy",
+    "detailsInfo": "Informacje",
+    "itemsTitle": "Pozycje zamówienia",
+    "updatedAt": "Zaktualizowano",
+    "descriptionLabel": "Opis",
     "columns": {
-      "position": "Kolejność",
-      "order": "Zamówienie",
-      "completionDeadlineDate": "Data realizacji",
+      "number": "Numer",
+      "client": "Klient",
+      "title": "Tytuł",
+      "status": "Status",
+      "delivery": "Dostawa",
+      "dueDate": "Termin",
+      "total": "Kwota",
+      "createdAt": "Utworzono",
       "actions": "Akcje"
     }
   },
@@ -555,5 +566,40 @@
     "noEvents": "Brak wizyt do wyświetlenia",
     "showMore": "+{count} więcej",
     "showLess": "Zwiń"
+  },
+  "orderStatus": {
+    "New": "Nowe",
+    "Confirmed": "Potwierdzone",
+    "InProgress": "W realizacji",
+    "Ready": "Gotowe",
+    "Completed": "Zakończone",
+    "Cancelled": "Anulowane"
+  },
+  "orderDeliveryMethod": {
+    "Pickup": "Odbiór osobisty",
+    "Shipping": "Wysyłka"
+  },
+  "orderForm": {
+    "title": "Nowe zamówienie",
+    "editTitle": "Edytuj zamówienie",
+    "client": "Klient",
+    "clientPlaceholder": "Wybierz klienta",
+    "titleLabel": "Tytuł",
+    "description": "Opis",
+    "status": "Status",
+    "deliveryMethod": "Metoda dostawy",
+    "dueDate": "Termin realizacji",
+    "itemsTitle": "Pozycje zamówienia",
+    "addItem": "Dodaj pozycję",
+    "removeItem": "Usuń pozycję",
+    "itemName": "Nazwa",
+    "itemNotes": "Notatka",
+    "itemQuantity": "Ilość",
+    "itemUnitPrice": "Cena jednostkowa",
+    "itemSubtotal": "Suma pozycji: {value}",
+    "total": "Suma: {value}",
+    "noItems": "Brak pozycji zamówienia.",
+    "save": "Zapisz zamówienie",
+    "update": "Zapisz zmiany"
   }
 }

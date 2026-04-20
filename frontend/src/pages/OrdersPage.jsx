@@ -1,54 +1,35 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import ArrowUpwardRoundedIcon from '@mui/icons-material/ArrowUpwardRounded';
-import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 import Modal from '../components/Modal';
-import ServiceForm from '../components/ServiceForm';
-import useServices from '../hooks/useServices';
+import OrderForm from '../components/OrderForm';
+import useOrders from '../hooks/useOrders';
 import { useToast } from '../components/ToastProvider';
-import { formatCurrencyRange, formatDate } from '../utils/formatters';
+import { formatCurrency, formatDate } from '../utils/formatters';
 import { t } from '../utils/i18n';
 
-const toServicePayload = (service, overrides = {}) => ({
-  name: service.name,
-  description: service.description ?? '',
-  durationFromMinutes: Number(service.durationFromMinutes ?? 0),
-  durationToMinutes: Number(service.durationToMinutes ?? 0),
-  priceFrom: Number(service.priceFrom ?? 0),
-  priceTo: Number(service.priceTo ?? 0),
-  type: service.type ?? 'OnSite',
-  completionDeadlineDate: service.completionDeadlineDate ?? null,
-  orderPosition: service.orderPosition ?? 0,
-  requiredProductIds: (service.requiredProducts ?? []).map((product) => product.id),
-  ...overrides
-});
-
 export default function OrdersPage() {
-  const { services, isLoading, error, addService, updateService, removeService } = useServices();
+  const { orders, isLoading, error, addOrder, updateOrder, updateOrderStatus, removeOrder, updateFilters } = useOrders();
   const { showToast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingOrder, setEditingOrder] = useState(null);
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [deliveryFilter, setDeliveryFilter] = useState('');
 
-  const customOrders = useMemo(
-    () => [...services]
-      .filter((service) => service.type === 'CustomOrder')
-      .sort((a, b) => Number(a.orderPosition ?? 0) - Number(b.orderPosition ?? 0)),
-    [services]
-  );
-
-  const showError = useCallback(
-    (message) => showToast(message, { severity: 'error' }),
-    [showToast]
-  );
+  useEffect(() => {
+    updateFilters({ search, status: statusFilter || undefined, deliveryMethod: deliveryFilter || undefined });
+  }, [search, statusFilter, deliveryFilter, updateFilters]);
 
   useEffect(() => {
     if (error) {
-      showError(error);
+      showToast(error, { severity: 'error' });
     }
-  }, [error, showError]);
+  }, [error, showToast]);
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -59,27 +40,15 @@ export default function OrdersPage() {
     setIsSubmitting(true);
     try {
       if (editingOrder) {
-        await updateService(editingOrder.id, {
-          ...payload,
-          orderPosition: editingOrder.orderPosition
-        });
+        await updateOrder(editingOrder.id, payload);
         showToast(t('ordersPage.toastUpdated'));
       } else {
-        const lastOrderPosition = customOrders.length
-          ? Math.max(...customOrders.map((item) => Number(item.orderPosition ?? 0)))
-          : 0;
-
-        await addService({
-          ...payload,
-          type: 'CustomOrder',
-          orderPosition: lastOrderPosition + 1
-        });
+        await addOrder(payload);
         showToast(t('ordersPage.toastSaved'));
       }
-
       closeModal();
     } catch (err) {
-      showError(err.message ?? t('ordersPage.toastSaveError'));
+      showToast(err.message ?? t('ordersPage.toastSaveError'), { severity: 'error' });
       return false;
     } finally {
       setIsSubmitting(false);
@@ -89,38 +58,24 @@ export default function OrdersPage() {
   };
 
   const handleDelete = async (order) => {
-    if (!window.confirm(t('ordersPage.deleteConfirm', { name: order.name }))) {
+    if (!window.confirm(t('ordersPage.deleteConfirm', { name: order.title }))) {
       return;
     }
 
     try {
-      await removeService(order.id);
+      await removeOrder(order.id);
       showToast(t('ordersPage.toastDeleted'));
     } catch (err) {
-      showError(err.message ?? t('ordersPage.toastDeleteError'));
+      showToast(err.message ?? t('ordersPage.toastDeleteError'), { severity: 'error' });
     }
   };
 
-  const handleSwapOrder = async (index, direction) => {
-    const targetIndex = index + direction;
-    if (targetIndex < 0 || targetIndex >= customOrders.length) {
-      return;
-    }
-
-    const current = customOrders[index];
-    const target = customOrders[targetIndex];
-
-    setIsSubmitting(true);
+  const handleStatusChange = async (order, status) => {
     try {
-      await Promise.all([
-        updateService(current.id, toServicePayload(current, { orderPosition: target.orderPosition })),
-        updateService(target.id, toServicePayload(target, { orderPosition: current.orderPosition }))
-      ]);
-      showToast(t('ordersPage.toastReordered'));
+      await updateOrderStatus(order.id, status);
+      showToast(t('ordersPage.toastStatusUpdated'));
     } catch (err) {
-      showError(err.message ?? t('ordersPage.toastReorderError'));
-    } finally {
-      setIsSubmitting(false);
+      showToast(err.message ?? t('ordersPage.toastSaveError'), { severity: 'error' });
     }
   };
 
@@ -140,74 +95,78 @@ export default function OrdersPage() {
         </header>
 
         <div className="grid-actions">
-          <button
-            type="button"
-            className="primary"
-            onClick={() => {
-              setEditingOrder(null);
-              setIsModalOpen(true);
-            }}
-          >
+          <button type="button" className="primary" onClick={() => setIsModalOpen(true)}>
             <AddIcon fontSize="small" />
             {t('ordersPage.newOrder')}
           </button>
         </div>
 
-        {isLoading ? <p className="muted">{t('serviceList.loading')}</p> : null}
+        <div className="list-controls grid-controls">
+          <label className="filter-field">
+            {t('ordersPage.searchLabel')}
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder={t('ordersPage.searchPlaceholder')}
+            />
+          </label>
+          <label className="filter-field">
+            {t('ordersPage.statusLabel')}
+            <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+              <option value="">{t('ordersPage.statusAll')}</option>
+              {['New', 'Confirmed', 'InProgress', 'Ready', 'Completed', 'Cancelled'].map((status) => (
+                <option key={status} value={status}>{t(`orderStatus.${status}`)}</option>
+              ))}
+            </select>
+          </label>
+          <label className="filter-field">
+            {t('ordersPage.deliveryLabel')}
+            <select value={deliveryFilter} onChange={(event) => setDeliveryFilter(event.target.value)}>
+              <option value="">{t('ordersPage.deliveryAll')}</option>
+              <option value="Pickup">{t('orderDeliveryMethod.Pickup')}</option>
+              <option value="Shipping">{t('orderDeliveryMethod.Shipping')}</option>
+            </select>
+          </label>
+        </div>
 
-        {!isLoading && customOrders.length === 0 ? (
-          <p className="muted">{t('ordersPage.empty')}</p>
-        ) : null}
+        {isLoading ? <p className="muted">{t('ordersPage.loading')}</p> : null}
+        {!isLoading && orders.length === 0 ? <p className="muted">{t('ordersPage.empty')}</p> : null}
 
-        {!isLoading && customOrders.length > 0 ? (
-          <div className="data-grid data-grid-services" role="table" aria-label={t('ordersPage.ariaLabel')}>
+        {!isLoading && orders.length > 0 ? (
+          <div className="data-grid" role="table" aria-label={t('ordersPage.ariaLabel')}>
             <div className="data-grid-row data-grid-header" role="row">
-              <span className="data-grid-cell" role="columnheader">{t('ordersPage.columns.position')}</span>
-              <span className="data-grid-cell" role="columnheader">{t('ordersPage.columns.order')}</span>
-              <span className="data-grid-cell" role="columnheader">{t('ordersPage.columns.completionDeadlineDate')}</span>
+              <span className="data-grid-cell" role="columnheader">{t('ordersPage.columns.number')}</span>
+              <span className="data-grid-cell" role="columnheader">{t('ordersPage.columns.client')}</span>
+              <span className="data-grid-cell" role="columnheader">{t('ordersPage.columns.title')}</span>
+              <span className="data-grid-cell" role="columnheader">{t('ordersPage.columns.status')}</span>
+              <span className="data-grid-cell" role="columnheader">{t('ordersPage.columns.delivery')}</span>
+              <span className="data-grid-cell" role="columnheader">{t('ordersPage.columns.dueDate')}</span>
+              <span className="data-grid-cell" role="columnheader">{t('ordersPage.columns.total')}</span>
+              <span className="data-grid-cell" role="columnheader">{t('ordersPage.columns.createdAt')}</span>
               <span className="data-grid-cell" role="columnheader">{t('ordersPage.columns.actions')}</span>
             </div>
-            {customOrders.map((order, index) => (
+            {orders.map((order) => (
               <div key={order.id} className="data-grid-row" role="row">
-                <div className="data-grid-cell" role="cell">#{index + 1}</div>
-                <div className="data-grid-cell" role="cell">
-                  <div className="data-grid-title">{order.name}</div>
-                  <div className="data-grid-meta">{order.description || t('serviceList.noDescription')}</div>
-                  <div className="data-grid-meta">{order.duration}</div>
-                  <div className="data-grid-meta">{formatCurrencyRange(order.priceFrom, order.priceTo)}</div>
+                <div className="data-grid-cell">{order.number}</div>
+                <div className="data-grid-cell">{order.clientName}</div>
+                <div className="data-grid-cell">{order.title}</div>
+                <div className="data-grid-cell">
+                  <select value={order.status} onChange={(event) => handleStatusChange(order, event.target.value)}>
+                    {['New', 'Confirmed', 'InProgress', 'Ready', 'Completed', 'Cancelled'].map((status) => (
+                      <option key={status} value={status}>{t(`orderStatus.${status}`)}</option>
+                    ))}
+                  </select>
                 </div>
-                <div className="data-grid-cell" role="cell">
-                  {order.completionDeadlineDate
-                    ? formatDate(order.completionDeadlineDate)
-                    : t('formatters.noData')}
-                </div>
-                <div className="data-grid-cell data-grid-actions" role="cell">
-                  <button
-                    type="button"
-                    className="ghost"
-                    onClick={() => handleSwapOrder(index, -1)}
-                    disabled={index === 0 || isSubmitting}
-                  >
-                    <ArrowUpwardRoundedIcon fontSize="small" />
-                    {t('ordersPage.moveUp')}
-                  </button>
-                  <button
-                    type="button"
-                    className="ghost"
-                    onClick={() => handleSwapOrder(index, 1)}
-                    disabled={index === customOrders.length - 1 || isSubmitting}
-                  >
-                    <ArrowDownwardRoundedIcon fontSize="small" />
-                    {t('ordersPage.moveDown')}
-                  </button>
-                  <button
-                    type="button"
-                    className="ghost"
-                    onClick={() => {
-                      setEditingOrder(order);
-                      setIsModalOpen(true);
-                    }}
-                  >
+                <div className="data-grid-cell">{t(`orderDeliveryMethod.${order.deliveryMethod}`)}</div>
+                <div className="data-grid-cell">{order.dueDate ? formatDate(order.dueDate) : t('formatters.noData')}</div>
+                <div className="data-grid-cell">{formatCurrency(order.totalAmount)}</div>
+                <div className="data-grid-cell">{formatDate(order.createdAt)}</div>
+                <div className="data-grid-cell data-grid-actions">
+                  <Link className="ghost" to={`/orders/${order.id}`}>
+                    <VisibilityRoundedIcon fontSize="small" />
+                    {t('ordersPage.details')}
+                  </Link>
+                  <button type="button" className="ghost" onClick={() => { setEditingOrder(order); setIsModalOpen(true); }}>
                     <EditOutlinedIcon fontSize="small" />
                     {t('serviceList.edit')}
                   </button>
@@ -223,17 +182,13 @@ export default function OrdersPage() {
       </article>
 
       {isModalOpen ? (
-        <Modal
-          title={editingOrder ? t('ordersPage.editModalTitle') : t('ordersPage.modalTitle')}
-          onClose={closeModal}
-        >
-          <ServiceForm
+        <Modal title={editingOrder ? t('ordersPage.editModalTitle') : t('ordersPage.modalTitle')} onClose={closeModal}>
+          <OrderForm
             onSubmit={handleSubmit}
             isSubmitting={isSubmitting}
             initialValues={editingOrder}
             showTitle={false}
             variant="plain"
-            forcedType="CustomOrder"
           />
         </Modal>
       ) : null}

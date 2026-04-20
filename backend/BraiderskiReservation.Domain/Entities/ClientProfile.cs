@@ -10,6 +10,7 @@ public sealed class ClientProfile
     public bool IsActive { get; set; } = true;
     public List<UsedProduct> UsedProducts { get; set; } = new();
     public List<Appointment> Appointments { get; set; } = new();
+    public List<Order> Orders { get; set; } = new();
 }
 
 public sealed class UsedProduct

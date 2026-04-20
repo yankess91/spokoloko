@@ -9,9 +9,6 @@ public sealed class ServiceItem
     public TimeSpan DurationTo { get; set; } = TimeSpan.FromMinutes(60);
     public decimal PriceFrom { get; set; }
     public decimal PriceTo { get; set; }
-    public ServiceType Type { get; set; } = ServiceType.OnSite;
-    public DateOnly? CompletionDeadlineDate { get; set; }
-    public int OrderPosition { get; set; }
     public List<Appointment> Appointments { get; set; } = new();
     public List<ServiceProduct> ServiceProducts { get; set; } = new();
 }

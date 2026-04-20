@@ -11,10 +11,12 @@ namespace BraiderskiReservation.Api.Controllers;
 public sealed class ClientsController : ControllerBase
 {
     private readonly IClientService _clientService;
+    private readonly IOrderService _orderService;
 
-    public ClientsController(IClientService clientService)
+    public ClientsController(IClientService clientService, IOrderService orderService)
     {
         _clientService = clientService;
+        _orderService = orderService;
     }
 
     [HttpGet]
@@ -30,6 +32,10 @@ public sealed class ClientsController : ControllerBase
         return client is null ? NotFound() : Ok(client);
     }
 
+
+    [HttpGet("{id:guid}/orders")]
+    public async Task<ActionResult<IEnumerable<OrderListItemResponse>>> GetOrders(Guid id, CancellationToken cancellationToken) =>
+        Ok(await _orderService.GetByClientIdAsync(id, cancellationToken));
     [HttpPost]
     public async Task<ActionResult<ClientProfileResponse>> Create([FromBody] CreateClientRequest request, CancellationToken cancellationToken)
     {

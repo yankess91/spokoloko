@@ -20,26 +20,17 @@ const createInitialState = (initialValues) => {
   return ({
     name: values.name ?? '',
     description: values.description ?? '',
-    type: values.type ?? 'OnSite',
     durationFromMinutes: values.durationFromMinutes ?? values.durationMinutes ?? 60,
     durationToMinutes: values.durationToMinutes ?? values.durationMinutes ?? 60,
     priceFrom: values.priceFrom ?? values.price ?? '',
     priceTo: values.priceTo ?? values.price ?? '',
-    completionDeadlineDate: values.completionDeadlineDate ?? '',
     selectedProducts: mapSelectedProducts(
       values.selectedProducts ?? values.requiredProducts ?? []
     )
   });
 };
 
-export default function ServiceForm({
-  onSubmit,
-  isSubmitting,
-  initialValues,
-  showTitle = true,
-  variant = 'card',
-  forcedType = null
-}) {
+export default function ServiceForm({ onSubmit, isSubmitting, initialValues, showTitle = true, variant = 'card' }) {
   const { showToast } = useToast();
   const [formState, setFormState] = useState(() => createInitialState(initialValues));
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -105,7 +96,6 @@ export default function ServiceForm({
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const selectedType = forcedType ?? formState.type;
     if (Number(formState.durationToMinutes) < Number(formState.durationFromMinutes)) {
       showError(t('serviceForm.durationRangeError'));
       return;
@@ -116,11 +106,6 @@ export default function ServiceForm({
       return;
     }
 
-    if (selectedType === 'CustomOrder' && !formState.completionDeadlineDate) {
-      showError(t('serviceForm.completionDeadlineError'));
-      return;
-    }
-
     const shouldReset = await onSubmit?.({
       name: formState.name,
       description: formState.description,
@@ -128,9 +113,6 @@ export default function ServiceForm({
       durationToMinutes: Number(formState.durationToMinutes),
       priceFrom: Number(formState.priceFrom),
       priceTo: Number(formState.priceTo),
-      type: selectedType,
-      completionDeadlineDate:
-        selectedType === 'CustomOrder' ? formState.completionDeadlineDate : null,
       requiredProductIds: formState.selectedProducts.map((item) => item.id)
     });
 
@@ -147,100 +129,28 @@ export default function ServiceForm({
       <form className="form" onSubmit={handleSubmit}>
         <label>
           {t('serviceForm.name')}
-          <input
-            name="name"
-            placeholder={t('serviceForm.namePlaceholder')}
-            value={formState.name}
-            onChange={handleChange}
-            required
-          />
+          <input name="name" placeholder={t('serviceForm.namePlaceholder')} value={formState.name} onChange={handleChange} required />
         </label>
         <label>
           {t('serviceForm.description')}
-          <textarea
-            name="description"
-            placeholder={t('serviceForm.descriptionPlaceholder')}
-            rows="3"
-            value={formState.description}
-            onChange={handleChange}
-          />
+          <textarea name="description" placeholder={t('serviceForm.descriptionPlaceholder')} rows="3" value={formState.description} onChange={handleChange} />
         </label>
-        {forcedType ? null : (
-          <label>
-            {t('serviceForm.type')}
-            <select
-              name="type"
-              value={formState.type}
-              onChange={handleChange}
-              required
-            >
-              <option value="OnSite">{t('serviceForm.types.onSite')}</option>
-              <option value="CustomOrder">{t('serviceForm.types.customOrder')}</option>
-            </select>
-          </label>
-        )}
         <label>
           {t('serviceForm.duration')}
           <div className="inline-field">
-            <input
-              name="durationFromMinutes"
-              type="number"
-              min="15"
-              step="5"
-              value={formState.durationFromMinutes}
-              onChange={handleChange}
-              required
-            />
+            <input name="durationFromMinutes" type="number" min="15" step="5" value={formState.durationFromMinutes} onChange={handleChange} required />
             <span className="muted">-</span>
-            <input
-              name="durationToMinutes"
-              type="number"
-              min="15"
-              step="5"
-              value={formState.durationToMinutes}
-              onChange={handleChange}
-              required
-            />
+            <input name="durationToMinutes" type="number" min="15" step="5" value={formState.durationToMinutes} onChange={handleChange} required />
           </div>
         </label>
         <label>
           {t('serviceForm.price')}
           <div className="inline-field">
-            <input
-              name="priceFrom"
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder={t('serviceForm.priceFromPlaceholder')}
-              value={formState.priceFrom}
-              onChange={handleChange}
-              required
-            />
+            <input name="priceFrom" type="number" min="0" step="0.01" placeholder={t('serviceForm.priceFromPlaceholder')} value={formState.priceFrom} onChange={handleChange} required />
             <span className="muted">-</span>
-            <input
-              name="priceTo"
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder={t('serviceForm.priceToPlaceholder')}
-              value={formState.priceTo}
-              onChange={handleChange}
-              required
-            />
+            <input name="priceTo" type="number" min="0" step="0.01" placeholder={t('serviceForm.priceToPlaceholder')} value={formState.priceTo} onChange={handleChange} required />
           </div>
         </label>
-        {(forcedType ?? formState.type) === 'CustomOrder' ? (
-          <label>
-            {t('serviceForm.completionDeadlineDate')}
-            <input
-              name="completionDeadlineDate"
-              type="date"
-              value={formState.completionDeadlineDate}
-              onChange={handleChange}
-              required
-            />
-          </label>
-        ) : null}
         <label>
           {t('serviceForm.requiredProducts')}
           <div className="inline-field">
@@ -258,41 +168,24 @@ export default function ServiceForm({
               hideLabel
               containerClassName="autocomplete-inline"
             />
-            <button type="button" className="secondary" onClick={handleAddProduct}>
-              {t('common.add')}
-            </button>
+            <button type="button" className="secondary" onClick={handleAddProduct}>{t('common.add')}</button>
           </div>
         </label>
         {formState.selectedProducts.length ? (
           <div className="chips">
             {formState.selectedProducts.map((product) => (
-              <button
-                key={product.id}
-                type="button"
-                className="chip chip-button"
-                onClick={() => handleRemoveProduct(product.id)}
-              >
+              <button key={product.id} type="button" className="chip chip-button" onClick={() => handleRemoveProduct(product.id)}>
                 {t('serviceForm.removeProduct', { label: product.label })}
               </button>
             ))}
           </div>
-        ) : (
-          <p className="muted">{t('serviceForm.noProducts')}</p>
-        )}
+        ) : <p className="muted">{t('serviceForm.noProducts')}</p>}
         <button type="submit" className="primary" disabled={isSubmitting}>
-          {isSubmitting
-            ? t('common.saving')
-            : initialValues
-            ? t('serviceForm.update')
-            : t('serviceForm.save')}
+          {isSubmitting ? t('common.saving') : initialValues ? t('serviceForm.update') : t('serviceForm.save')}
         </button>
       </form>
     </>
   );
 
-  if (variant === 'card') {
-    return <article className="card">{formContent}</article>;
-  }
-
-  return <div>{formContent}</div>;
+  return variant === 'card' ? <article className="card">{formContent}</article> : <div>{formContent}</div>;
 }

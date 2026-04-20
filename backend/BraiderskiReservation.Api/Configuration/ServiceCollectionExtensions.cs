@@ -29,6 +29,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IServiceCatalogService, ServiceCatalogService>();
         services.AddTransient<IAppointmentService, AppointmentService>();
         services.AddTransient<IAuthService, AuthService>();
+        services.AddTransient<IOrderService, OrderService>();
         services.AddTransient<IScrapingImportService, ScrapingImportService>();
         services.AddSingleton<IScraperResolver, ScraperResolver>();
 
@@ -50,6 +51,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IServiceRepository, ServiceRepository>();
         services.AddScoped<IAppointmentRepository, AppointmentRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
 
         services.AddHttpClient<IListingScraper, MagfactoryListingScraper>(ConfigureScraperHttpClient);
         services.AddHttpClient<IMagfactoryImageUrlProvider, MagfactoryImageUrlProvider>(ConfigureScraperHttpClient);

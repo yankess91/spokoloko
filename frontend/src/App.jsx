@@ -25,6 +25,7 @@ import ProductsPage from './pages/ProductsPage';
 import ServiceDetailsPage from './pages/ServiceDetailsPage';
 import ServicesPage from './pages/ServicesPage';
 import OrdersPage from './pages/OrdersPage';
+import OrderDetailsPage from './pages/OrderDetailsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuth } from './context/AuthContext';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
@@ -174,6 +175,7 @@ export default function App() {
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/services/:id" element={<ServiceDetailsPage />} />
         <Route path="/orders" element={<OrdersPage />} />
+        <Route path="/orders/:id" element={<OrderDetailsPage />} />
         <Route path="/appointments" element={<AppointmentsPage />} />
         <Route path="/appointments/:id" element={<AppointmentDetailsPage />} />
         <Route path="/calendar" element={<CalendarPage />} />

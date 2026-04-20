@@ -4,6 +4,7 @@ import AuthApi from './AuthApi';
 import ClientsApi from './ClientsApi';
 import ProductsApi from './ProductsApi';
 import ServicesApi from './ServicesApi';
+import OrdersApi from './OrdersApi';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
 
@@ -14,3 +15,4 @@ export const authApi = new AuthApi(apiClient);
 export const clientsApi = new ClientsApi(apiClient);
 export const productsApi = new ProductsApi(apiClient);
 export const servicesApi = new ServicesApi(apiClient);
+export const ordersApi = new OrdersApi(apiClient);

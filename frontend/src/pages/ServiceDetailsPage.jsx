@@ -7,7 +7,7 @@ import ConstructionRoundedIcon from '@mui/icons-material/ConstructionRounded';
 import useServiceDetails from '../hooks/useServiceDetails';
 import useProducts from '../hooks/useProducts';
 import { useToast } from '../components/ToastProvider';
-import { formatCurrencyRange, formatDate } from '../utils/formatters';
+import { formatCurrencyRange } from '../utils/formatters';
 import { servicesApi } from '../api';
 import { t } from '../utils/i18n';
 
@@ -92,9 +92,6 @@ export default function ServiceDetailsPage() {
     <div className="page-content">
       <header className="section-header detail-header modern-surface">
         <div className="detail-header-top">
-          <span className="detail-badge">
-            {t(`serviceTypes.${service.type ?? 'OnSite'}`)}
-          </span>
           <span className="detail-badge is-muted">
             <ConstructionRoundedIcon fontSize="inherit" />
             {t('serviceDetails.durationLabel', { value: service.duration })}
@@ -121,12 +118,8 @@ export default function ServiceDetailsPage() {
         <article className="card detail-card">
           <h2>{t('serviceDetails.descriptionTitle')}</h2>
           <p>{service.description || t('serviceDetails.noDescription')}</p>
-          <p>{t('serviceDetails.typeLabel', { value: t(`serviceTypes.${service.type ?? 'OnSite'}`) })}</p>
           <p>{t('serviceDetails.durationLabel', { value: service.duration })}</p>
           <p>{t('serviceDetails.priceLabel', { value: formatCurrencyRange(service.priceFrom, service.priceTo) })}</p>
-          {service.type === 'CustomOrder' && service.completionDeadlineDate ? (
-            <p>{t('serviceDetails.completionDeadlineDateLabel', { value: formatDate(service.completionDeadlineDate) })}</p>
-          ) : null}
         </article>
 
         <article className="card detail-card">

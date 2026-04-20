@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace BraiderskiReservation.Api.Application.DTOs;
 
 public sealed record CreateServiceRequest(
@@ -9,8 +7,5 @@ public sealed record CreateServiceRequest(
     int DurationToMinutes,
     decimal PriceFrom,
     decimal PriceTo,
-    string Type,
-    DateOnly? CompletionDeadlineDate,
-    int? OrderPosition,
     List<Guid> RequiredProductIds
 );
