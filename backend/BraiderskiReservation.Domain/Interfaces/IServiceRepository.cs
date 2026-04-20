@@ -20,6 +20,7 @@ public interface IServiceRepository
         TimeSpan durationTo,
         decimal priceFrom,
         decimal priceTo,
+        ServiceType type,
         List<Guid> requiredProductIds,
         CancellationToken cancellationToken);
 

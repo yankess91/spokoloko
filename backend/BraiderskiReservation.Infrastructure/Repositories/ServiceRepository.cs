@@ -52,6 +52,7 @@ public sealed class ServiceRepository : IServiceRepository
         TimeSpan durationTo,
         decimal priceFrom,
         decimal priceTo,
+        ServiceType type,
         List<Guid> requiredProductIds,
         CancellationToken cancellationToken)
     {
@@ -70,6 +71,7 @@ public sealed class ServiceRepository : IServiceRepository
         service.DurationTo = durationTo;
         service.PriceFrom = priceFrom;
         service.PriceTo = priceTo;
+        service.Type = type;
 
         var normalizedRequiredProductIds = (requiredProductIds ?? new List<Guid>())
             .Distinct()

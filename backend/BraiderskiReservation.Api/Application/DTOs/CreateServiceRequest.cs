@@ -9,5 +9,6 @@ public sealed record CreateServiceRequest(
     int DurationToMinutes,
     decimal PriceFrom,
     decimal PriceTo,
+    string Type,
     List<Guid> RequiredProductIds
 );
