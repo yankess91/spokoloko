@@ -49,6 +49,7 @@ public static class DtoMapper
             serviceItem.DurationTo,
             serviceItem.PriceFrom,
             serviceItem.PriceTo,
+            serviceItem.Type.ToString(),
             serviceItem.ServiceProducts
                 .Select(serviceProduct => serviceProduct.Product)
                 .Where(product => product is not null)

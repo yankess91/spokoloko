@@ -8,4 +8,5 @@ public sealed record ServiceItemResponse(
     TimeSpan DurationTo,
     decimal PriceFrom,
     decimal PriceTo,
+    string Type,
     List<ProductResponse> RequiredProducts);

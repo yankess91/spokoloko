@@ -45,6 +45,8 @@ public sealed class ServiceCatalogService : IServiceCatalogService
             throw new InvalidOperationException("Pole PriceTo musi być większe lub równe PriceFrom.");
         }
 
+        var serviceType = ParseServiceType(request.Type);
+
         var service = new ServiceItem
         {
             Name = request.Name,
@@ -53,6 +55,7 @@ public sealed class ServiceCatalogService : IServiceCatalogService
             DurationTo = TimeSpan.FromMinutes(request.DurationToMinutes),
             PriceFrom = request.PriceFrom,
             PriceTo = request.PriceTo,
+            Type = serviceType,
             ServiceProducts = (request.RequiredProductIds ?? new List<Guid>())
                 .Distinct()
                 .Select(productId => new ServiceProduct
@@ -87,6 +90,7 @@ public sealed class ServiceCatalogService : IServiceCatalogService
             TimeSpan.FromMinutes(request.DurationToMinutes),
             request.PriceFrom,
             request.PriceTo,
+            ParseServiceType(request.Type),
             request.RequiredProductIds ?? new List<Guid>(),
             cancellationToken);
 
@@ -131,5 +135,15 @@ public sealed class ServiceCatalogService : IServiceCatalogService
 
         await _serviceRepository.SaveChangesAsync(cancellationToken);
         return true;
+    }
+
+    private static ServiceType ParseServiceType(string type)
+    {
+        if (Enum.TryParse<ServiceType>(type, true, out var serviceType))
+        {
+            return serviceType;
+        }
+
+        throw new InvalidOperationException("Pole Type musi mieć wartość OnSite albo CustomOrder.");
     }
 }

@@ -116,6 +116,10 @@ public sealed class AppDbContext : DbContext
             entity.Property(service => service.DurationTo).HasColumnName("duration_to");
             entity.Property(service => service.PriceFrom).HasColumnName("price_from");
             entity.Property(service => service.PriceTo).HasColumnName("price_to");
+            entity.Property(service => service.Type)
+                .HasColumnName("type")
+                .HasConversion<int>()
+                .HasDefaultValue(ServiceType.OnSite);
             entity.HasIndex(service => service.Name);
             entity.HasMany(service => service.Appointments)
                 .WithOne(appointment => appointment.ServiceItem)

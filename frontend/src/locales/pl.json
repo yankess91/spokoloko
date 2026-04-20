@@ -167,6 +167,10 @@
     "delete": "Usuń",
     "edit": "Edytuj"
   },
+  "serviceTypes": {
+    "OnSite": "Na miejscu",
+    "CustomOrder": "Na zamówienie"
+  },
   "serviceForm": {
     "selectProductError": "Wybierz produkt z listy podpowiedzi.",
     "duplicateProductError": "Ten produkt został już dodany.",
@@ -177,6 +181,11 @@
     "namePlaceholder": "np. Warkocze klasyczne",
     "description": "Opis",
     "descriptionPlaceholder": "Krótki opis zabiegu",
+    "type": "Typ usługi",
+    "types": {
+      "onSite": "Wykonywana na miejscu",
+      "customOrder": "Wykonywana na zamówienie"
+    },
     "duration": "Czas trwania (min)",
     "price": "Cena (zł)",
     "priceFromPlaceholder": "od, np. 250",
@@ -327,6 +336,7 @@
     "delete": "Usuń usługę",
     "descriptionTitle": "Opis",
     "noDescription": "Brak opisu",
+    "typeLabel": "Typ: {value}",
     "durationLabel": "Czas trwania: {value}",
     "priceLabel": "Cena: {value}",
     "requiredProductsTitle": "Wymagane produkty",

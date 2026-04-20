@@ -83,6 +83,11 @@ internal partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.Property<string>("Name").IsRequired().HasColumnType("text").HasColumnName("name");
                 b.Property<decimal>("PriceFrom").HasColumnType("numeric").HasColumnName("price_from");
                 b.Property<decimal>("PriceTo").HasColumnType("numeric").HasColumnName("price_to");
+                b.Property<int>("Type")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer")
+                    .HasColumnName("type")
+                    .HasDefaultValue(0);
                 b.HasKey("Id");
                 b.HasIndex("Name");
                 b.ToTable("services", (string)null);

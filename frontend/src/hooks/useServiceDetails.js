@@ -20,6 +20,7 @@ export default function useServiceDetails(serviceId) {
       const data = await servicesApi.getById(serviceId);
       setService({
         ...data,
+        type: data?.type ?? 'OnSite',
         duration: formatDurationRange(data.durationFrom, data.durationTo)
       });
       setError('');

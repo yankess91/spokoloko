@@ -20,6 +20,7 @@ const createInitialState = (initialValues) => {
   return ({
     name: values.name ?? '',
     description: values.description ?? '',
+    type: values.type ?? 'OnSite',
     durationFromMinutes: values.durationFromMinutes ?? values.durationMinutes ?? 60,
     durationToMinutes: values.durationToMinutes ?? values.durationMinutes ?? 60,
     priceFrom: values.priceFrom ?? values.price ?? '',
@@ -119,6 +120,7 @@ export default function ServiceForm({
       durationToMinutes: Number(formState.durationToMinutes),
       priceFrom: Number(formState.priceFrom),
       priceTo: Number(formState.priceTo),
+      type: formState.type,
       requiredProductIds: formState.selectedProducts.map((item) => item.id)
     });
 
@@ -152,6 +154,18 @@ export default function ServiceForm({
             value={formState.description}
             onChange={handleChange}
           />
+        </label>
+        <label>
+          {t('serviceForm.type')}
+          <select
+            name="type"
+            value={formState.type}
+            onChange={handleChange}
+            required
+          >
+            <option value="OnSite">{t('serviceForm.types.onSite')}</option>
+            <option value="CustomOrder">{t('serviceForm.types.customOrder')}</option>
+          </select>
         </label>
         <label>
           {t('serviceForm.duration')}

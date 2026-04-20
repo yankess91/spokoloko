@@ -20,6 +20,7 @@ function mapService(service) {
     ...service,
     durationFromMinutes: durationFromMinutes ?? 0,
     durationToMinutes: durationToMinutes ?? 0,
+    type: service?.type ?? 'OnSite',
     duration: formatDurationRange(durationFromValue, durationToValue)
   };
 }

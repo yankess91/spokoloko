@@ -12,10 +12,10 @@ VALUES
     ('2b4b2d2f-1a42-4b84-9f20-2bb2b8e4e2c1', 'Olejek ochronny', 'GlowRoots', 'Nakładany przed stylizacją', 'https://images.example.com/products/olejek-ochronny.jpg', 54.50, 'https://sklep.przyklad.pl/olejek-ochronny', true, NOW())
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO services (id, name, description, duration_from, duration_to, price_from, price_to)
+INSERT INTO services (id, name, description, duration_from, duration_to, price_from, price_to, type)
 VALUES
-    ('06b6b1d1-9c30-4e49-9c1a-5e7f93d2bb09', 'Warkocze klasyczne', 'Zaplatanie klasycznych warkoczy z pielęgnacją.', interval '90 minutes', interval '90 minutes', 220.00, 220.00),
-    ('f3d7e56f-0a7c-4580-9cd1-00d9f64d8b0b', 'Regeneracja skóry głowy', 'Oczyszczanie i masaż skóry głowy.', interval '60 minutes', interval '60 minutes', 160.00, 160.00)
+    ('06b6b1d1-9c30-4e49-9c1a-5e7f93d2bb09', 'Warkocze klasyczne', 'Zaplatanie klasycznych warkoczy z pielęgnacją.', interval '90 minutes', interval '90 minutes', 220.00, 220.00, 0),
+    ('f3d7e56f-0a7c-4580-9cd1-00d9f64d8b0b', 'Regeneracja skóry głowy', 'Oczyszczanie i masaż skóry głowy.', interval '60 minutes', interval '60 minutes', 160.00, 160.00, 0)
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO users (id, full_name, email, password_hash, created_at)
