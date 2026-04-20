@@ -56,6 +56,27 @@ body {
   padding: 0;
 }
 
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  width: 100%;
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  transition: width 240ms ease, margin 240ms ease;
+}
+
+.app-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .site-footer {
   margin-top: auto;
   padding: var(--space-6) clamp(20px, 4vw, 48px);
@@ -317,6 +338,12 @@ a:focus-visible {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .site-footer {
+    padding: var(--space-5) clamp(16px, 4vw, 32px);
+  }
 }
 
 .topbar-title {
