@@ -49,7 +49,22 @@ dotnet ef migrations list \
 dotnet ef database update \
   --project backend/BraiderskiReservation.Infrastructure \
   --startup-project backend/BraiderskiReservation.Api
+
+# lokalny reset (usuwa bazę i odtwarza schemat wyłącznie z migracji EF Core)
+dotnet ef database drop --force --no-build \
+  --project backend/BraiderskiReservation.Infrastructure \
+  --startup-project backend/BraiderskiReservation.Api
+
+dotnet ef database update \
+  --project backend/BraiderskiReservation.Infrastructure \
+  --startup-project backend/BraiderskiReservation.Api
+
+# kontrola wpisów migracji w __EFMigrationsHistory
+psql "Host=localhost;Port=5432;Database=spokoloko;Username=spokoloko;Password=spokoloko" \
+  -c 'SELECT migration_id, product_version FROM "__EFMigrationsHistory" ORDER BY migration_id;'
 ```
+
+Jeżeli lokalna baza była tworzona wcześniej poza EF Core (pusta tabela `__EFMigrationsHistory` przy istniejącym schemacie), wykonaj powyższy reset, żeby od teraz schema była budowana tylko przez migracje.
 
 Domyślnie aplikacja może automatycznie wykonać migracje na starcie (`Database:ApplyMigrationsOnStartup=true`).
 
