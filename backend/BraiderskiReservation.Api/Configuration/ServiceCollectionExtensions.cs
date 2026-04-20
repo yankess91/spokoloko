@@ -53,6 +53,7 @@ public static class ServiceCollectionExtensions
 
         services.AddHttpClient<IListingScraper, MagfactoryListingScraper>(ConfigureScraperHttpClient);
         services.AddHttpClient<IMagfactoryImageUrlProvider, MagfactoryImageUrlProvider>(ConfigureScraperHttpClient);
+        services.AddHttpClient<ILocalImageStorage, LocalImageStorage>(ConfigureScraperHttpClient);
         services.AddHttpClient<IListingScraper, AlthairListingScraper>(ConfigureScraperHttpClient);
 
         return services;

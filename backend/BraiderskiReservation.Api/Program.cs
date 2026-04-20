@@ -18,6 +18,7 @@ app.UseGlobalExceptionHandling();
 app.UseSwaggerIfDevelopment();
 app.UseStatusCodeProblemDetails();
 app.UseConfiguredCors();
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

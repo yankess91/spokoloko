@@ -15,6 +15,7 @@ import AppointmentForm from '../components/AppointmentForm';
 import Modal from '../components/Modal';
 import { useToast } from '../components/ToastProvider';
 import { t } from '../utils/i18n';
+import { toApiAssetUrl } from '../utils/assets';
 
 export default function ClientDetailsPage() {
   const { id } = useParams();
@@ -159,13 +160,13 @@ export default function ClientDetailsPage() {
                               className="thumb-button"
                               onClick={() =>
                                 setZoomedImage({
-                                  src: product.imageUrl,
+                                  src: toApiAssetUrl(product.imageUrl),
                                   name: product.name,
                                 })
                               }
                               title={t('clientDetails.zoomImage')}
                             >
-                              <img className="thumb" src={product.imageUrl} alt={product.name} />
+                              <img className="thumb" src={toApiAssetUrl(product.imageUrl)} alt={product.name} />
                               <span className="thumb-overlay">
                                 <ZoomInIcon fontSize="small" />
                               </span>

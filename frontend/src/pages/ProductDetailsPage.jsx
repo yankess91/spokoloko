@@ -9,6 +9,7 @@ import useProductDetails from '../hooks/useProductDetails';
 import { useToast } from '../components/ToastProvider';
 import { productsApi } from '../api';
 import { t } from '../utils/i18n';
+import { toApiAssetUrl } from '../utils/assets';
 import { formatCurrency, formatDate } from '../utils/formatters';
 
 export default function ProductDetailsPage() {
@@ -127,7 +128,7 @@ export default function ProductDetailsPage() {
         <article className="card detail-card media-card">
           <h2>{t('productDetails.imageTitle')}</h2>
           {product.imageUrl ? (
-            <img className="product-image detail-main-image" src={product.imageUrl} alt={product.name} />
+            <img className="product-image detail-main-image" src={toApiAssetUrl(product.imageUrl)} alt={product.name} />
           ) : (
             <p className="muted">{t('productDetails.noImage')}</p>
           )}

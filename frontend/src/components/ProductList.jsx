@@ -6,6 +6,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import CloseIcon from '@mui/icons-material/Close';
 import { formatCurrency, formatDate } from '../utils/formatters';
+import { toApiAssetUrl } from '../utils/assets';
 import { t } from '../utils/i18n';
 
 export default function ProductList({ products, isLoading, linkBase, onEdit, onDelete }) {
@@ -31,7 +32,10 @@ export default function ProductList({ products, isLoading, linkBase, onEdit, onD
         <span className="data-grid-cell" role="columnheader">{t('productList.columns.image')}</span>
         <span className="data-grid-cell" role="columnheader">{t('productList.columns.actions')}</span>
       </div>
-      {products.map((product) => (
+      {products.map((product) => {
+        const imageUrl = toApiAssetUrl(product.imageUrl);
+
+        return (
         <div
           key={product.id}
           className={`data-grid-row ${product.isAvailable ? 'product-row-available' : 'product-row-unavailable'}`}
@@ -47,14 +51,14 @@ export default function ProductList({ products, isLoading, linkBase, onEdit, onD
             {product.availabilityCheckedAt ? formatDate(product.availabilityCheckedAt) : t('productList.noAvailabilityDate')}
           </div>
           <div className="data-grid-cell" role="cell">
-            {product.imageUrl ? (
+            {imageUrl ? (
               <button
                 type="button"
                 className="thumb-button"
-                onClick={() => setZoomedImage({ src: product.imageUrl, name: product.name })}
+                onClick={() => setZoomedImage({ src: imageUrl, name: product.name })}
                 title={t('productList.zoomImage')}
               >
-                <img className="thumb" src={product.imageUrl} alt={product.name} />
+                <img className="thumb" src={imageUrl} alt={product.name} />
                 <span className="thumb-overlay">
                   <ZoomInIcon fontSize="small" />
                 </span>
@@ -86,7 +90,8 @@ export default function ProductList({ products, isLoading, linkBase, onEdit, onD
             </button>
           </div>
         </div>
-      ))}
+      );
+      })}
 
       {zoomedImage ? (
         <div className="image-zoom-backdrop" onClick={() => setZoomedImage(null)}>
