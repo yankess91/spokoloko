@@ -81,6 +81,14 @@ internal partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.Property<TimeSpan>("DurationFrom").HasColumnType("interval").HasColumnName("duration_from");
                 b.Property<TimeSpan>("DurationTo").HasColumnType("interval").HasColumnName("duration_to");
                 b.Property<string>("Name").IsRequired().HasColumnType("text").HasColumnName("name");
+                b.Property<int?>("MaxCompletionTimeDays")
+                    .HasColumnType("integer")
+                    .HasColumnName("max_completion_time_days");
+                b.Property<int>("OrderPosition")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer")
+                    .HasColumnName("order_position")
+                    .HasDefaultValue(0);
                 b.Property<decimal>("PriceFrom").HasColumnType("numeric").HasColumnName("price_from");
                 b.Property<decimal>("PriceTo").HasColumnType("numeric").HasColumnName("price_to");
                 b.Property<int>("Type")

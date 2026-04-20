@@ -16,7 +16,8 @@ public sealed class ServiceRepository : IServiceRepository
 
     public Task<List<ServiceItem>> GetAllAsync(CancellationToken cancellationToken) =>
         BuildServiceQuery(includeProducts: true)
-            .OrderBy(service => service.Name)
+            .OrderBy(service => service.OrderPosition)
+            .ThenBy(service => service.Name)
             .ToListAsync(cancellationToken);
 
     public Task<List<ServiceItem>> SearchAsync(string? searchTerm, CancellationToken cancellationToken)
@@ -33,7 +34,8 @@ public sealed class ServiceRepository : IServiceRepository
         }
 
         return query
-            .OrderBy(service => service.Name)
+            .OrderBy(service => service.OrderPosition)
+            .ThenBy(service => service.Name)
             .ToListAsync(cancellationToken);
     }
 
@@ -53,6 +55,8 @@ public sealed class ServiceRepository : IServiceRepository
         decimal priceFrom,
         decimal priceTo,
         ServiceType type,
+        int? maxCompletionTimeDays,
+        int? orderPosition,
         List<Guid> requiredProductIds,
         CancellationToken cancellationToken)
     {
@@ -72,6 +76,11 @@ public sealed class ServiceRepository : IServiceRepository
         service.PriceFrom = priceFrom;
         service.PriceTo = priceTo;
         service.Type = type;
+        service.MaxCompletionTimeDays = maxCompletionTimeDays;
+        if (orderPosition.HasValue)
+        {
+            service.OrderPosition = orderPosition.Value;
+        }
 
         var normalizedRequiredProductIds = (requiredProductIds ?? new List<Guid>())
             .Distinct()

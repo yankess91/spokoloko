@@ -120,6 +120,11 @@ public sealed class AppDbContext : DbContext
                 .HasColumnName("type")
                 .HasConversion<int>()
                 .HasDefaultValue(ServiceType.OnSite);
+            entity.Property(service => service.MaxCompletionTimeDays)
+                .HasColumnName("max_completion_time_days");
+            entity.Property(service => service.OrderPosition)
+                .HasColumnName("order_position")
+                .HasDefaultValue(0);
             entity.HasIndex(service => service.Name);
             entity.HasMany(service => service.Appointments)
                 .WithOne(appointment => appointment.ServiceItem)

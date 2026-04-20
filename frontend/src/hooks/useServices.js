@@ -21,6 +21,8 @@ function mapService(service) {
     durationFromMinutes: durationFromMinutes ?? 0,
     durationToMinutes: durationToMinutes ?? 0,
     type: service?.type ?? 'OnSite',
+    maxCompletionTimeDays: service?.maxCompletionTimeDays ?? null,
+    orderPosition: Number(service?.orderPosition ?? 0),
     duration: formatDurationRange(durationFromValue, durationToValue)
   };
 }
