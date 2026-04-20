@@ -8,10 +8,6 @@ namespace BraiderskiReservation.Infrastructure.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql("ALTER TABLE services DROP COLUMN IF EXISTS type;");
-            migrationBuilder.Sql("ALTER TABLE services DROP COLUMN IF EXISTS completion_deadline_date;");
-            migrationBuilder.Sql("ALTER TABLE services DROP COLUMN IF EXISTS order_position;");
-
             migrationBuilder.CreateTable(
                 name: "orders",
                 columns: table => new
@@ -103,26 +99,6 @@ namespace BraiderskiReservation.Infrastructure.Data.Migrations
         {
             migrationBuilder.DropTable(name: "order_items");
             migrationBuilder.DropTable(name: "orders");
-
-            migrationBuilder.AddColumn<int>(
-                name: "type",
-                table: "services",
-                type: "integer",
-                nullable: false,
-                defaultValue: 0);
-
-            migrationBuilder.AddColumn<DateOnly>(
-                name: "completion_deadline_date",
-                table: "services",
-                type: "date",
-                nullable: true);
-
-            migrationBuilder.AddColumn<int>(
-                name: "order_position",
-                table: "services",
-                type: "integer",
-                nullable: false,
-                defaultValue: 0);
         }
     }
 }
