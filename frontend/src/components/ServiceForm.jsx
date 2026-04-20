@@ -25,7 +25,7 @@ const createInitialState = (initialValues) => {
     durationToMinutes: values.durationToMinutes ?? values.durationMinutes ?? 60,
     priceFrom: values.priceFrom ?? values.price ?? '',
     priceTo: values.priceTo ?? values.price ?? '',
-    maxCompletionTimeDays: values.maxCompletionTimeDays ?? '',
+    completionDeadlineDate: values.completionDeadlineDate ?? '',
     selectedProducts: mapSelectedProducts(
       values.selectedProducts ?? values.requiredProducts ?? []
     )
@@ -116,8 +116,8 @@ export default function ServiceForm({
       return;
     }
 
-    if (selectedType === 'CustomOrder' && Number(formState.maxCompletionTimeDays) <= 0) {
-      showError(t('serviceForm.maxCompletionTimeError'));
+    if (selectedType === 'CustomOrder' && !formState.completionDeadlineDate) {
+      showError(t('serviceForm.completionDeadlineError'));
       return;
     }
 
@@ -129,8 +129,8 @@ export default function ServiceForm({
       priceFrom: Number(formState.priceFrom),
       priceTo: Number(formState.priceTo),
       type: selectedType,
-      maxCompletionTimeDays:
-        selectedType === 'CustomOrder' ? Number(formState.maxCompletionTimeDays) : null,
+      completionDeadlineDate:
+        selectedType === 'CustomOrder' ? formState.completionDeadlineDate : null,
       requiredProductIds: formState.selectedProducts.map((item) => item.id)
     });
 
@@ -231,14 +231,11 @@ export default function ServiceForm({
         </label>
         {(forcedType ?? formState.type) === 'CustomOrder' ? (
           <label>
-            {t('serviceForm.maxCompletionTime')}
+            {t('serviceForm.completionDeadlineDate')}
             <input
-              name="maxCompletionTimeDays"
-              type="number"
-              min="1"
-              step="1"
-              placeholder={t('serviceForm.maxCompletionTimePlaceholder')}
-              value={formState.maxCompletionTimeDays}
+              name="completionDeadlineDate"
+              type="date"
+              value={formState.completionDeadlineDate}
               onChange={handleChange}
               required
             />

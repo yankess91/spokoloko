@@ -8,7 +8,7 @@ import Modal from '../components/Modal';
 import ServiceForm from '../components/ServiceForm';
 import useServices from '../hooks/useServices';
 import { useToast } from '../components/ToastProvider';
-import { formatCurrencyRange } from '../utils/formatters';
+import { formatCurrencyRange, formatDate } from '../utils/formatters';
 import { t } from '../utils/i18n';
 
 const toServicePayload = (service, overrides = {}) => ({
@@ -19,7 +19,7 @@ const toServicePayload = (service, overrides = {}) => ({
   priceFrom: Number(service.priceFrom ?? 0),
   priceTo: Number(service.priceTo ?? 0),
   type: service.type ?? 'OnSite',
-  maxCompletionTimeDays: service.maxCompletionTimeDays ?? null,
+  completionDeadlineDate: service.completionDeadlineDate ?? null,
   orderPosition: service.orderPosition ?? 0,
   requiredProductIds: (service.requiredProducts ?? []).map((product) => product.id),
   ...overrides
@@ -164,7 +164,7 @@ export default function OrdersPage() {
             <div className="data-grid-row data-grid-header" role="row">
               <span className="data-grid-cell" role="columnheader">{t('ordersPage.columns.position')}</span>
               <span className="data-grid-cell" role="columnheader">{t('ordersPage.columns.order')}</span>
-              <span className="data-grid-cell" role="columnheader">{t('ordersPage.columns.maxCompletionTime')}</span>
+              <span className="data-grid-cell" role="columnheader">{t('ordersPage.columns.completionDeadlineDate')}</span>
               <span className="data-grid-cell" role="columnheader">{t('ordersPage.columns.actions')}</span>
             </div>
             {customOrders.map((order, index) => (
@@ -177,7 +177,9 @@ export default function OrdersPage() {
                   <div className="data-grid-meta">{formatCurrencyRange(order.priceFrom, order.priceTo)}</div>
                 </div>
                 <div className="data-grid-cell" role="cell">
-                  {t('ordersPage.maxCompletionTimeValue', { days: order.maxCompletionTimeDays ?? 0 })}
+                  {order.completionDeadlineDate
+                    ? formatDate(order.completionDeadlineDate)
+                    : t('formatters.noData')}
                 </div>
                 <div className="data-grid-cell data-grid-actions" role="cell">
                   <button

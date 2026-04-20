@@ -9,6 +9,6 @@ public sealed record ServiceItemResponse(
     decimal PriceFrom,
     decimal PriceTo,
     string Type,
-    int? MaxCompletionTimeDays,
+    DateOnly? CompletionDeadlineDate,
     int OrderPosition,
     List<ProductResponse> RequiredProducts);

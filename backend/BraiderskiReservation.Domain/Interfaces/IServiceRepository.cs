@@ -21,7 +21,7 @@ public interface IServiceRepository
         decimal priceFrom,
         decimal priceTo,
         ServiceType type,
-        int? maxCompletionTimeDays,
+        DateOnly? completionDeadlineDate,
         int? orderPosition,
         List<Guid> requiredProductIds,
         CancellationToken cancellationToken);

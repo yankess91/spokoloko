@@ -120,8 +120,9 @@ public sealed class AppDbContext : DbContext
                 .HasColumnName("type")
                 .HasConversion<int>()
                 .HasDefaultValue(ServiceType.OnSite);
-            entity.Property(service => service.MaxCompletionTimeDays)
-                .HasColumnName("max_completion_time_days");
+            entity.Property(service => service.CompletionDeadlineDate)
+                .HasColumnName("completion_deadline_date")
+                .HasColumnType("date");
             entity.Property(service => service.OrderPosition)
                 .HasColumnName("order_position")
                 .HasDefaultValue(0);

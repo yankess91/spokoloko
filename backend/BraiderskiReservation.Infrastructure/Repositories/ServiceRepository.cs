@@ -55,7 +55,7 @@ public sealed class ServiceRepository : IServiceRepository
         decimal priceFrom,
         decimal priceTo,
         ServiceType type,
-        int? maxCompletionTimeDays,
+        DateOnly? completionDeadlineDate,
         int? orderPosition,
         List<Guid> requiredProductIds,
         CancellationToken cancellationToken)
@@ -76,7 +76,7 @@ public sealed class ServiceRepository : IServiceRepository
         service.PriceFrom = priceFrom;
         service.PriceTo = priceTo;
         service.Type = type;
-        service.MaxCompletionTimeDays = maxCompletionTimeDays;
+        service.CompletionDeadlineDate = type == ServiceType.CustomOrder ? completionDeadlineDate : null;
         if (orderPosition.HasValue)
         {
             service.OrderPosition = orderPosition.Value;

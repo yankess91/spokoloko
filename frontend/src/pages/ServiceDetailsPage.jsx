@@ -7,7 +7,7 @@ import ConstructionRoundedIcon from '@mui/icons-material/ConstructionRounded';
 import useServiceDetails from '../hooks/useServiceDetails';
 import useProducts from '../hooks/useProducts';
 import { useToast } from '../components/ToastProvider';
-import { formatCurrencyRange } from '../utils/formatters';
+import { formatCurrencyRange, formatDate } from '../utils/formatters';
 import { servicesApi } from '../api';
 import { t } from '../utils/i18n';
 
@@ -124,8 +124,8 @@ export default function ServiceDetailsPage() {
           <p>{t('serviceDetails.typeLabel', { value: t(`serviceTypes.${service.type ?? 'OnSite'}`) })}</p>
           <p>{t('serviceDetails.durationLabel', { value: service.duration })}</p>
           <p>{t('serviceDetails.priceLabel', { value: formatCurrencyRange(service.priceFrom, service.priceTo) })}</p>
-          {service.type === 'CustomOrder' ? (
-            <p>{t('serviceDetails.maxCompletionTimeLabel', { value: service.maxCompletionTimeDays ?? 0 })}</p>
+          {service.type === 'CustomOrder' && service.completionDeadlineDate ? (
+            <p>{t('serviceDetails.completionDeadlineDateLabel', { value: formatDate(service.completionDeadlineDate) })}</p>
           ) : null}
         </article>
 

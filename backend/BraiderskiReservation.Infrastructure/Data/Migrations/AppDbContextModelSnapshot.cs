@@ -81,9 +81,9 @@ internal partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.Property<TimeSpan>("DurationFrom").HasColumnType("interval").HasColumnName("duration_from");
                 b.Property<TimeSpan>("DurationTo").HasColumnType("interval").HasColumnName("duration_to");
                 b.Property<string>("Name").IsRequired().HasColumnType("text").HasColumnName("name");
-                b.Property<int?>("MaxCompletionTimeDays")
-                    .HasColumnType("integer")
-                    .HasColumnName("max_completion_time_days");
+                b.Property<DateOnly?>("CompletionDeadlineDate")
+                    .HasColumnType("date")
+                    .HasColumnName("completion_deadline_date");
                 b.Property<int>("OrderPosition")
                     .ValueGeneratedOnAdd()
                     .HasColumnType("integer")
