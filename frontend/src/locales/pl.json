@@ -14,6 +14,7 @@
     "appointments": "Wizyty",
     "products": "Produkty",
     "services": "Usługi",
+    "orders": "Zamówienia",
     "calendar": "Kalendarz"
   },
   "footer": {
@@ -176,6 +177,7 @@
     "duplicateProductError": "Ten produkt został już dodany.",
     "durationRangeError": "Pole czasu \"do\" musi być większe lub równe polu \"od\".",
     "priceRangeError": "Pole ceny \"do\" musi być większe lub równe polu \"od\".",
+    "maxCompletionTimeError": "Podaj dodatni maksymalny czas realizacji dla usługi na zamówienie.",
     "title": "Dodaj usługę",
     "name": "Nazwa usługi",
     "namePlaceholder": "np. Warkocze klasyczne",
@@ -188,6 +190,8 @@
     },
     "duration": "Czas trwania (min)",
     "price": "Cena (zł)",
+    "maxCompletionTime": "Maksymalny czas realizacji (dni)",
+    "maxCompletionTimePlaceholder": "np. 14",
     "priceFromPlaceholder": "od, np. 250",
     "priceToPlaceholder": "do, np. 300",
     "requiredProducts": "Wymagane produkty",
@@ -339,6 +343,7 @@
     "typeLabel": "Typ: {value}",
     "durationLabel": "Czas trwania: {value}",
     "priceLabel": "Cena: {value}",
+    "maxCompletionTimeLabel": "Maksymalny czas realizacji: {value} dni",
     "requiredProductsTitle": "Wymagane produkty",
     "noBrand": "Brak marki",
     "noProducts": "Nie przypisano produktów.",
@@ -501,6 +506,34 @@
     "sortPriceDesc": "Cena (malejąco)",
     "toastUpdated": "Usługa została zaktualizowana.",
     "editModalTitle": "Edytuj usługę"
+  },
+  "ordersPage": {
+    "toastSaved": "Zamówienie zostało zapisane.",
+    "toastSaveError": "Nie udało się zapisać zamówienia.",
+    "toastDeleted": "Zamówienie zostało usunięte.",
+    "toastDeleteError": "Nie udało się usunąć zamówienia.",
+    "toastUpdated": "Zamówienie zostało zaktualizowane.",
+    "toastReordered": "Kolejność zamówień została zaktualizowana.",
+    "toastReorderError": "Nie udało się zmienić kolejności zamówień.",
+    "deleteConfirm": "Czy na pewno chcesz usunąć zamówienie \"{name}\"?",
+    "title": "Zamówienia",
+    "subtitle": "Usługi wykonywane na zamówienie z widocznym czasem realizacji.",
+    "listTitle": "Lista zamówień",
+    "listSubtitle": "Dodawaj zamówienia i zarządzaj ich kolejnością realizacji.",
+    "newOrder": "Nowe zamówienie",
+    "modalTitle": "Nowe zamówienie",
+    "editModalTitle": "Edytuj zamówienie",
+    "empty": "Brak usług na zamówienie.",
+    "ariaLabel": "Lista zamówień",
+    "moveUp": "Wyżej",
+    "moveDown": "Niżej",
+    "maxCompletionTimeValue": "{days} dni",
+    "columns": {
+      "position": "Kolejność",
+      "order": "Zamówienie",
+      "maxCompletionTime": "Maks. czas realizacji",
+      "actions": "Akcje"
+    }
   },
   "pagination": {
     "ariaLabel": "Paginacja listy",

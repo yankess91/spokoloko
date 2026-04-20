@@ -10,5 +10,7 @@ public sealed record CreateServiceRequest(
     decimal PriceFrom,
     decimal PriceTo,
     string Type,
+    int? MaxCompletionTimeDays,
+    int? OrderPosition,
     List<Guid> RequiredProductIds
 );

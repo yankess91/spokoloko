@@ -124,6 +124,9 @@ export default function ServiceDetailsPage() {
           <p>{t('serviceDetails.typeLabel', { value: t(`serviceTypes.${service.type ?? 'OnSite'}`) })}</p>
           <p>{t('serviceDetails.durationLabel', { value: service.duration })}</p>
           <p>{t('serviceDetails.priceLabel', { value: formatCurrencyRange(service.priceFrom, service.priceTo) })}</p>
+          {service.type === 'CustomOrder' ? (
+            <p>{t('serviceDetails.maxCompletionTimeLabel', { value: service.maxCompletionTimeDays ?? 0 })}</p>
+          ) : null}
         </article>
 
         <article className="card detail-card">

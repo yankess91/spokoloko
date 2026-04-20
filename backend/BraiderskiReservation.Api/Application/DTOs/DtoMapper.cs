@@ -50,6 +50,8 @@ public static class DtoMapper
             serviceItem.PriceFrom,
             serviceItem.PriceTo,
             serviceItem.Type.ToString(),
+            serviceItem.MaxCompletionTimeDays,
+            serviceItem.OrderPosition,
             serviceItem.ServiceProducts
                 .Select(serviceProduct => serviceProduct.Product)
                 .Where(product => product is not null)

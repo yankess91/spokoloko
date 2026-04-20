@@ -46,6 +46,11 @@ public sealed class ServiceCatalogService : IServiceCatalogService
         }
 
         var serviceType = ParseServiceType(request.Type);
+        ValidateCustomOrderFields(serviceType, request.MaxCompletionTimeDays);
+        var maxOrderPosition = await _serviceRepository.GetAllAsync(cancellationToken);
+        var nextOrderPosition = maxOrderPosition.Count == 0
+            ? 1
+            : maxOrderPosition.Max(service => service.OrderPosition) + 1;
 
         var service = new ServiceItem
         {
@@ -56,6 +61,8 @@ public sealed class ServiceCatalogService : IServiceCatalogService
             PriceFrom = request.PriceFrom,
             PriceTo = request.PriceTo,
             Type = serviceType,
+            MaxCompletionTimeDays = request.MaxCompletionTimeDays,
+            OrderPosition = request.OrderPosition ?? nextOrderPosition,
             ServiceProducts = (request.RequiredProductIds ?? new List<Guid>())
                 .Distinct()
                 .Select(productId => new ServiceProduct
@@ -82,6 +89,9 @@ public sealed class ServiceCatalogService : IServiceCatalogService
             throw new InvalidOperationException("Pole PriceTo musi być większe lub równe PriceFrom.");
         }
 
+        var serviceType = ParseServiceType(request.Type);
+        ValidateCustomOrderFields(serviceType, request.MaxCompletionTimeDays);
+
         var updated = await _serviceRepository.UpdateAsync(
             id,
             request.Name,
@@ -90,7 +100,9 @@ public sealed class ServiceCatalogService : IServiceCatalogService
             TimeSpan.FromMinutes(request.DurationToMinutes),
             request.PriceFrom,
             request.PriceTo,
-            ParseServiceType(request.Type),
+            serviceType,
+            request.MaxCompletionTimeDays,
+            request.OrderPosition,
             request.RequiredProductIds ?? new List<Guid>(),
             cancellationToken);
 
@@ -145,5 +157,13 @@ public sealed class ServiceCatalogService : IServiceCatalogService
         }
 
         throw new InvalidOperationException("Pole Type musi mieć wartość OnSite albo CustomOrder.");
+    }
+
+    private static void ValidateCustomOrderFields(ServiceType type, int? maxCompletionTimeDays)
+    {
+        if (type == ServiceType.CustomOrder && (maxCompletionTimeDays is null || maxCompletionTimeDays <= 0))
+        {
+            throw new InvalidOperationException("Usługa na zamówienie musi zawierać dodatni maksymalny czas realizacji (w dniach).");
+        }
     }
 }

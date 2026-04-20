@@ -24,6 +24,7 @@ import ProductDetailsPage from './pages/ProductDetailsPage';
 import ProductsPage from './pages/ProductsPage';
 import ServiceDetailsPage from './pages/ServiceDetailsPage';
 import ServicesPage from './pages/ServicesPage';
+import OrdersPage from './pages/OrdersPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuth } from './context/AuthContext';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
@@ -35,6 +36,7 @@ import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookRoundedIcon from '@mui/icons-material/FacebookRounded';
+import ShoppingBagRoundedIcon from '@mui/icons-material/ShoppingBagRounded';
 import { t } from './utils/i18n';
 import logoSrc from './assets/spokoloko-logo.png';
 
@@ -89,6 +91,11 @@ export default function App() {
       label: t('nav.services'),
       to: '/services',
       icon: <DesignServicesRoundedIcon fontSize="small" />,
+    },
+    {
+      label: t('nav.orders'),
+      to: '/orders',
+      icon: <ShoppingBagRoundedIcon fontSize="small" />,
     },
   ];
 
@@ -292,6 +299,7 @@ export default function App() {
           <Route path="/products/:id" element={<ProductDetailsPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:id" element={<ServiceDetailsPage />} />
+          <Route path="/orders" element={<OrdersPage />} />
           <Route path="/appointments" element={<AppointmentsPage />} />
           <Route path="/appointments/:id" element={<AppointmentDetailsPage />} />
           <Route path="/calendar" element={<CalendarPage />} />

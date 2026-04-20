@@ -25,6 +25,7 @@ const createInitialState = (initialValues) => {
     durationToMinutes: values.durationToMinutes ?? values.durationMinutes ?? 60,
     priceFrom: values.priceFrom ?? values.price ?? '',
     priceTo: values.priceTo ?? values.price ?? '',
+    maxCompletionTimeDays: values.maxCompletionTimeDays ?? '',
     selectedProducts: mapSelectedProducts(
       values.selectedProducts ?? values.requiredProducts ?? []
     )
@@ -36,7 +37,8 @@ export default function ServiceForm({
   isSubmitting,
   initialValues,
   showTitle = true,
-  variant = 'card'
+  variant = 'card',
+  forcedType = null
 }) {
   const { showToast } = useToast();
   const [formState, setFormState] = useState(() => createInitialState(initialValues));
@@ -103,6 +105,7 @@ export default function ServiceForm({
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const selectedType = forcedType ?? formState.type;
     if (Number(formState.durationToMinutes) < Number(formState.durationFromMinutes)) {
       showError(t('serviceForm.durationRangeError'));
       return;
@@ -113,6 +116,11 @@ export default function ServiceForm({
       return;
     }
 
+    if (selectedType === 'CustomOrder' && Number(formState.maxCompletionTimeDays) <= 0) {
+      showError(t('serviceForm.maxCompletionTimeError'));
+      return;
+    }
+
     const shouldReset = await onSubmit?.({
       name: formState.name,
       description: formState.description,
@@ -120,7 +128,9 @@ export default function ServiceForm({
       durationToMinutes: Number(formState.durationToMinutes),
       priceFrom: Number(formState.priceFrom),
       priceTo: Number(formState.priceTo),
-      type: formState.type,
+      type: selectedType,
+      maxCompletionTimeDays:
+        selectedType === 'CustomOrder' ? Number(formState.maxCompletionTimeDays) : null,
       requiredProductIds: formState.selectedProducts.map((item) => item.id)
     });
 
@@ -155,18 +165,20 @@ export default function ServiceForm({
             onChange={handleChange}
           />
         </label>
-        <label>
-          {t('serviceForm.type')}
-          <select
-            name="type"
-            value={formState.type}
-            onChange={handleChange}
-            required
-          >
-            <option value="OnSite">{t('serviceForm.types.onSite')}</option>
-            <option value="CustomOrder">{t('serviceForm.types.customOrder')}</option>
-          </select>
-        </label>
+        {forcedType ? null : (
+          <label>
+            {t('serviceForm.type')}
+            <select
+              name="type"
+              value={formState.type}
+              onChange={handleChange}
+              required
+            >
+              <option value="OnSite">{t('serviceForm.types.onSite')}</option>
+              <option value="CustomOrder">{t('serviceForm.types.customOrder')}</option>
+            </select>
+          </label>
+        )}
         <label>
           {t('serviceForm.duration')}
           <div className="inline-field">
@@ -217,6 +229,21 @@ export default function ServiceForm({
             />
           </div>
         </label>
+        {(forcedType ?? formState.type) === 'CustomOrder' ? (
+          <label>
+            {t('serviceForm.maxCompletionTime')}
+            <input
+              name="maxCompletionTimeDays"
+              type="number"
+              min="1"
+              step="1"
+              placeholder={t('serviceForm.maxCompletionTimePlaceholder')}
+              value={formState.maxCompletionTimeDays}
+              onChange={handleChange}
+              required
+            />
+          </label>
+        ) : null}
         <label>
           {t('serviceForm.requiredProducts')}
           <div className="inline-field">
