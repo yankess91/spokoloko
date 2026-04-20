@@ -25,12 +25,33 @@ Backend podczas startu wczytuje plik `.env` z głównego katalogu repozytorium i
 
 Po uruchomieniu dostępne jest Swagger UI pod `https://localhost:5001/swagger` lub `http://localhost:5000/swagger`.
 
-### Schemat bazy i seed
-Aktualny stan schematu startowego jest utrzymywany bezpośrednio w pliku:
-`backend/BraiderskiReservation.Api/database/seed-data.sql`
+### Schemat bazy i migracje (EF Core)
+Źródłem prawdy dla schematu bazy są **wyłącznie migracje EF Core** w projekcie:
+`backend/BraiderskiReservation.Infrastructure/Data/Migrations`.
 
-Repozytorium nie przechowuje już historycznych migracji SQL — od tego momentu stan początkowy bazy jest budowany od zera na podstawie tego pliku.
-Jeżeli aktualizujesz istniejącą bazę danych, użyj skryptów z katalogu `backend/BraiderskiReservation.Api/database/migrations`.
+`seed-data.sql` służy wyłącznie jako opcjonalny seed danych developerskich (bez tworzenia struktury tabel).
+
+#### Komendy EF Core CLI
+Uruchamiaj z katalogu głównego repozytorium:
+
+```bash
+# dodanie nowej migracji
+dotnet ef migrations add <NazwaMigracji> \
+  --project backend/BraiderskiReservation.Infrastructure \
+  --startup-project backend/BraiderskiReservation.Api
+
+# lista migracji
+dotnet ef migrations list \
+  --project backend/BraiderskiReservation.Infrastructure \
+  --startup-project backend/BraiderskiReservation.Api
+
+# aktualizacja bazy do najnowszej migracji
+dotnet ef database update \
+  --project backend/BraiderskiReservation.Infrastructure \
+  --startup-project backend/BraiderskiReservation.Api
+```
+
+Domyślnie aplikacja może automatycznie wykonać migracje na starcie (`Database:ApplyMigrationsOnStartup=true`).
 
 ## Frontend (React)
 

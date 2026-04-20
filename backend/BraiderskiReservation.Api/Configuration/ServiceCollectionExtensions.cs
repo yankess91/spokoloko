@@ -43,7 +43,8 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<AppDbContext>(options =>
         {
             var connectionString = configuration.GetConnectionString("Default");
-            options.UseNpgsql(connectionString);
+            options.UseNpgsql(connectionString, npgsql =>
+                npgsql.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName));
         });
 
         services.AddScoped<IClientRepository, ClientRepository>();
