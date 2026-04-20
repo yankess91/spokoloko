@@ -35,6 +35,8 @@ public sealed class AppDbContext : DbContext
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<ServiceProduct> ServiceProducts => Set<ServiceProduct>();
     public DbSet<AppointmentProduct> AppointmentProducts => Set<AppointmentProduct>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<UserAccount> Users => Set<UserAccount>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -74,6 +76,10 @@ public sealed class AppDbContext : DbContext
             entity.HasMany(client => client.Appointments)
                 .WithOne(appointment => appointment.ClientProfile)
                 .HasForeignKey(appointment => appointment.ClientId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasMany(client => client.Orders)
+                .WithOne(order => order.ClientProfile)
+                .HasForeignKey(order => order.ClientId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -116,16 +122,6 @@ public sealed class AppDbContext : DbContext
             entity.Property(service => service.DurationTo).HasColumnName("duration_to");
             entity.Property(service => service.PriceFrom).HasColumnName("price_from");
             entity.Property(service => service.PriceTo).HasColumnName("price_to");
-            entity.Property(service => service.Type)
-                .HasColumnName("type")
-                .HasConversion<int>()
-                .HasDefaultValue(ServiceType.OnSite);
-            entity.Property(service => service.CompletionDeadlineDate)
-                .HasColumnName("completion_deadline_date")
-                .HasColumnType("date");
-            entity.Property(service => service.OrderPosition)
-                .HasColumnName("order_position")
-                .HasDefaultValue(0);
             entity.HasIndex(service => service.Name);
             entity.HasMany(service => service.Appointments)
                 .WithOne(appointment => appointment.ServiceItem)
@@ -134,6 +130,47 @@ public sealed class AppDbContext : DbContext
                 .WithOne(serviceProduct => serviceProduct.ServiceItem)
                 .HasForeignKey(serviceProduct => serviceProduct.ServiceId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.ToTable("orders");
+            entity.HasKey(order => order.Id);
+            entity.Property(order => order.Id).HasColumnName("id");
+            entity.Property(order => order.Number).HasColumnName("number");
+            entity.Property(order => order.ClientId).HasColumnName("client_id");
+            entity.Property(order => order.Title).HasColumnName("title");
+            entity.Property(order => order.Description).HasColumnName("description");
+            entity.Property(order => order.Status).HasColumnName("status").HasConversion<int>();
+            entity.Property(order => order.DeliveryMethod).HasColumnName("delivery_method").HasConversion<int>();
+            entity.Property(order => order.DueDate).HasColumnName("due_date").HasColumnType("date");
+            entity.Property(order => order.CreatedAt).HasColumnName("created_at");
+            entity.Property(order => order.UpdatedAt).HasColumnName("updated_at");
+            entity.Property(order => order.TotalAmount).HasColumnName("total_amount").HasColumnType("numeric");
+            entity.HasIndex(order => order.Number).IsUnique();
+            entity.HasIndex(order => order.ClientId);
+            entity.HasIndex(order => order.Status);
+            entity.HasIndex(order => order.DeliveryMethod);
+            entity.HasIndex(order => order.DueDate);
+            entity.HasIndex(order => order.CreatedAt);
+            entity.HasMany(order => order.Items)
+                .WithOne(orderItem => orderItem.Order)
+                .HasForeignKey(orderItem => orderItem.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<OrderItem>(entity =>
+        {
+            entity.ToTable("order_items");
+            entity.HasKey(item => item.Id);
+            entity.Property(item => item.Id).HasColumnName("id");
+            entity.Property(item => item.OrderId).HasColumnName("order_id");
+            entity.Property(item => item.Name).HasColumnName("name");
+            entity.Property(item => item.Notes).HasColumnName("notes");
+            entity.Property(item => item.Quantity).HasColumnName("quantity").HasColumnType("numeric");
+            entity.Property(item => item.UnitPrice).HasColumnName("unit_price").HasColumnType("numeric");
+            entity.Property(item => item.LineTotal).HasColumnName("line_total").HasColumnType("numeric");
+            entity.HasIndex(item => item.OrderId);
         });
 
         modelBuilder.Entity<Appointment>(entity =>

@@ -16,6 +16,10 @@ export default class ClientsApi {
     return this.client.get(`/api/clients/${id}`);
   }
 
+  getOrders(id) {
+    return this.client.get(`/api/clients/${id}/orders`);
+  }
+
   create(payload) {
     return this.client.post('/api/clients', payload);
   }

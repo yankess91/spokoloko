@@ -46,7 +46,6 @@ export default function ServiceList({ services, isLoading, linkBase, onEdit, onD
             <div className="data-grid-cell" role="cell">
               <span className="data-grid-title">{service.duration}</span>
               <span className="data-grid-meta">{formatCurrencyRange(service.priceFrom, service.priceTo)}</span>
-              <span className="data-grid-meta">{t(`serviceTypes.${service.type ?? 'OnSite'}`)}</span>
             </div>
             <div className="data-grid-cell" role="cell">
               {requiredProducts}

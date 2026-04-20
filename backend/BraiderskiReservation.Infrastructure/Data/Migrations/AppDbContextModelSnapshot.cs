@@ -57,6 +57,43 @@ internal partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.ToTable("clients", (string)null);
             });
 
+        modelBuilder.Entity("BraiderskiReservation.Domain.Entities.Order", b =>
+            {
+                b.Property<Guid>("Id").HasColumnType("uuid").HasColumnName("id");
+                b.Property<Guid>("ClientId").HasColumnType("uuid").HasColumnName("client_id");
+                b.Property<DateTime>("CreatedAt").HasColumnType("timestamp with time zone").HasColumnName("created_at");
+                b.Property<int>("DeliveryMethod").HasColumnType("integer").HasColumnName("delivery_method");
+                b.Property<string>("Description").IsRequired().HasColumnType("text").HasColumnName("description");
+                b.Property<DateOnly?>("DueDate").HasColumnType("date").HasColumnName("due_date");
+                b.Property<string>("Number").IsRequired().HasColumnType("text").HasColumnName("number");
+                b.Property<int>("Status").HasColumnType("integer").HasColumnName("status");
+                b.Property<string>("Title").IsRequired().HasColumnType("text").HasColumnName("title");
+                b.Property<decimal>("TotalAmount").HasColumnType("numeric").HasColumnName("total_amount");
+                b.Property<DateTime>("UpdatedAt").HasColumnType("timestamp with time zone").HasColumnName("updated_at");
+                b.HasKey("Id");
+                b.HasIndex("ClientId");
+                b.HasIndex("CreatedAt");
+                b.HasIndex("DeliveryMethod");
+                b.HasIndex("DueDate");
+                b.HasIndex("Number").IsUnique();
+                b.HasIndex("Status");
+                b.ToTable("orders", (string)null);
+            });
+
+        modelBuilder.Entity("BraiderskiReservation.Domain.Entities.OrderItem", b =>
+            {
+                b.Property<Guid>("Id").HasColumnType("uuid").HasColumnName("id");
+                b.Property<decimal>("LineTotal").HasColumnType("numeric").HasColumnName("line_total");
+                b.Property<string>("Name").IsRequired().HasColumnType("text").HasColumnName("name");
+                b.Property<string>("Notes").IsRequired().HasColumnType("text").HasColumnName("notes");
+                b.Property<Guid>("OrderId").HasColumnType("uuid").HasColumnName("order_id");
+                b.Property<decimal>("Quantity").HasColumnType("numeric").HasColumnName("quantity");
+                b.Property<decimal>("UnitPrice").HasColumnType("numeric").HasColumnName("unit_price");
+                b.HasKey("Id");
+                b.HasIndex("OrderId");
+                b.ToTable("order_items", (string)null);
+            });
+
         modelBuilder.Entity("BraiderskiReservation.Domain.Entities.Product", b =>
             {
                 b.Property<Guid>("Id").HasColumnType("uuid").HasColumnName("id");
@@ -81,21 +118,8 @@ internal partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.Property<TimeSpan>("DurationFrom").HasColumnType("interval").HasColumnName("duration_from");
                 b.Property<TimeSpan>("DurationTo").HasColumnType("interval").HasColumnName("duration_to");
                 b.Property<string>("Name").IsRequired().HasColumnType("text").HasColumnName("name");
-                b.Property<DateOnly?>("CompletionDeadlineDate")
-                    .HasColumnType("date")
-                    .HasColumnName("completion_deadline_date");
-                b.Property<int>("OrderPosition")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("integer")
-                    .HasColumnName("order_position")
-                    .HasDefaultValue(0);
                 b.Property<decimal>("PriceFrom").HasColumnType("numeric").HasColumnName("price_from");
                 b.Property<decimal>("PriceTo").HasColumnType("numeric").HasColumnName("price_to");
-                b.Property<int>("Type")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("integer")
-                    .HasColumnName("type")
-                    .HasDefaultValue(0);
                 b.HasKey("Id");
                 b.HasIndex("Name");
                 b.ToTable("services", (string)null);
@@ -161,6 +185,24 @@ internal partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.HasOne("BraiderskiReservation.Domain.Entities.Product", "Product")
                     .WithMany("AppointmentProducts")
                     .HasForeignKey("ProductId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
+        modelBuilder.Entity("BraiderskiReservation.Domain.Entities.Order", b =>
+            {
+                b.HasOne("BraiderskiReservation.Domain.Entities.ClientProfile", "ClientProfile")
+                    .WithMany("Orders")
+                    .HasForeignKey("ClientId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
+        modelBuilder.Entity("BraiderskiReservation.Domain.Entities.OrderItem", b =>
+            {
+                b.HasOne("BraiderskiReservation.Domain.Entities.Order", "Order")
+                    .WithMany("Items")
+                    .HasForeignKey("OrderId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
             });

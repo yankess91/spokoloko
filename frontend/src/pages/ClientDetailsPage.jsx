@@ -10,7 +10,7 @@ import PhoneRoundedIcon from '@mui/icons-material/PhoneRounded';
 import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded';
 import VerifiedUserRoundedIcon from '@mui/icons-material/VerifiedUserRounded';
 import useClientDetails from '../hooks/useClientDetails';
-import { appointmentsApi } from '../api';
+import { appointmentsApi, clientsApi } from '../api';
 import AppointmentForm from '../components/AppointmentForm';
 import Modal from '../components/Modal';
 import { useToast } from '../components/ToastProvider';
@@ -24,6 +24,7 @@ export default function ClientDetailsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [zoomedImage, setZoomedImage] = useState(null);
+  const [orders, setOrders] = useState([]);
 
   const defaultClient = useMemo(
     () => (client ? { id: client.id, label: client.fullName, isActive: client.isActive } : null),
@@ -35,6 +36,24 @@ export default function ClientDetailsPage() {
       showToast(error, { severity: 'error' });
     }
   }, [error, showToast]);
+
+  useEffect(() => {
+    const loadOrders = async () => {
+      if (!id) {
+        setOrders([]);
+        return;
+      }
+
+      try {
+        const clientOrders = await clientsApi.getOrders(id);
+        setOrders(clientOrders);
+      } catch (err) {
+        showToast(err.message ?? t('clientDetails.ordersLoadError'), { severity: 'error' });
+      }
+    };
+
+    loadOrders();
+  }, [id, showToast]);
 
   const handleAddAppointment = async (payload) => {
     try {
@@ -187,6 +206,25 @@ export default function ClientDetailsPage() {
             <p className="muted">{t('clientDetails.noServiceHistory')}</p>
           )}
         </article>
+
+        <article className="card detail-card">
+          <h2>{t('clientDetails.ordersTitle')}</h2>
+          {orders.length ? (
+            <ul className="list stacked detail-stack-list">
+              {orders.map((order) => (
+                <li key={order.id}>
+                  <Link className="list-title" to={`/orders/${order.id}`}>{order.number}</Link>
+                  <span className="muted">{t(`orderStatus.${order.status}`)}</span>
+                  <span className="muted">{order.dueDate ? new Date(order.dueDate).toLocaleDateString('pl-PL') : t('formatters.noData')}</span>
+                  <span className="muted">{order.totalAmount?.toFixed?.(2)} PLN</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="muted">{t('clientDetails.noOrders')}</p>
+          )}
+        </article>
+
       </section>
       {isModalOpen ? (
         <Modal title={t('clientDetails.modalTitle')} onClose={() => setIsModalOpen(false)}>

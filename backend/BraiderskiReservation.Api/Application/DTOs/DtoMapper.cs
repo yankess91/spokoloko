@@ -49,14 +49,43 @@ public static class DtoMapper
             serviceItem.DurationTo,
             serviceItem.PriceFrom,
             serviceItem.PriceTo,
-            serviceItem.Type.ToString(),
-            serviceItem.CompletionDeadlineDate,
-            serviceItem.OrderPosition,
             serviceItem.ServiceProducts
                 .Select(serviceProduct => serviceProduct.Product)
                 .Where(product => product is not null)
                 .Select(product => product!.ToResponse())
                 .ToList());
+
+    public static OrderResponse ToResponse(this Order order) =>
+        new(
+            order.Id,
+            order.Number,
+            order.ClientId,
+            order.ClientProfile?.FullName ?? string.Empty,
+            order.Title,
+            order.Description,
+            order.Status.ToString(),
+            order.DeliveryMethod.ToString(),
+            order.DueDate,
+            order.CreatedAt,
+            order.UpdatedAt,
+            order.TotalAmount,
+            order.Items.Select(item => item.ToResponse()).ToList());
+
+    public static OrderItemResponse ToResponse(this OrderItem item) =>
+        new(item.Id, item.Name, item.Notes, item.Quantity, item.UnitPrice, item.LineTotal);
+
+    public static OrderListItemResponse ToListItemResponse(this Order order) =>
+        new(
+            order.Id,
+            order.Number,
+            order.ClientId,
+            order.ClientProfile?.FullName ?? string.Empty,
+            order.Title,
+            order.Status.ToString(),
+            order.DeliveryMethod.ToString(),
+            order.DueDate,
+            order.CreatedAt,
+            order.TotalAmount);
 
     public static ServiceSummaryResponse ToSummaryResponse(this ServiceItem serviceItem) =>
         new(

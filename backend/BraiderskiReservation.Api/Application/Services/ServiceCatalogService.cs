@@ -35,22 +35,7 @@ public sealed class ServiceCatalogService : IServiceCatalogService
 
     public async Task<ServiceItemResponse> CreateAsync(CreateServiceRequest request, CancellationToken cancellationToken)
     {
-        if (request.DurationToMinutes < request.DurationFromMinutes)
-        {
-            throw new InvalidOperationException("Pole DurationToMinutes musi być większe lub równe DurationFromMinutes.");
-        }
-
-        if (request.PriceTo < request.PriceFrom)
-        {
-            throw new InvalidOperationException("Pole PriceTo musi być większe lub równe PriceFrom.");
-        }
-
-        var serviceType = ParseServiceType(request.Type);
-        ValidateCustomOrderFields(serviceType, request.CompletionDeadlineDate);
-        var maxOrderPosition = await _serviceRepository.GetAllAsync(cancellationToken);
-        var nextOrderPosition = maxOrderPosition.Count == 0
-            ? 1
-            : maxOrderPosition.Max(service => service.OrderPosition) + 1;
+        ValidateRanges(request);
 
         var service = new ServiceItem
         {
@@ -60,9 +45,6 @@ public sealed class ServiceCatalogService : IServiceCatalogService
             DurationTo = TimeSpan.FromMinutes(request.DurationToMinutes),
             PriceFrom = request.PriceFrom,
             PriceTo = request.PriceTo,
-            Type = serviceType,
-            CompletionDeadlineDate = serviceType == ServiceType.CustomOrder ? request.CompletionDeadlineDate : null,
-            OrderPosition = request.OrderPosition ?? nextOrderPosition,
             ServiceProducts = (request.RequiredProductIds ?? new List<Guid>())
                 .Distinct()
                 .Select(productId => new ServiceProduct
@@ -79,18 +61,7 @@ public sealed class ServiceCatalogService : IServiceCatalogService
 
     public async Task<ServiceItemResponse?> UpdateAsync(Guid id, CreateServiceRequest request, CancellationToken cancellationToken)
     {
-        if (request.DurationToMinutes < request.DurationFromMinutes)
-        {
-            throw new InvalidOperationException("Pole DurationToMinutes musi być większe lub równe DurationFromMinutes.");
-        }
-
-        if (request.PriceTo < request.PriceFrom)
-        {
-            throw new InvalidOperationException("Pole PriceTo musi być większe lub równe PriceFrom.");
-        }
-
-        var serviceType = ParseServiceType(request.Type);
-        ValidateCustomOrderFields(serviceType, request.CompletionDeadlineDate);
+        ValidateRanges(request);
 
         var updated = await _serviceRepository.UpdateAsync(
             id,
@@ -100,9 +71,6 @@ public sealed class ServiceCatalogService : IServiceCatalogService
             TimeSpan.FromMinutes(request.DurationToMinutes),
             request.PriceFrom,
             request.PriceTo,
-            serviceType,
-            request.CompletionDeadlineDate,
-            request.OrderPosition,
             request.RequiredProductIds ?? new List<Guid>(),
             cancellationToken);
 
@@ -149,21 +117,16 @@ public sealed class ServiceCatalogService : IServiceCatalogService
         return true;
     }
 
-    private static ServiceType ParseServiceType(string type)
+    private static void ValidateRanges(CreateServiceRequest request)
     {
-        if (Enum.TryParse<ServiceType>(type, true, out var serviceType))
+        if (request.DurationToMinutes < request.DurationFromMinutes)
         {
-            return serviceType;
+            throw new InvalidOperationException("Pole DurationToMinutes musi być większe lub równe DurationFromMinutes.");
         }
 
-        throw new InvalidOperationException("Pole Type musi mieć wartość OnSite albo CustomOrder.");
-    }
-
-    private static void ValidateCustomOrderFields(ServiceType type, DateOnly? completionDeadlineDate)
-    {
-        if (type == ServiceType.CustomOrder && completionDeadlineDate is null)
+        if (request.PriceTo < request.PriceFrom)
         {
-            throw new InvalidOperationException("Usługa na zamówienie musi zawierać datę realizacji.");
+            throw new InvalidOperationException("Pole PriceTo musi być większe lub równe PriceFrom.");
         }
     }
 }
